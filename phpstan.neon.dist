@@ -1,0 +1,9 @@
+parameters:
+    level: 0
+    paths:
+        - src
+        - tests
+    bootstrapFiles:
+        - phpstan.bootstrap.php
+    phpVersion: 80400
+    tmpDir: var/smartresponsor-tagging/phpstan

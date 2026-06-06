@@ -1,0 +1,11 @@
+framework:
+  secret: '%env(default:default_navigation_secret:APP_SECRET)%'
+  test: true
+  router:
+    utf8: true
+    resource: '%kernel.project_dir%/config/routes_dev.yaml'
+  http_method_override: false
+  handle_all_throwables: true
+
+parameters:
+  default_navigation_secret: navigation-standalone-dev-secret

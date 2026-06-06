@@ -1,0 +1,25 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    bind:
+      array $navigationConfig: '%navigation.config%'
+
+  App\Navigating\:
+    resource: '../src/'
+
+  App\Navigating\ServiceInterface\Navigation\NavigationRuntimeProviderInterface:
+    alias: App\Navigating\Service\Navigation\NavigationRuntimeProvider
+
+  App\Navigating\ServiceInterface\Navigation\NavigationShellPayloadProviderInterface:
+    alias: App\Navigating\Service\Navigation\NavigationShellPayloadProvider
+
+  App\Navigating\ServiceInterface\Navigation\NavigationRequestRoleProviderInterface:
+    alias: App\Navigating\Service\Navigation\RequestAttributeNavigationRoleProvider
+
+  App\Navigating\ServiceInterface\Navigation\NavigationRendererInterface:
+    alias: App\Navigating\Service\Navigation\TwigNavigationRenderer
+
+  App\Navigating\Controller\NavigationController:
+    tags:
+      - { name: controller.service_arguments }

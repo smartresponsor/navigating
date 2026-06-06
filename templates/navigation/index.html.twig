@@ -1,0 +1,11 @@
+{% set navigation_locations = navigation.locations|default({}) %}
+
+<nav data-surface="navigation" data-template="index">
+    {% for location, items in navigation_locations %}
+        <section data-navigation-location="{{ location }}">
+            {% for item in items %}
+                <a href="{{ item.url }}"{% if item.active|default(false) %} aria-current="page"{% endif %}>{{ item.label }}</a>
+            {% endfor %}
+        </section>
+    {% endfor %}
+</nav>

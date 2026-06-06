@@ -1,0 +1,15 @@
+parameters:
+  level: max
+  paths:
+    - src
+    - tests
+  inferPrivatePropertyTypeFromConstructor: true
+  scanFiles:
+    - tools/phpstan/stubs/DoctrineDBALConnection.stub.php
+    - tools/phpstan/stubs/PHPUnitFrameworkTestCase.stub.php
+  stubFiles:
+    - tools/phpstan/stubs/DoctrineDBALConnection.stub.php
+    - tools/phpstan/stubs/PHPUnitFrameworkTestCase.stub.php
+  ignoreErrors:
+    - identifier: property.unusedType
+      path: src/Entity/*

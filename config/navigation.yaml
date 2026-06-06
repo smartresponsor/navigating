@@ -1,0 +1,282 @@
+navigation:
+  schema: 3
+  shell_groups:
+    body_top_workspace:
+      label: Workspace status
+      location: shell.body.top
+      type: status
+      priority: 10
+      items:
+        workspace:
+          type: badge
+          label: Workspace
+          icon: workspace
+          badge: ready
+          priority: 10
+
+    header_bottom_breadcrumb:
+      label: Breadcrumb
+      location: shell.header.bottom
+      type: breadcrumb
+      priority: 20
+      items:
+        home:
+          type: link
+          label: Home
+          icon: home
+          priority: 10
+          path: /
+
+    left_middle_primary:
+      label: Primary navigation
+      location: shell.left.middle
+      type: menu
+      priority: 30
+      items:
+        dashboard:
+          type: link
+          label: Dashboard
+          icon: dashboard
+          priority: 10
+          path: /
+        catalog:
+          type: link
+          label: Catalog
+          icon: catalog
+          priority: 20
+          path: /catalog
+        order:
+          type: link
+          label: Orders
+          icon: order
+          priority: 30
+          path: /order
+        customer:
+          type: link
+          label: Customers
+          icon: customer
+          priority: 40
+          path: /customer
+        marketing:
+          type: link
+          label: Marketing
+          icon: marketing
+          priority: 50
+          path: /marketing
+        analytics:
+          type: link
+          label: Analytics
+          icon: analytics
+          priority: 60
+          path: /analytics
+        setting:
+          type: link
+          label: Settings
+          icon: setting
+          priority: 70
+          path: /setting
+
+    context_middle_section:
+      label: Section navigation
+      location: shell.context.middle
+      type: context
+      priority: 40
+      items:
+        overview:
+          type: link
+          label: Overview
+          priority: 10
+          path: /overview
+        list:
+          type: link
+          label: List
+          priority: 20
+          path: /list
+        create:
+          type: link
+          label: Create
+          priority: 30
+          path: /create
+        import:
+          type: link
+          label: Import
+          priority: 40
+          path: /import
+        export:
+          type: link
+          label: Export
+          priority: 50
+          path: /export
+        history:
+          type: link
+          label: History
+          priority: 60
+          path: /history
+
+    main_toolbar_actions:
+      label: Page actions
+      location: shell.main.toolbar
+      type: toolbar
+      priority: 50
+      items:
+        create:
+          type: action
+          label: Create
+          icon: create
+          action: navigation.create
+          priority: 10
+        save:
+          type: action
+          label: Save
+          icon: save
+          action: navigation.save
+          priority: 20
+        publish:
+          type: action
+          label: Publish
+          icon: publish
+          action: navigation.publish
+          priority: 30
+          visible_for_roles:
+            - ROLE_ADMIN
+        archive:
+          type: action
+          label: Archive
+          icon: archive
+          action: navigation.archive
+          priority: 40
+        refresh:
+          type: action
+          label: Refresh
+          icon: refresh
+          action: navigation.refresh
+          priority: 50
+
+    right_tool_panel:
+      label: Tools
+      location: shell.right.tool
+      type: tool
+      priority: 60
+      items:
+        inspector:
+          type: widget
+          label: Inspector
+          icon: inspector
+          widget: shell.inspector
+          priority: 10
+        ai_assistant:
+          type: widget
+          label: AI Assistant
+          icon: ai
+          widget: shell.ai_assistant
+          priority: 20
+        activity:
+          type: widget
+          label: Activity
+          icon: activity
+          widget: shell.activity
+          priority: 30
+        permission:
+          type: widget
+          label: Permissions
+          icon: permission
+          widget: shell.permission
+          priority: 40
+
+    right_filter_panel:
+      label: Filters
+      location: shell.right.filter
+      type: filter
+      priority: 70
+      items:
+        status:
+          type: action
+          label: Status
+          action: filter.status
+          priority: 10
+        owner:
+          type: action
+          label: Owner
+          action: filter.owner
+          priority: 20
+        date:
+          type: action
+          label: Date
+          action: filter.date
+          priority: 30
+        tag:
+          type: action
+          label: Tag
+          action: filter.tag
+          priority: 40
+        tenant:
+          type: action
+          label: Tenant
+          action: filter.tenant
+          priority: 50
+
+    footer_left_system:
+      label: System
+      location: shell.footer.left
+      type: footer
+      priority: 80
+      items:
+        system_status:
+          type: link
+          label: System status
+          priority: 10
+          path: /system/status
+
+    footer_context_environment:
+      label: Environment
+      location: shell.footer.context
+      type: footer
+      priority: 90
+      visible_for_scopes:
+        - system
+      items:
+        environment:
+          type: badge
+          label: Environment
+          badge: dev
+          priority: 10
+          visible_for_environments:
+            - dev
+        build:
+          type: badge
+          label: Build
+          badge: local
+          priority: 20
+
+    footer_main_support:
+      label: Support
+      location: shell.footer.main
+      type: footer
+      priority: 100
+      items:
+        help:
+          type: link
+          label: Help
+          priority: 10
+          path: /help
+
+    footer_right_legal:
+      label: Legal
+      location: shell.footer.right
+      type: footer
+      priority: 110
+      items:
+        legal:
+          type: link
+          label: Legal
+          priority: 10
+          path: /legal
+  runtime_roles:
+    fallback_roles:
+      - ROLE_USER
+  runtime_scopes:
+    fallback_scopes:
+      - user
+      - system
+  runtime_environment:
+    fallback_environment: dev
