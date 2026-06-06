@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Navigating\Service\Navigation;
 
+use App\Navigating\ServiceInterface\Navigation\NavigationRuntimeProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 final readonly class NavigationTemplateDataProvider
@@ -12,7 +13,7 @@ final readonly class NavigationTemplateDataProvider
     public const TEMPLATE = 'index';
 
     public function __construct(
-        private NavigationRuntimeProvider $runtimeProvider,
+        private NavigationRuntimeProviderInterface $runtimeProvider,
     ) {
     }
 

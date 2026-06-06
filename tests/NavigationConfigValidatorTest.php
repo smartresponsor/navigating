@@ -223,6 +223,35 @@ final class NavigationConfigValidatorTest extends TestCase
         self::assertStringContainsString('path is only supported for link items', implode(' ', $result->errors));
     }
 
+    public function testRejectsAnyNestedItemShapeKeyIndependently(): void
+    {
+        foreach (['items', 'sections', 'children'] as $nestedKey) {
+            $result = (new NavigationConfigValidator())->validate([
+                'schema' => 3,
+                'shell_groups' => [
+                    'left_middle_primary' => [
+                        'location' => 'shell.left.middle',
+                        'items' => [
+                            'dashboard' => [
+                                'type' => 'link',
+                                'label' => 'Dashboard',
+                                'path' => '/',
+                                $nestedKey => [],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+            self::assertFalse($result->isValid(), $nestedKey);
+            self::assertStringContainsString(
+                'must not contain nested items/sections/children',
+                implode(' ', $result->errors),
+                $nestedKey,
+            );
+        }
+    }
+
     public function testAcceptsScopeAndEnvironmentVisibility(): void
     {
         $result = (new NavigationConfigValidator())->validate([

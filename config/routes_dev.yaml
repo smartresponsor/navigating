@@ -1,7 +1,7 @@
 navigation_standalone_index:
   path: /navigation
-  controller: App\Navigating\Controller\NavigationController::index
+  controller: App\Navigating\Service\Http\Navigation\NavigationHttpService::index
 
 navigation_standalone_preview:
   path: /navigation/preview
-  controller: App\Navigating\Controller\NavigationController::preview
+  controller: App\Navigating\Service\Http\Navigation\NavigationHttpService::preview

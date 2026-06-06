@@ -1,4 +1,4 @@
-# Navigating W6 — visibility context contract
+# Navigating W7 — controller evacuation and QA cleanup
 
 This slice keeps the shell v3 and typed item contracts and adds a lightweight visibility context layer.
 
@@ -34,3 +34,11 @@ navigation:
 ## W6 intent
 
 This is intentionally not Symfony voter integration. It is a deterministic shell visibility filter for user-facing shell data.
+
+
+## W7 cleanup
+
+- Standalone HTTP entry points are served by `Service/Http/Navigation/NavigationHttpService`.
+- `src/Controller` is intentionally absent.
+- PHPStan configuration no longer references missing local stubs.
+- Nested item keys are rejected independently: `items`, `sections`, or `children`.

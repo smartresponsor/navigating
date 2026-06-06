@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Navigating\Controller;
+namespace App\Navigating\Service\Http\Navigation;
 
 use App\Navigating\Service\Navigation\NavigationResponseProvider;
 use App\Navigating\Service\Navigation\NavigationTemplateDataProvider;
@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-final readonly class NavigationController
+final readonly class NavigationHttpService
 {
     public function __construct(
         private NavigationResponseProvider $responseProvider,

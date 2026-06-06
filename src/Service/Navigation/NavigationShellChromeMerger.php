@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Navigating\Service\Navigation;
 
+use App\Navigating\ServiceInterface\Navigation\NavigationShellPayloadProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 final readonly class NavigationShellChromeMerger
 {
     public function __construct(
-        private NavigationShellPayloadProvider $shellPayloadProvider,
+        private NavigationShellPayloadProviderInterface $shellPayloadProvider,
     ) {
     }
 

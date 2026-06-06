@@ -20,6 +20,6 @@ services:
   App\Navigating\ServiceInterface\Navigation\NavigationRendererInterface:
     alias: App\Navigating\Service\Navigation\TwigNavigationRenderer
 
-  App\Navigating\Controller\NavigationController:
+  App\Navigating\Service\Http\Navigation\NavigationHttpService:
     tags:
       - { name: controller.service_arguments }

@@ -109,7 +109,7 @@ final class NavigationConfigValidator
                     continue;
                 }
 
-                if (isset($itemConfig['items'], $itemConfig['sections'], $itemConfig['children'])) {
+                if (isset($itemConfig['items']) || isset($itemConfig['sections']) || isset($itemConfig['children'])) {
                     $errors[] = sprintf('navigation.shell_groups.%s.items.%s must not contain nested items/sections/children.', $groupKey, $itemKey);
                 }
 

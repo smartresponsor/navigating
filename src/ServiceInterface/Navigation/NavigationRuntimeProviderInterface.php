@@ -14,4 +14,11 @@ interface NavigationRuntimeProviderInterface
      * @return array<string, list<array<string, mixed>>>
      */
     public function provideLocations(Request $request): array;
+
+    /**
+     * Returns deterministic active navigation identifiers.
+     *
+     * @return array{active_group: string|null, active_item: string|null, active_root: string|null, active_section: string|null}
+     */
+    public function provideActiveState(Request $request): array;
 }
