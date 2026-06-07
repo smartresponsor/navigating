@@ -11,9 +11,9 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
     public function testEasyAdminDoctrineSurfaceFilesAreRegistered(): void
     {
         self::assertFileExists(__DIR__.'/../src/Controllers/Admin/DashboardController.php');
-        self::assertFileExists(__DIR__.'/../src/Controllers/Admin/NavigationMenuItemCrudController.php');
-        self::assertFileExists(__DIR__.'/../src/Entity/NavigationMenuItem.php');
-        self::assertFileExists(__DIR__.'/../src/Repository/NavigationMenuItemRepository.php');
+        self::assertFileExists(__DIR__.'/../src/Controllers/Admin/NavigationItemCrudController.php');
+        self::assertFileExists(__DIR__.'/../src/Entity/NavigationItem.php');
+        self::assertFileExists(__DIR__.'/../src/Repository/NavigationItemRepository.php');
         self::assertFileExists(__DIR__.'/../config/routes/easyadmin.yaml');
         self::assertFileExists(__DIR__.'/../config/standalone/doctrine.yaml');
         self::assertFileExists(__DIR__.'/../config/standalone/security.yaml');
@@ -38,20 +38,20 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
         self::assertStringNotContainsString("path: '^/ea'", $security);
     }
 
-    public function testNavigationMenuUsesNativeEasyAdminCrudController(): void
+    public function testNavigationUsesNativeEasyAdminCrudController(): void
     {
-        $controller = file_get_contents(__DIR__.'/../src/Controllers/Admin/NavigationMenuItemCrudController.php');
-        $entity = file_get_contents(__DIR__.'/../src/Entity/NavigationMenuItem.php');
+        $controller = file_get_contents(__DIR__.'/../src/Controllers/Admin/NavigationItemCrudController.php');
+        $entity = file_get_contents(__DIR__.'/../src/Entity/NavigationItem.php');
         self::assertIsString($controller);
         self::assertIsString($entity);
 
         self::assertStringContainsString('extends AbstractCrudController', $controller);
-        self::assertStringContainsString('NavigationMenuItem::class', $controller);
+        self::assertStringContainsString('NavigationItem::class', $controller);
         self::assertStringContainsString('configureActions', $controller);
         self::assertStringContainsString('linkToCrudAction', $controller);
         self::assertStringContainsString('@EasyAdmin/page/content.html.twig', $controller);
         self::assertStringContainsString('#[ORM\\Entity', $entity);
-        self::assertStringContainsString("#[ORM\\Table(name: 'navigation_menu_item')]", $entity);
+        self::assertStringContainsString("#[ORM\\Table(name: 'navigation_item')]", $entity);
     }
 
     public function testDoctrineSqliteStandaloneConfigIsPresent(): void
@@ -69,12 +69,12 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
 
     public function testEntityFirstDatabaseDesignHasIndexesAndNoMigrations(): void
     {
-        $entity = file_get_contents(__DIR__.'/../src/Entity/NavigationMenuItem.php');
+        $entity = file_get_contents(__DIR__.'/../src/Entity/NavigationItem.php');
         self::assertIsString($entity);
 
-        self::assertStringContainsString("#[ORM\\UniqueConstraint(name: 'uniq_navigation_menu_item_menu_key'", $entity);
-        self::assertStringContainsString("#[ORM\\Index(name: 'idx_navigation_menu_item_enabled_location_position'", $entity);
-        self::assertStringContainsString("#[ORM\\Column(name: 'menu_key'", $entity);
+        self::assertStringContainsString("#[ORM\\UniqueConstraint(name: 'uniq_navigation_item_navigation_key'", $entity);
+        self::assertStringContainsString("#[ORM\\Index(name: 'idx_navigation_item_enabled_location_position'", $entity);
+        self::assertStringContainsString("#[ORM\\Column(name: 'navigation_key'", $entity);
         self::assertStringContainsString("#[ORM\\Column(name: 'parent_key'", $entity);
         self::assertStringContainsString("#[ORM\\Column(name: 'route_name'", $entity);
         self::assertStringContainsString("#[ORM\\Column(name: 'required_role'", $entity);
@@ -85,10 +85,10 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
 
     public function testEasyAdminCrudExposesEntityFirstFields(): void
     {
-        $controller = file_get_contents(__DIR__.'/../src/Controllers/Admin/NavigationMenuItemCrudController.php');
+        $controller = file_get_contents(__DIR__.'/../src/Controllers/Admin/NavigationItemCrudController.php');
         self::assertIsString($controller);
 
-        self::assertStringContainsString("TextField::new('menuKey')", $controller);
+        self::assertStringContainsString("TextField::new('navigationKey')", $controller);
         self::assertStringContainsString("TextField::new('parentKey')", $controller);
         self::assertStringContainsString("TextField::new('requiredRole')", $controller);
         self::assertStringContainsString("TextareaField::new('metadata')", $controller);

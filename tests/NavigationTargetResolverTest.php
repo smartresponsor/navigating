@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Service\Navigation\NavigationTargetResolver;
+use App\Navigating\Service\Navigation\Resolve\NavigationTargetResolveService;
 use App\Navigating\Value\Navigation\NavigationTarget;
 use PHPUnit\Framework\TestCase;
 
-final class NavigationTargetResolverTest extends TestCase
+final class NavigationTargetResolveServiceTest extends TestCase
 {
     public function testUnknownTargetFallsBackToRoot(): void
     {
-        $resolver = new NavigationTargetResolver();
+        $resolver = new NavigationTargetResolveService();
 
         $url = $resolver->resolveUrl(new NavigationTarget(
             type: 'unknown',
         ));
 
-        self::assertSame('/', $url);
+        self::assertSame('', $url);
     }
 
     public function testPathTargetNormalizesLeadingSlash(): void
     {
-        $resolver = new NavigationTargetResolver();
+        $resolver = new NavigationTargetResolveService();
 
         $url = $resolver->resolveUrl(new NavigationTarget(
             type: 'path',
@@ -37,7 +37,7 @@ final class NavigationTargetResolverTest extends TestCase
     {
         $target = NavigationTarget::fromArray([
             'type' => 'route',
-            'route' => 'navigation.menu.archive_id',
+            'route' => 'navigation.archive_id',
             'parameters' => [
                 'id' => 123,
             ],

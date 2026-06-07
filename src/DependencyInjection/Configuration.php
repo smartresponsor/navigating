@@ -44,7 +44,7 @@ final class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('label')->defaultNull()->end()
                             ->scalarNode('location')->isRequired()->cannotBeEmpty()->end()
-                            ->scalarNode('type')->defaultValue('menu')->end()
+                            ->scalarNode('type')->defaultValue('navigation')->end()
                             ->integerNode('priority')->defaultValue(100)->end()
                             ->booleanNode('enabled')->defaultTrue()->end()
                             ->booleanNode('visible')->defaultTrue()->end()

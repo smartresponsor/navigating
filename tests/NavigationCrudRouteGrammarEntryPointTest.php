@@ -10,12 +10,12 @@ final class NavigationCrudRouteGrammarEntryPointTest extends TestCase
 {
     public function testCanonicalCrudRouteBridgeExists(): void
     {
-        $controller = self::read('src/Controllers/Admin/NavigationMenuCrudRouteController.php');
+        $controller = self::read('src/Controllers/Admin/NavigationCrudRouteController.php');
         foreach (self::routeNames() as $routeName) {
             self::assertStringContainsString("name: '".$routeName."'", $controller);
         }
         self::assertStringContainsString('AdminUrlGenerator', $controller);
-        self::assertStringContainsString('NavigationMenuItemCrudController::class', $controller);
+        self::assertStringContainsString('NavigationItemCrudController::class', $controller);
         self::assertStringContainsString("#[IsGranted('ROLE_ADMIN')]", $controller);
     }
 
@@ -28,7 +28,7 @@ final class NavigationCrudRouteGrammarEntryPointTest extends TestCase
 
     public function testRouteMapRegistryMatchesCanonicalGrammar(): void
     {
-        $routeMap = self::read('config/platform/routes/crud/navigation.menu.yaml');
+        $routeMap = self::read('config/platform/routes/crud/navigation.yaml');
         foreach (self::routeNames() as $routeName) {
             self::assertStringContainsString($routeName.':', $routeMap);
         }
@@ -38,14 +38,14 @@ final class NavigationCrudRouteGrammarEntryPointTest extends TestCase
 
     public function testEntitySupportsIdSlugAndArchiveGrammarVariants(): void
     {
-        self::assertStringContainsString('uniq_navigation_menu_item_slug', self::read('src/Entity/NavigationMenuItem.php'));
-        self::assertStringContainsString('archived_at', self::read('src/Entity/NavigationMenuItem.php'));
-        self::assertStringContainsString('function findOneBySlug', self::read('src/Repository/NavigationMenuItemRepository.php'));
+        self::assertStringContainsString('uniq_navigation_item_slug', self::read('src/Entity/NavigationItem.php'));
+        self::assertStringContainsString('archived_at', self::read('src/Entity/NavigationItem.php'));
+        self::assertStringContainsString('function findOneBySlug', self::read('src/Repository/NavigationItemRepository.php'));
     }
 
     public function testCanonicalCrudBridgeUsesExplicitHttpMethods(): void
     {
-        $controller = self::read('src/Controllers/Admin/NavigationMenuCrudRouteController.php');
+        $controller = self::read('src/Controllers/Admin/NavigationCrudRouteController.php');
 
         foreach (self::expectedRouteMethods() as $routeName => $methods) {
             self::assertStringContainsString("name: '".$routeName."'", $controller);
@@ -57,7 +57,7 @@ final class NavigationCrudRouteGrammarEntryPointTest extends TestCase
 
     public function testRouteMapRegistryCarriesHttpMethodGrammar(): void
     {
-        $routeMap = self::read('config/platform/routes/crud/navigation.menu.yaml');
+        $routeMap = self::read('config/platform/routes/crud/navigation.yaml');
 
         foreach (self::expectedRouteMethods() as $routeName => $methods) {
             self::assertStringContainsString($routeName.':', $routeMap);
@@ -68,33 +68,33 @@ final class NavigationCrudRouteGrammarEntryPointTest extends TestCase
     /** @return list<string> */
     private static function routeNames(): array
     {
-        return ['navigation.menu.index', 'navigation.menu.show_id', 'navigation.menu.show_slug', 'navigation.menu.new', 'navigation.menu.create', 'navigation.menu.edit_id', 'navigation.menu.edit_slug', 'navigation.menu.update_id', 'navigation.menu.update_slug', 'navigation.menu.delete_id', 'navigation.menu.delete_slug', 'navigation.menu.bulk', 'navigation.menu.import', 'navigation.menu.export', 'navigation.menu.archive_id', 'navigation.menu.archive_slug', 'navigation.menu.restore_id', 'navigation.menu.restore_slug', 'navigation.menu.duplicate_id', 'navigation.menu.duplicate_slug'];
+        return ['navigation.index', 'navigation.show_id', 'navigation.show_slug', 'navigation.new', 'navigation.create', 'navigation.edit_id', 'navigation.edit_slug', 'navigation.update_id', 'navigation.update_slug', 'navigation.delete_id', 'navigation.delete_slug', 'navigation.bulk', 'navigation.import', 'navigation.export', 'navigation.archive_id', 'navigation.archive_slug', 'navigation.restore_id', 'navigation.restore_slug', 'navigation.duplicate_id', 'navigation.duplicate_slug'];
     }
 
     /** @return array<string, list<string>> */
     private static function expectedRouteMethods(): array
     {
         return [
-            'navigation.menu.index' => ['GET'],
-            'navigation.menu.show_id' => ['GET'],
-            'navigation.menu.show_slug' => ['GET'],
-            'navigation.menu.new' => ['GET'],
-            'navigation.menu.create' => ['POST'],
-            'navigation.menu.edit_id' => ['GET'],
-            'navigation.menu.edit_slug' => ['GET'],
-            'navigation.menu.update_id' => ['POST'],
-            'navigation.menu.update_slug' => ['POST'],
-            'navigation.menu.delete_id' => ['POST'],
-            'navigation.menu.delete_slug' => ['POST'],
-            'navigation.menu.bulk' => ['POST'],
-            'navigation.menu.import' => ['GET', 'POST'],
-            'navigation.menu.export' => ['GET'],
-            'navigation.menu.archive_id' => ['POST'],
-            'navigation.menu.archive_slug' => ['POST'],
-            'navigation.menu.restore_id' => ['POST'],
-            'navigation.menu.restore_slug' => ['POST'],
-            'navigation.menu.duplicate_id' => ['POST'],
-            'navigation.menu.duplicate_slug' => ['POST'],
+            'navigation.index' => ['GET'],
+            'navigation.show_id' => ['GET'],
+            'navigation.show_slug' => ['GET'],
+            'navigation.new' => ['GET'],
+            'navigation.create' => ['POST'],
+            'navigation.edit_id' => ['GET'],
+            'navigation.edit_slug' => ['GET'],
+            'navigation.update_id' => ['POST'],
+            'navigation.update_slug' => ['POST'],
+            'navigation.delete_id' => ['POST'],
+            'navigation.delete_slug' => ['POST'],
+            'navigation.bulk' => ['POST'],
+            'navigation.import' => ['GET', 'POST'],
+            'navigation.export' => ['GET'],
+            'navigation.archive_id' => ['POST'],
+            'navigation.archive_slug' => ['POST'],
+            'navigation.restore_id' => ['POST'],
+            'navigation.restore_slug' => ['POST'],
+            'navigation.duplicate_id' => ['POST'],
+            'navigation.duplicate_slug' => ['POST'],
         ];
     }
 

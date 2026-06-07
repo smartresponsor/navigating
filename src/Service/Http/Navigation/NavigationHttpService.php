@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Navigating\Service\Http\Navigation;
 
-use App\Navigating\Service\Navigation\NavigationResponseProvider;
-use App\Navigating\Service\Navigation\NavigationTemplateDataProvider;
+use App\Navigating\ServiceInterface\Navigation\Provide\NavigationResponseProvideServiceInterface;
+use App\Navigating\ServiceInterface\Navigation\Provide\NavigationTemplateDataProvideServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,8 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 final readonly class NavigationHttpService
 {
     public function __construct(
-        private NavigationResponseProvider $responseProvider,
-        private NavigationTemplateDataProvider $templateDataProvider,
+        private NavigationResponseProvideServiceInterface $responseProvider,
+        private NavigationTemplateDataProvideServiceInterface $templateDataProvider,
     ) {
     }
 

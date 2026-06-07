@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Navigating\DependencyInjection;
 
-use App\Navigating\Service\Navigation\NavigationConfigValidator;
+use App\Navigating\Service\Navigation\Validate\NavigationConfigValidateService;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -20,7 +20,7 @@ final class NavigationExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-        $validationResult = (new NavigationConfigValidator())->validate($config);
+        $validationResult = (new NavigationConfigValidateService())->validate($config);
 
         if (!$validationResult->isValid()) {
             throw new InvalidConfigurationException(implode(PHP_EOL, $validationResult->errors));

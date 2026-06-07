@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Navigating\Command;
 
-use App\Navigating\Service\Navigation\NavigationConfigValidator;
+use App\Navigating\Service\Navigation\Validate\NavigationConfigValidateService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,7 +21,7 @@ final class NavigationValidateConfigCommand extends Command
      * @param array<string, mixed> $navigationConfig
      */
     public function __construct(
-        private readonly NavigationConfigValidator $validator,
+        private readonly NavigationConfigValidateService $validator,
         private readonly array $navigationConfig = [],
     ) {
         parent::__construct();

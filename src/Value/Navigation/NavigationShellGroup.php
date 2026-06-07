@@ -22,7 +22,7 @@ final readonly class NavigationShellGroup
         public array $visibleForScopes,
         public array $visibleForEnvironments,
         public string $location,
-        public string $type = 'menu',
+        public string $type = 'navigation',
         public array $items = [],
     ) {
     }

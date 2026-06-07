@@ -10,24 +10,24 @@ final class NavigationEasyAdminSymfonyTypeTest extends TestCase
 {
     public function testEasyAdminCrudUsesSymfonyFormTypes(): void
     {
-        $controller = self::read('src/Controllers/Admin/NavigationMenuItemCrudController.php');
+        $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
 
         self::assertStringContainsString('JsonArrayTextareaType::class', $controller);
-        self::assertStringContainsString('NavigationMenuItemLocationType::class', $controller);
-        self::assertStringContainsString('NavigationMenuItemOperationType::class', $controller);
+        self::assertStringContainsString('NavigationItemLocationType::class', $controller);
+        self::assertStringContainsString('NavigationItemOperationType::class', $controller);
         self::assertStringContainsString('->setFormType(', $controller);
         self::assertStringNotContainsString('->setChoices([', $controller);
     }
 
     public function testSymfonyFormTypesExistForEasyAdminCrudFields(): void
     {
-        self::assertFileExists(self::path('src/Form/Type/Admin/NavigationMenuItemLocationType.php'));
-        self::assertFileExists(self::path('src/Form/Type/Admin/NavigationMenuItemOperationType.php'));
+        self::assertFileExists(self::path('src/Form/Type/Admin/NavigationItemLocationType.php'));
+        self::assertFileExists(self::path('src/Form/Type/Admin/NavigationItemOperationType.php'));
         self::assertFileExists(self::path('src/Form/Type/Admin/JsonArrayTextareaType.php'));
 
-        self::assertStringContainsString('extends AbstractType', self::read('src/Form/Type/Admin/NavigationMenuItemLocationType.php'));
-        self::assertStringContainsString('ChoiceType::class', self::read('src/Form/Type/Admin/NavigationMenuItemLocationType.php'));
-        self::assertStringContainsString('ChoiceType::class', self::read('src/Form/Type/Admin/NavigationMenuItemOperationType.php'));
+        self::assertStringContainsString('extends AbstractType', self::read('src/Form/Type/Admin/NavigationItemLocationType.php'));
+        self::assertStringContainsString('ChoiceType::class', self::read('src/Form/Type/Admin/NavigationItemLocationType.php'));
+        self::assertStringContainsString('ChoiceType::class', self::read('src/Form/Type/Admin/NavigationItemOperationType.php'));
         self::assertStringContainsString('TextareaType::class', self::read('src/Form/Type/Admin/JsonArrayTextareaType.php'));
         self::assertStringContainsString('CallbackTransformer', self::read('src/Form/Type/Admin/JsonArrayTextareaType.php'));
     }

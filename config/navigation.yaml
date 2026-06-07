@@ -55,7 +55,7 @@ navigation:
     left_top_workspace:
       label: Workspace
       location: shell.left.top
-      type: menu
+      type: navigation
       priority: 25
       items:
         dashboard:
@@ -85,12 +85,8 @@ navigation:
     left_middle_business:
       label: Business roots
       location: shell.left.middle
-      type: menu
+      type: navigation
       priority: 30
-      metadata:
-        contract: business roots only
-        crud_index_only: true
-        system_roots_allowed: false
       items:
         vendor:
           type: link
@@ -104,7 +100,7 @@ navigation:
             domain: vendor
             resource: profile
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         catalog:
@@ -119,7 +115,7 @@ navigation:
             domain: catalog
             resource: product
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         merchandise:
@@ -134,7 +130,7 @@ navigation:
             domain: merchandise
             resource: product
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         commerce:
@@ -149,7 +145,7 @@ navigation:
             domain: commerce
             resource: offer
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         cart:
@@ -164,7 +160,7 @@ navigation:
             domain: cart
             resource: item
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         order:
@@ -179,7 +175,7 @@ navigation:
             domain: order
             resource: checkout
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         consumer:
@@ -194,7 +190,7 @@ navigation:
             domain: consumer
             resource: profile
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         retail:
@@ -209,7 +205,7 @@ navigation:
             domain: retail
             resource: store
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         promotion:
@@ -224,7 +220,7 @@ navigation:
             domain: promotion
             resource: coupon
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         pricing:
@@ -239,7 +235,7 @@ navigation:
             domain: pricing
             resource: price
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         billing:
@@ -254,7 +250,7 @@ navigation:
             domain: billing
             resource: invoice
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         payment:
@@ -269,7 +265,7 @@ navigation:
             domain: payment
             resource: invoice
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         finance:
@@ -284,7 +280,7 @@ navigation:
             domain: finance
             resource: account
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         subscription:
@@ -299,7 +295,7 @@ navigation:
             domain: subscription
             resource: plan
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         shipment:
@@ -314,7 +310,7 @@ navigation:
             domain: shipment
             resource: package
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         review:
@@ -329,7 +325,7 @@ navigation:
             domain: review
             resource: product
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         tax:
@@ -344,7 +340,7 @@ navigation:
             domain: tax
             resource: rule
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         commission:
@@ -359,7 +355,7 @@ navigation:
             domain: commission
             resource: payout
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         currency:
@@ -374,7 +370,7 @@ navigation:
             domain: currency
             resource: rate
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         exchange:
@@ -389,7 +385,7 @@ navigation:
             domain: exchange
             resource: rate
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         attachment:
@@ -404,7 +400,7 @@ navigation:
             domain: attachment
             resource: media
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         address:
@@ -419,7 +415,7 @@ navigation:
             domain: address
             resource: location
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         locator:
@@ -434,7 +430,7 @@ navigation:
             domain: locator
             resource: place
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
         analysis:
@@ -449,36 +445,31 @@ navigation:
             domain: analysis
             resource: report
             operation: index
-            menu_scope: business
+            navigation_scope: business
             root_only: true
             crud_index_only: true
     left_bottom_platform:
       label: System roots
       location: shell.left.bottom
-      type: menu
+      type: navigation
       priority: 35
       visible_for_roles: &id001
       - ROLE_ADMIN
       - ROLE_SUPER_ADMIN
-      metadata:
-        contract: system roots only
-        crud_index_only: true
-        minimum_role: ROLE_ADMIN
-        business_roots_allowed: false
       items:
         navigation:
           type: link
           label: Navigation
           icon: navigation
           priority: 10
-          path: /navigation/menu/index
+          path: /navigation/index
           metadata:
             business_visible: true
-            route_name: navigation.menu.index
+            route_name: navigation.index
             domain: navigation
-            resource: menu
+            resource: navigation
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -495,7 +486,7 @@ navigation:
             domain: management
             resource: user
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -512,7 +503,7 @@ navigation:
             domain: access
             resource: user
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -529,7 +520,7 @@ navigation:
             domain: governance
             resource: decision
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -546,7 +537,7 @@ navigation:
             domain: gate
             resource: policy
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -563,7 +554,7 @@ navigation:
             domain: rollout
             resource: release
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -580,7 +571,7 @@ navigation:
             domain: config
             resource: option
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -597,7 +588,7 @@ navigation:
             domain: automation
             resource: job
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -614,7 +605,7 @@ navigation:
             domain: codex
             resource: agent
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -631,7 +622,7 @@ navigation:
             domain: command
             resource: task
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -648,7 +639,7 @@ navigation:
             domain: compliance
             resource: policy
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -665,7 +656,7 @@ navigation:
             domain: canon
             resource: rule
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -682,7 +673,7 @@ navigation:
             domain: boundary
             resource: rule
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -699,7 +690,7 @@ navigation:
             domain: runtime
             resource: scope
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -716,7 +707,7 @@ navigation:
             domain: operation
             resource: action
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -733,7 +724,7 @@ navigation:
             domain: orchestration
             resource: workflow
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -750,7 +741,7 @@ navigation:
             domain: container
             resource: service
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -767,7 +758,7 @@ navigation:
             domain: observability
             resource: metric
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -784,7 +775,7 @@ navigation:
             domain: incident
             resource: report
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -801,7 +792,7 @@ navigation:
             domain: locale
             resource: translation
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -818,7 +809,7 @@ navigation:
             domain: domain
             resource: model
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -835,7 +826,7 @@ navigation:
             domain: object
             resource: schema
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -852,7 +843,7 @@ navigation:
             domain: interface
             resource: widget
             operation: index
-            menu_scope: system
+            navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
@@ -870,11 +861,11 @@ navigation:
           label: List
           icon: list
           priority: 10
-          path: /navigation/menu/index
+          path: /navigation/index
           metadata:
             business_visible: true
             crud: true
-            route_name: navigation.menu.index
+            route_name: navigation.index
             operation: index
             resolver: none
             surface: easyadmin
@@ -883,11 +874,11 @@ navigation:
           label: New
           icon: create
           priority: 20
-          path: /navigation/menu/new
+          path: /navigation/new
           metadata:
             business_visible: true
             crud: true
-            route_name: navigation.menu.new
+            route_name: navigation.new
             operation: new
             resolver: none
             surface: easyadmin
@@ -896,11 +887,11 @@ navigation:
           label: Edit by id
           icon: edit
           priority: 30
-          path: /navigation/menu/edit/0
+          path: /navigation/edit/0
           metadata:
             business_visible: true
             crud: true
-            route_name: navigation.menu.edit_id
+            route_name: navigation.edit_id
             operation: edit
             resolver: id
             surface: easyadmin
@@ -910,11 +901,11 @@ navigation:
           label: Import
           icon: import
           priority: 40
-          path: /navigation/menu/import
+          path: /navigation/import
           metadata:
             business_visible: true
             crud: true
-            route_name: navigation.menu.import
+            route_name: navigation.import
             operation: import
             resolver: none
             surface: easyadmin
@@ -923,11 +914,11 @@ navigation:
           label: Export
           icon: export
           priority: 50
-          path: /navigation/menu/export
+          path: /navigation/export
           metadata:
             business_visible: true
             crud: true
-            route_name: navigation.menu.export
+            route_name: navigation.export
             operation: export
             resolver: none
             surface: easyadmin
@@ -936,11 +927,11 @@ navigation:
           label: Archive by id
           icon: archive
           priority: 60
-          path: /navigation/menu/archive/0
+          path: /navigation/archive/0
           metadata:
             business_visible: true
             crud: true
-            route_name: navigation.menu.archive_id
+            route_name: navigation.archive_id
             operation: archive
             resolver: id
             surface: easyadmin
@@ -958,11 +949,11 @@ navigation:
           label: Create
           icon: create
           priority: 10
-          path: /navigation/menu/new
+          path: /navigation/new
           metadata:
             business_visible: true
             crud: true
-            route_name: navigation.menu.new
+            route_name: navigation.new
             operation: new
             surface: easyadmin
         import:
@@ -970,11 +961,11 @@ navigation:
           label: Import
           icon: import
           priority: 20
-          path: /navigation/menu/import
+          path: /navigation/import
           metadata:
             business_visible: true
             crud: true
-            route_name: navigation.menu.import
+            route_name: navigation.import
             operation: import
             surface: easyadmin
         export:
@@ -982,11 +973,11 @@ navigation:
           label: Export
           icon: export
           priority: 30
-          path: /navigation/menu/export
+          path: /navigation/export
           metadata:
             business_visible: true
             crud: true
-            route_name: navigation.menu.export
+            route_name: navigation.export
             operation: export
             surface: easyadmin
         refresh:
@@ -1294,11 +1285,6 @@ navigation:
       location: shell.context.top
       type: context
       priority: 40
-      metadata:
-        contract: related business entities only
-        crud_index_only: true
-        system_relations_allowed: false
-        admin_only: false
       items:
         attachment:
           type: link
@@ -1312,7 +1298,7 @@ navigation:
             domain: attachment
             resource: media
             operation: index
-            menu_scope: business
+            navigation_scope: business
             related_entity: true
             crud_index_only: true
             relation_role: attachment
@@ -1329,7 +1315,7 @@ navigation:
             domain: tag
             resource: item
             operation: index
-            menu_scope: business
+            navigation_scope: business
             related_entity: true
             crud_index_only: true
             relation_role: tag
@@ -1346,7 +1332,7 @@ navigation:
             domain: address
             resource: location
             operation: index
-            menu_scope: business
+            navigation_scope: business
             related_entity: true
             crud_index_only: true
             relation_role: address
@@ -1363,7 +1349,7 @@ navigation:
             domain: document
             resource: page
             operation: index
-            menu_scope: business
+            navigation_scope: business
             related_entity: true
             crud_index_only: true
             relation_role: document
@@ -1379,7 +1365,7 @@ navigation:
             domain: message
             resource: thread
             operation: index
-            menu_scope: business
+            navigation_scope: business
             related_entity: true
             crud_index_only: true
             relation_role: communication
@@ -1395,7 +1381,7 @@ navigation:
             domain: review
             resource: product
             operation: index
-            menu_scope: business
+            navigation_scope: business
             related_entity: true
             crud_index_only: true
             relation_role: review
@@ -1407,11 +1393,6 @@ navigation:
       visible_for_roles: &id002
       - ROLE_ADMIN
       - ROLE_SUPER_ADMIN
-      metadata:
-        contract: related system entities only
-        crud_index_only: true
-        minimum_role: ROLE_ADMIN
-        business_relations_allowed: false
       items:
         access:
           type: link
@@ -1425,7 +1406,7 @@ navigation:
             domain: access
             resource: user
             operation: index
-            menu_scope: system
+            navigation_scope: system
             related_entity: true
             crud_index_only: true
             relation_role: permission
@@ -1443,7 +1424,7 @@ navigation:
             domain: governance
             resource: decision
             operation: index
-            menu_scope: system
+            navigation_scope: system
             related_entity: true
             crud_index_only: true
             relation_role: decision
@@ -1461,7 +1442,7 @@ navigation:
             domain: incident
             resource: report
             operation: index
-            menu_scope: system
+            navigation_scope: system
             related_entity: true
             crud_index_only: true
             relation_role: audit
@@ -1479,7 +1460,7 @@ navigation:
             domain: observability
             resource: metric
             operation: index
-            menu_scope: system
+            navigation_scope: system
             related_entity: true
             crud_index_only: true
             relation_role: metric
@@ -1497,7 +1478,7 @@ navigation:
             domain: boundary
             resource: rule
             operation: index
-            menu_scope: system
+            navigation_scope: system
             related_entity: true
             crud_index_only: true
             relation_role: boundary
@@ -1515,7 +1496,7 @@ navigation:
             domain: object
             resource: schema
             operation: index
-            menu_scope: system
+            navigation_scope: system
             related_entity: true
             crud_index_only: true
             relation_role: schema

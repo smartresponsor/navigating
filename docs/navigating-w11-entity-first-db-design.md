@@ -4,23 +4,23 @@ W11 keeps the EasyAdmin + Doctrine SQLite decision from W10, but makes the datab
 
 ## Decision
 
-- Database design is owned by `App\Navigating\Entity\NavigationMenuItem`.
+- Database design is owned by `App\Navigating\Entity\NavigationItem`.
 - No Doctrine migration files are added.
 - Standalone/dev schema is produced from entity metadata with Doctrine schema tooling.
 - SQLite remains the default standalone database.
-- EasyAdmin CRUD works over the entity contract, not over YAML-only menu definitions.
+- EasyAdmin CRUD works over the entity contract, not over YAML-only navigation definitions.
 
 ## Table
 
 ```text
-navigation_menu_item
+navigation_item
 ```
 
 ## Entity-first columns
 
 ```text
 id               integer primary key
-menu_key         varchar(160), unique, stable business key
+navigation_key         varchar(160), unique, stable business key
 parent_key       varchar(160), nullable, tree parent business key
 label            varchar(140)
 route_name       varchar(180)
@@ -39,11 +39,11 @@ updated_at       datetime immutable
 ## Indexes
 
 ```text
-uniq_navigation_menu_item_menu_key
-idx_navigation_menu_item_route_name
-idx_navigation_menu_item_operation
-idx_navigation_menu_item_parent_key
-idx_navigation_menu_item_enabled_location_position
+uniq_navigation_item_navigation_key
+idx_navigation_item_route_name
+idx_navigation_item_operation
+idx_navigation_item_parent_key
+idx_navigation_item_enabled_location_position
 ```
 
 ## Local schema commands

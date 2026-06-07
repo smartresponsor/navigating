@@ -8,8 +8,8 @@ EasyAdmin CRUD controllers must not own low-level field option grammar such as e
 
 The controller should only attach Symfony form types to EasyAdmin fields:
 
-- `NavigationMenuItemLocationType`
-- `NavigationMenuItemOperationType`
+- `NavigationItemLocationType`
+- `NavigationItemOperationType`
 - `JsonArrayTextareaType`
 
 ## Scope
@@ -22,7 +22,7 @@ The controller should only attach Symfony form types to EasyAdmin fields:
 
 ## Runtime shape
 
-`NavigationMenuItemCrudController` owns EasyAdmin page/action composition.
+`NavigationItemCrudController` owns EasyAdmin page/action composition.
 
 `src/Form/Type/Admin/*Type.php` owns Symfony form input grammar:
 
@@ -50,4 +50,4 @@ Rejected:
 ]
 ```
 
-The database contract stays entity-first through Doctrine attributes on `NavigationMenuItem`.
+The database contract stays entity-first through Doctrine attributes on `NavigationItem`.

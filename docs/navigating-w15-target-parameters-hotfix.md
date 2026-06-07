@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Fix runtime config validation for canonical CRUD menu links that use `target.parameters`.
+Fix runtime config validation for canonical CRUD navigation links that use `target.parameters`.
 
 ## Decision
 

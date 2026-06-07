@@ -1,0 +1,101 @@
+# ---------------------------------------------------------------------------
+# Cruding token grammar
+# ---------------------------------------------------------------------------
+# Back-office CRUD entry points are mounted under APP_BACK_TOKEN and guarded by ROLE_ADMIN.
+# EasyAdmin remains the native CRUD executor.
+# ---------------------------------------------------------------------------
+
+navigation.index:
+  path: /navigation/index
+  methods: [GET]
+  ea_crud_action: index
+navigation.show_id:
+  path: /navigation/show/{id}
+  methods: [GET]
+  ea_crud_action: detail
+  resolver: id
+navigation.show_slug:
+  path: /navigation/show/{slug}
+  methods: [GET]
+  ea_crud_action: detail
+  resolver: slug
+navigation.new:
+  path: /navigation/new
+  methods: [GET]
+  ea_crud_action: new
+navigation.create:
+  path: /navigation/create
+  methods: [POST]
+  ea_crud_action: new
+navigation.edit_id:
+  path: /navigation/edit/{id}
+  methods: [GET]
+  ea_crud_action: edit
+  resolver: id
+navigation.edit_slug:
+  path: /navigation/edit/{slug}
+  methods: [GET]
+  ea_crud_action: edit
+  resolver: slug
+navigation.update_id:
+  path: /navigation/update/{id}
+  methods: [POST]
+  ea_crud_action: edit
+  resolver: id
+navigation.update_slug:
+  path: /navigation/update/{slug}
+  methods: [POST]
+  ea_crud_action: edit
+  resolver: slug
+navigation.delete_id:
+  path: /navigation/delete/{id}
+  methods: [POST]
+  ea_crud_action: detail
+  resolver: id
+navigation.delete_slug:
+  path: /navigation/delete/{slug}
+  methods: [POST]
+  ea_crud_action: detail
+  resolver: slug
+navigation.bulk:
+  path: /navigation/bulk
+  methods: [POST]
+  ea_crud_action: bulkItems
+navigation.import:
+  path: /navigation/import
+  methods: [GET, POST]
+  ea_crud_action: importItems
+navigation.export:
+  path: /navigation/export
+  methods: [GET]
+  ea_crud_action: exportItems
+navigation.archive_id:
+  path: /navigation/archive/{id}
+  methods: [POST]
+  ea_crud_action: archiveItem
+  resolver: id
+navigation.archive_slug:
+  path: /navigation/archive/{slug}
+  methods: [POST]
+  ea_crud_action: archiveItem
+  resolver: slug
+navigation.restore_id:
+  path: /navigation/restore/{id}
+  methods: [POST]
+  ea_crud_action: restoreItem
+  resolver: id
+navigation.restore_slug:
+  path: /navigation/restore/{slug}
+  methods: [POST]
+  ea_crud_action: restoreItem
+  resolver: slug
+navigation.duplicate_id:
+  path: /navigation/duplicate/{id}
+  methods: [POST]
+  ea_crud_action: duplicateItem
+  resolver: id
+navigation.duplicate_slug:
+  path: /navigation/duplicate/{slug}
+  methods: [POST]
+  ea_crud_action: duplicateItem
+  resolver: slug

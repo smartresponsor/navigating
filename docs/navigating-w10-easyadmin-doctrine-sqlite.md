@@ -11,7 +11,7 @@ W10 turns the admin surface into native EasyAdmin CRUD backed by Doctrine ORM an
 - EasyAdmin dependency remains `^5.0`.
 - Persistence is Doctrine ORM over SQLite for standalone mode.
 - Admin code lives under `src/Controllers/Admin/`.
-- CRUD execution uses `AbstractCrudController` for `NavigationMenuItem`.
+- CRUD execution uses `AbstractCrudController` for `NavigationItem`.
 - Custom import/export are EasyAdmin CRUD actions, not custom Twig pages.
 - Native EasyAdmin template `@EasyAdmin/page/content.html.twig` is used for action pages.
 

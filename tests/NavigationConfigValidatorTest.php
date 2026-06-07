@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Service\Navigation\NavigationConfigValidator;
+use App\Navigating\Service\Navigation\Validate\NavigationConfigValidateService;
 use PHPUnit\Framework\TestCase;
 
-final class NavigationConfigValidatorTest extends TestCase
+final class NavigationConfigValidateServiceTest extends TestCase
 {
     public function testAcceptsShellGroupsOnlyConfig(): void
     {
-        $result = (new NavigationConfigValidator())->validate([
+        $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
             'shell_groups' => [
                 'left_middle_primary' => [
@@ -32,7 +32,7 @@ final class NavigationConfigValidatorTest extends TestCase
 
     public function testRejectsRemovedLegacyRootFooterAndSlotKeys(): void
     {
-        $result = (new NavigationConfigValidator())->validate([
+        $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
             'slots' => ['roots' => 'shell.left.middle'],
             'roots' => [],
@@ -48,7 +48,7 @@ final class NavigationConfigValidatorTest extends TestCase
 
     public function testRejectsNonCanonicalShellLocation(): void
     {
-        $result = (new NavigationConfigValidator())->validate([
+        $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
             'shell_groups' => [
                 'legacy' => [
@@ -65,7 +65,7 @@ final class NavigationConfigValidatorTest extends TestCase
 
     public function testAcceptsProcessedConfigurationDefaultsForTypedItems(): void
     {
-        $result = (new NavigationConfigValidator())->validate([
+        $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
             'shell_groups' => [
                 'left_middle_primary' => [
@@ -114,7 +114,7 @@ final class NavigationConfigValidatorTest extends TestCase
 
     public function testRejectsMissingShellItemType(): void
     {
-        $result = (new NavigationConfigValidator())->validate([
+        $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
             'shell_groups' => [
                 'left_middle_primary' => [
@@ -135,14 +135,14 @@ final class NavigationConfigValidatorTest extends TestCase
 
     public function testRejectsInvalidShellItemType(): void
     {
-        $result = (new NavigationConfigValidator())->validate([
+        $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
             'shell_groups' => [
                 'left_middle_primary' => [
                     'location' => 'shell.left.middle',
                     'items' => [
                         'dashboard' => [
-                            'type' => 'menu',
+                            'type' => 'navigation',
                             'label' => 'Dashboard',
                             'path' => '/',
                         ],
@@ -153,12 +153,12 @@ final class NavigationConfigValidatorTest extends TestCase
 
         self::assertFalse($result->isValid());
         self::assertStringContainsString('type must be one of', implode(' ', $result->errors));
-        self::assertStringContainsString('menu', implode(' ', $result->errors));
+        self::assertStringContainsString('link', implode(' ', $result->errors));
     }
 
     public function testRejectsActionWithoutActionToken(): void
     {
-        $result = (new NavigationConfigValidator())->validate([
+        $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
             'shell_groups' => [
                 'main_toolbar_actions' => [
@@ -179,7 +179,7 @@ final class NavigationConfigValidatorTest extends TestCase
 
     public function testAcceptsTargetlessHeadingAndSeparator(): void
     {
-        $result = (new NavigationConfigValidator())->validate([
+        $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
             'shell_groups' => [
                 'left_middle_primary' => [
@@ -202,7 +202,7 @@ final class NavigationConfigValidatorTest extends TestCase
 
     public function testRejectsTargetOnTargetlessItem(): void
     {
-        $result = (new NavigationConfigValidator())->validate([
+        $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
             'shell_groups' => [
                 'main_toolbar_actions' => [
@@ -226,7 +226,7 @@ final class NavigationConfigValidatorTest extends TestCase
     public function testRejectsAnyNestedItemShapeKeyIndependently(): void
     {
         foreach (['items', 'sections', 'children'] as $nestedKey) {
-            $result = (new NavigationConfigValidator())->validate([
+            $result = (new NavigationConfigValidateService())->validate([
                 'schema' => 3,
                 'shell_groups' => [
                     'left_middle_primary' => [
@@ -254,7 +254,7 @@ final class NavigationConfigValidatorTest extends TestCase
 
     public function testAcceptsRouteTargetParametersAlias(): void
     {
-        $result = (new NavigationConfigValidator())->validate([
+        $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
             'shell_groups' => [
                 'main_toolbar_actions' => [
@@ -265,7 +265,7 @@ final class NavigationConfigValidatorTest extends TestCase
                             'label' => 'Archive',
                             'target' => [
                                 'type' => 'route',
-                                'route' => 'navigation.menu.archive_id',
+                                'route' => 'navigation.archive_id',
                                 'parameters' => [
                                     'id' => 0,
                                 ],
@@ -281,7 +281,7 @@ final class NavigationConfigValidatorTest extends TestCase
 
     public function testAcceptsScopeAndEnvironmentVisibility(): void
     {
-        $result = (new NavigationConfigValidator())->validate([
+        $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
             'runtime_scopes' => [
                 'fallback_scopes' => ['user', 'system'],
@@ -310,7 +310,7 @@ final class NavigationConfigValidatorTest extends TestCase
 
     public function testRejectsInvalidScopeAndEnvironmentVisibility(): void
     {
-        $result = (new NavigationConfigValidator())->validate([
+        $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
             'runtime_scopes' => [
                 'fallback_scopes' => ['user', ''],

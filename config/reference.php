@@ -749,7 +749,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     shell_groups?: array<string, array{ // Default: []
  *         label?: scalar|Param|null, // Default: null
  *         location?: scalar|Param|null,
- *         type?: scalar|Param|null, // Default: "menu"
+ *         type?: scalar|Param|null, // Default: "navigation"
  *         priority?: int|Param, // Default: 100
  *         enabled?: bool|Param, // Default: true
  *         visible?: bool|Param, // Default: true
