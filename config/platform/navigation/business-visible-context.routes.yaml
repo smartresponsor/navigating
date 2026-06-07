@@ -1,0 +1,18 @@
+# Business-visible context route roots.
+# These route names are intentionally index-only.
+
+shell.context.top:
+  attachment: attachment.media.index
+  tag: tag.item.index
+  address: address.location.index
+  document: document.page.index
+  message: message.thread.index
+  review: review.product.index
+
+shell.context.bottom:
+  access: access.user.index
+  governance: governance.decision.index
+  incident: incident.report.index
+  observability: observability.metric.index
+  boundary: boundary.rule.index
+  schema: object.schema.index
