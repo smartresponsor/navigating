@@ -1,0 +1,26 @@
+parameters:
+  app.default_back_token: 'ea'
+  app.back_token: '%env(default:app.default_back_token:APP_BACK_TOKEN)%'
+  default_navigation_admin_password: '$2y$13$Q5qXq88h1C4ITawBfFHlq.vrOXMn75x2vnYeoMvLG4TRSjsXzX/mq'
+
+security:
+  password_hashers:
+    Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: auto
+  providers:
+    navigation_memory:
+      memory:
+        users:
+          admin:
+            password: '%env(default:default_navigation_admin_password:NAVIGATION_ADMIN_PASSWORD)%'
+            roles:
+              - ROLE_ADMIN
+  firewalls:
+    dev:
+      pattern: '^/(_(profiler|wdt)|css|images|js)/'
+      security: false
+    main:
+      lazy: true
+      provider: navigation_memory
+      http_basic: ~
+  access_control:
+    - { path: '^/%app.back_token%', roles: ROLE_ADMIN }

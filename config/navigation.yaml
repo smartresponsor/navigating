@@ -91,22 +91,46 @@ navigation:
           type: link
           label: List
           priority: 20
-          path: /list
+          target:
+            type: route
+            route: navigation.menu.index
+          metadata:
+            crud: true
+            operation: index
+            surface: easyadmin
         create:
           type: link
           label: Create
           priority: 30
-          path: /create
+          target:
+            type: route
+            route: navigation.menu.new
+          metadata:
+            crud: true
+            operation: new
+            surface: easyadmin
         import:
           type: link
           label: Import
           priority: 40
-          path: /import
+          target:
+            type: route
+            route: navigation.menu.import
+          metadata:
+            crud: true
+            operation: import
+            surface: easyadmin
         export:
           type: link
           label: Export
           priority: 50
-          path: /export
+          target:
+            type: route
+            route: navigation.menu.export
+          metadata:
+            crud: true
+            operation: export
+            surface: easyadmin
         history:
           type: link
           label: History
@@ -120,11 +144,17 @@ navigation:
       priority: 50
       items:
         create:
-          type: action
+          type: link
           label: Create
           icon: create
-          action: navigation.create
           priority: 10
+          target:
+            type: route
+            route: navigation.menu.new
+          metadata:
+            crud: true
+            operation: new
+            surface: easyadmin
         save:
           type: action
           label: Save
@@ -140,11 +170,20 @@ navigation:
           visible_for_roles:
             - ROLE_ADMIN
         archive:
-          type: action
+          type: link
           label: Archive
           icon: archive
-          action: navigation.archive
           priority: 40
+          target:
+            type: route
+            route: navigation.menu.archive_id
+            parameters:
+              id: 0
+          metadata:
+            crud: true
+            operation: archive
+            resolver: id
+            surface: easyadmin
         refresh:
           type: action
           label: Refresh

@@ -10,7 +10,6 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\Yaml\Yaml;
 
 final class NavigationExtension extends Extension
 {
@@ -19,18 +18,6 @@ final class NavigationExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $packageConfigFile = __DIR__.'/../../config/navigation.yaml';
-        if (is_file($packageConfigFile)) {
-            $packageConfig = Yaml::parseFile($packageConfigFile);
-            if (is_array($packageConfig) && isset($packageConfig['navigation']) && is_array($packageConfig['navigation'])) {
-                $packageConfig = $packageConfig['navigation'];
-            }
-
-            if (is_array($packageConfig)) {
-                array_unshift($configs, $packageConfig);
-            }
-        }
-
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
         $validationResult = (new NavigationConfigValidator())->validate($config);

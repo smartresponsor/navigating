@@ -252,6 +252,33 @@ final class NavigationConfigValidatorTest extends TestCase
         }
     }
 
+    public function testAcceptsRouteTargetParametersAlias(): void
+    {
+        $result = (new NavigationConfigValidator())->validate([
+            'schema' => 3,
+            'shell_groups' => [
+                'main_toolbar_actions' => [
+                    'location' => 'shell.main.toolbar',
+                    'items' => [
+                        'archive' => [
+                            'type' => 'link',
+                            'label' => 'Archive',
+                            'target' => [
+                                'type' => 'route',
+                                'route' => 'navigation.menu.archive_id',
+                                'parameters' => [
+                                    'id' => 0,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        self::assertTrue($result->isValid(), implode(' ', $result->errors));
+    }
+
     public function testAcceptsScopeAndEnvironmentVisibility(): void
     {
         $result = (new NavigationConfigValidator())->validate([

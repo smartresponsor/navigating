@@ -32,4 +32,17 @@ final class NavigationTargetResolverTest extends TestCase
 
         self::assertSame('/payment/methods', $url);
     }
+
+    public function testFromArrayAcceptsParametersAlias(): void
+    {
+        $target = NavigationTarget::fromArray([
+            'type' => 'route',
+            'route' => 'navigation.menu.archive_id',
+            'parameters' => [
+                'id' => 123,
+            ],
+        ]);
+
+        self::assertSame(['id' => 123], $target->params);
+    }
 }

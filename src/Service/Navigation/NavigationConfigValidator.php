@@ -445,7 +445,7 @@ final class NavigationConfigValidator
                 continue;
             }
 
-            if (!in_array($targetKey, ['type', 'path', 'route', 'name', 'params', 'query'], true)) {
+            if (!in_array($targetKey, ['type', 'path', 'route', 'name', 'params', 'parameters', 'query'], true)) {
                 $errors[] = sprintf('%s.%s is not supported.', $path, $targetKey);
             }
         }
@@ -462,7 +462,7 @@ final class NavigationConfigValidator
             }
         }
 
-        foreach (['params', 'query'] as $mapKey) {
+        foreach (['params', 'parameters', 'query'] as $mapKey) {
             if (isset($target[$mapKey]) && !is_array($target[$mapKey])) {
                 $errors[] = sprintf('%s.%s must be a map when configured.', $path, $mapKey);
             }

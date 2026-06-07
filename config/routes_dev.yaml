@@ -1,3 +1,9 @@
+navigation_ea:
+  resource: routes/easyadmin.yaml
+
+navigation_admin_crud:
+  resource: routes/navigation_admin_crud.yaml
+
 navigation_standalone_index:
   path: /navigation
   controller: App\Navigating\Service\Http\Navigation\NavigationHttpService::index

@@ -30,8 +30,26 @@ final readonly class NavigationTarget
             type: $type,
             path: isset($data['path']) ? (string) $data['path'] : null,
             route: isset($data['route']) ? (string) $data['route'] : (isset($data['name']) ? (string) $data['name'] : null),
-            params: is_array($data['params'] ?? null) ? $data['params'] : [],
+            params: self::parametersFromArray($data),
             query: is_array($data['query'] ?? null) ? $data['query'] : [],
         );
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    private static function parametersFromArray(array $data): array
+    {
+        if (isset($data['params']) && is_array($data['params'])) {
+            return $data['params'];
+        }
+
+        if (isset($data['parameters']) && is_array($data['parameters'])) {
+            return $data['parameters'];
+        }
+
+        return [];
     }
 }

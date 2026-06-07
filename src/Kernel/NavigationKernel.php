@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Navigating\Kernel;
 
 use App\Navigating\NavigatingBundle;
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -16,8 +19,20 @@ final class NavigationKernel extends Kernel
     {
         yield new FrameworkBundle();
 
+        if (class_exists(SecurityBundle::class)) {
+            yield new SecurityBundle();
+        }
+
         if (class_exists(TwigBundle::class)) {
             yield new TwigBundle();
+        }
+
+        if (class_exists(DoctrineBundle::class)) {
+            yield new DoctrineBundle();
+        }
+
+        if (class_exists(EasyAdminBundle::class)) {
+            yield new EasyAdminBundle();
         }
 
         yield new NavigatingBundle();
@@ -31,6 +46,14 @@ final class NavigationKernel extends Kernel
 
         if (class_exists(TwigBundle::class)) {
             $loader->load($configDir.'/standalone/twig.yaml');
+        }
+
+        if (class_exists(SecurityBundle::class)) {
+            $loader->load($configDir.'/standalone/security.yaml');
+        }
+
+        if (class_exists(DoctrineBundle::class)) {
+            $loader->load($configDir.'/standalone/doctrine.yaml');
         }
 
         $loader->load($configDir.'/navigation.yaml');

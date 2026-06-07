@@ -1,0 +1,4 @@
+navigation_admin_crud:
+  resource: '../../src/Controllers/Admin/NavigationMenuCrudRouteController.php'
+  type: attribute
+  prefix: '/%app.back_token%'
