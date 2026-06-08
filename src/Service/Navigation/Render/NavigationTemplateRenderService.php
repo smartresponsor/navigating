@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Navigating\Service\Navigation\Render;
 
-use App\Navigating\ServiceInterface\Navigation\Render\NavigationTemplateRenderServiceInterface;
+use App\Navigating\ServiceInterface\Navigation\NavigationRendererInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 
-final readonly class NavigationTemplateRenderService implements NavigationTemplateRenderServiceInterface
+final readonly class NavigationTemplateRenderService implements NavigationRendererInterface
 {
     public function __construct(
         private ?Environment $twig = null,

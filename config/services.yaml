@@ -47,7 +47,7 @@ services:
   App\Navigating\ServiceInterface\Navigation\Render\NavigationRenderServiceInterface:
     alias: App\Navigating\Service\Navigation\Render\NavigationRenderService
 
-  App\Navigating\ServiceInterface\Navigation\Render\NavigationTemplateRenderServiceInterface:
+  App\Navigating\ServiceInterface\Navigation\NavigationRendererInterface:
     alias: App\Navigating\Service\Navigation\Render\NavigationTemplateRenderService
 
   App\Navigating\Service\Http\Navigation\NavigationHttpService:
