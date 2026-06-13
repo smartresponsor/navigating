@@ -6,6 +6,7 @@ namespace App\Navigating\Service\Navigation\Provide;
 
 use App\Navigating\ServiceInterface\Navigation\Provide\NavigationRequestRoleProvideServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 final readonly class NavigationRequestRoleProvideService implements NavigationRequestRoleProvideServiceInterface
 {
@@ -14,6 +15,7 @@ final readonly class NavigationRequestRoleProvideService implements NavigationRe
      */
     public function __construct(
         private array $navigationConfig = [],
+        private ?TokenStorageInterface $tokenStorage = null,
     ) {
     }
 
@@ -30,7 +32,27 @@ final readonly class NavigationRequestRoleProvideService implements NavigationRe
             }
         }
 
+        $securityRoles = $this->securityRoles();
+
+        if ([] !== $securityRoles) {
+            return $securityRoles;
+        }
+
         return $this->fallbackRoles();
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function securityRoles(): array
+    {
+        $token = $this->tokenStorage?->getToken();
+
+        if (null === $token) {
+            return [];
+        }
+
+        return $this->normalizeRoles($token->getRoleNames());
     }
 
     /**

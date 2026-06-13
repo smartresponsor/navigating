@@ -1,0 +1,924 @@
+navigation:
+  schema: 3 # Navigation schema version consumed by Navigating.
+
+  shell_locations:
+    shell.body.top:
+      label: Body top
+      description: Shell-wide status or workspace strip.
+      region: body
+      slot: top
+      type: status
+      priority: 10
+      metadata:
+        interface_location: true
+    shell.header.bottom:
+      label: Header bottom
+      description: Breadcrumb or header-bottom secondary navigation row.
+      region: header
+      slot: bottom
+      type: breadcrumb
+      priority: 20
+      metadata:
+        interface_location: true
+    shell.header.right.quick.menu:
+      label: Header right quick menu
+      description: Quick-access popover menu in the right side of the application header.
+      region: header
+      slot: right.quick.menu
+      type: navigation
+      priority: 30
+      metadata:
+        interface_location: true
+    shell.left.top:
+      label: Left top
+      description: Workspace shortcuts at the top of the left rail.
+      region: left
+      slot: top
+      type: navigation
+      priority: 40
+      metadata:
+        interface_location: true
+    shell.left.middle:
+      label: Left middle
+      description: Primary business navigation in the left rail.
+      region: left
+      slot: middle
+      type: navigation
+      priority: 50
+      metadata:
+        interface_location: true
+    shell.left.bottom:
+      label: Left bottom
+      description: System/admin navigation at the bottom of the left rail.
+      region: left
+      slot: bottom
+      type: navigation
+      priority: 60
+      metadata:
+        interface_location: true
+    shell.context.top:
+      label: Context top
+      description: Top related business context area.
+      region: context
+      slot: top
+      type: context
+      priority: 70
+      metadata:
+        interface_location: true
+    shell.context.middle:
+      label: Context middle
+      description: Main related business context area.
+      region: context
+      slot: middle
+      type: context
+      priority: 80
+      metadata:
+        interface_location: true
+    shell.context.bottom:
+      label: Context bottom
+      description: Bottom related/system context area.
+      region: context
+      slot: bottom
+      type: context
+      priority: 90
+      metadata:
+        interface_location: true
+    shell.main.top:
+      label: Main top
+      description: Top content-area location before toolbar/content.
+      region: main
+      slot: top
+      type: generic
+      priority: 100
+      metadata:
+        interface_location: true
+    shell.main.toolbar:
+      label: Main toolbar
+      description: Primary page toolbar/actions location.
+      region: main
+      slot: toolbar
+      type: toolbar
+      priority: 110
+      metadata:
+        interface_location: true
+    shell.main.content:
+      label: Main content
+      description: Main content projection location.
+      region: main
+      slot: content
+      type: content
+      priority: 120
+      metadata:
+        interface_location: true
+    shell.main.bottom:
+      label: Main bottom
+      description: Bottom content-area location after content.
+      region: main
+      slot: bottom
+      type: generic
+      priority: 130
+      metadata:
+        interface_location: true
+    shell.right.top:
+      label: Right top
+      description: Top right rail toggles/location.
+      region: right
+      slot: top
+      type: toggle
+      priority: 140
+      metadata:
+        interface_location: true
+    shell.right.tool:
+      label: Right tool
+      description: Right rail tools/widgets panel.
+      region: right
+      slot: tool
+      type: tool
+      priority: 150
+      metadata:
+        interface_location: true
+    shell.right.filter:
+      label: Right filter
+      description: Right rail filter controls panel.
+      region: right
+      slot: filter
+      type: filter
+      priority: 160
+      metadata:
+        interface_location: true
+    shell.right.middle:
+      label: Right middle
+      description: Middle right rail generic location.
+      region: right
+      slot: middle
+      type: generic
+      priority: 170
+      metadata:
+        interface_location: true
+    shell.right.bottom:
+      label: Right bottom
+      description: Bottom right rail generic location.
+      region: right
+      slot: bottom
+      type: generic
+      priority: 180
+      metadata:
+        interface_location: true
+    shell.footer.top:
+      label: Footer top
+      description: Top footer strip.
+      region: footer
+      slot: top
+      type: footer
+      priority: 190
+      metadata:
+        interface_location: true
+    shell.footer.left:
+      label: Footer left
+      description: Left footer links.
+      region: footer
+      slot: left
+      type: footer
+      priority: 200
+      metadata:
+        interface_location: true
+    shell.footer.context:
+      label: Footer context
+      description: Footer environment/runtime context area.
+      region: footer
+      slot: context
+      type: footer
+      priority: 210
+      metadata:
+        interface_location: true
+    shell.footer.main:
+      label: Footer main
+      description: Main footer support links.
+      region: footer
+      slot: main
+      type: footer
+      priority: 220
+      metadata:
+        interface_location: true
+    shell.footer.right:
+      label: Footer right
+      description: Right footer legal links.
+      region: footer
+      slot: right
+      type: footer
+      priority: 230
+      metadata:
+        interface_location: true
+
+  shell_groups:
+    body_top_workspace: # Small status strip above the application body.
+      label: Store workspace # User-facing name of the status group.
+      location: shell.body.top # Interfacing location: top status area.
+      type: status # Render as status/badge content, not as menu.
+      priority: 10 # Lower number renders earlier.
+      items:
+        workspace:
+          type: badge # Non-clickable status badge.
+          label: Commerce workspace # Shows the current workspace mode.
+          icon: workspace # Icon key; renderer decides actual icon.
+          badge: ready # Badge text/value.
+          priority: 10 # Item order inside the group.
+          metadata:
+            business_visible: true # Available on business surfaces.
+            surface: workspace # Semantic surface marker.
+
+    header_bottom_breadcrumb: # Breadcrumb/navigation trail under the header.
+      label: Breadcrumb # Group label for diagnostics/admin surfaces.
+      location: shell.header.bottom # Interfacing location: header lower row.
+      type: breadcrumb # Renderer may style this as breadcrumbs.
+      priority: 20 # Renders after body status.
+      items:
+        home:
+          type: link # Clickable link item.
+          label: Home # User-facing breadcrumb label.
+          icon: home # Icon key.
+          priority: 10 # First breadcrumb.
+          path: / # Public home entry.
+          metadata:
+            business_visible: true # Visible in business shell.
+            surface: breadcrumb # Breadcrumb semantic marker.
+        commerce:
+          type: link # Clickable link item.
+          label: Commerce # Root commerce workspace breadcrumb.
+          icon: store # Storefront/business icon key.
+          priority: 20 # Second breadcrumb.
+          path: /app/ # Current app workspace entry.
+          metadata:
+            business_visible: true # Visible in business shell.
+            route_name: app_guest_index # Host route if available.
+            surface: breadcrumb # Breadcrumb semantic marker.
+
+    left_top_workspace: # Primary workspace shortcuts.
+      label: Workspace # Group label; may be displayed as a section heading.
+      location: shell.left.top # Interfacing location: top of the left rail.
+      type: navigation # Render as navigation links.
+      priority: 20 # Top section in the left menu.
+      items:
+        dashboard:
+          type: link # Clickable index link.
+          label: Dashboard # Friendly workspace dashboard label.
+          icon: dashboard # Dashboard icon key.
+          priority: 10 # First item.
+          path: /app/ # Host dashboard route.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: app_guest_index # Host route if available.
+            domain: app # Logical domain.
+            resource: dashboard # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: workspace # Workspace navigation scope.
+            crud_index_only: true # Guard marker: no CRUD actions here.
+        search:
+          type: link # Clickable index link.
+          label: Search # Global search entry.
+          icon: search # Search icon key.
+          priority: 20 # Second item.
+          path: /search/query/index # Search index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: search.query.index # Canonical route name.
+            domain: search # Logical domain.
+            resource: query # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: workspace # Workspace navigation scope.
+            crud_index_only: true # Guard marker: no CRUD actions here.
+
+    left_middle_business: # Main user-friendly e-commerce menu.
+      label: Commerce # Friendly section heading.
+      location: shell.left.middle # Interfacing location: main left menu area.
+      type: navigation # Render as navigation links.
+      priority: 30 # Main menu section after workspace shortcuts.
+      items:
+        storefront:
+          type: link # Clickable index link.
+          label: Storefront # Customer-facing store overview.
+          icon: store # Store icon key.
+          priority: 10 # First commerce item.
+          path: /commerce/offer/index # Offer/storefront index.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: commerce.offer.index # Canonical route name.
+            domain: commerce # Logical domain.
+            resource: offer # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No new/edit/import/export/archive here.
+
+        products:
+          type: link # Clickable index link.
+          label: Products # Product management entry.
+          icon: product # Product icon key.
+          priority: 20 # Product section order.
+          path: /catalog/product/index # Product index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: catalog.product.index # Canonical route name.
+            domain: catalog # Logical domain.
+            resource: product # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        inventory:
+          type: link # Clickable index link.
+          label: Inventory # Stock/merchandise overview.
+          icon: inventory # Inventory icon key.
+          priority: 30 # Inventory section order.
+          path: /merchandise/product/index # Merchandise index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: merchandise.product.index # Canonical route name.
+            domain: merchandise # Logical domain.
+            resource: product # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        suppliers:
+          type: link # Clickable index link.
+          label: Suppliers # Vendor/supplier area.
+          icon: vendor # Vendor icon key.
+          priority: 40 # Supplier section order.
+          path: /vendor/profile/index # Vendor profile index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: vendor.profile.index # Canonical route name.
+            domain: vendor # Logical domain.
+            resource: profile # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        customers:
+          type: link # Clickable index link.
+          label: Customers # Customer/consumer area.
+          icon: consumer # Consumer/customer icon key.
+          priority: 50 # Customer section order.
+          path: /consumer/profile/index # Consumer index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: consumer.profile.index # Canonical route name.
+            domain: consumer # Logical domain.
+            resource: profile # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        orders:
+          type: link # Clickable index link.
+          label: Orders # Sales/order workspace.
+          icon: order # Order icon key.
+          priority: 60 # Order section order.
+          path: /order/checkout/index # Order checkout index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: order.checkout.index # Canonical route name.
+            domain: order # Logical domain.
+            resource: checkout # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        carts:
+          type: link # Clickable index link.
+          label: Carts # Cart activity workspace.
+          icon: cart # Cart icon key.
+          priority: 70 # Cart section order.
+          path: /cart/item/index # Cart item index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: cart.item.index # Canonical route name.
+            domain: cart # Logical domain.
+            resource: item # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        marketing:
+          type: link # Clickable index link.
+          label: Marketing # Promotions/coupons area.
+          icon: promotion # Marketing icon key.
+          priority: 80 # Marketing section order.
+          path: /promotion/coupon/index # Coupon index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: promotion.coupon.index # Canonical route name.
+            domain: promotion # Logical domain.
+            resource: coupon # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        pricing:
+          type: link # Clickable index link.
+          label: Pricing # Prices, rules, discounts.
+          icon: price # Pricing icon key.
+          priority: 90 # Pricing section order.
+          path: /pricing/price/index # Pricing index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: pricing.price.index # Canonical route name.
+            domain: pricing # Logical domain.
+            resource: price # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        payments:
+          type: link # Clickable index link.
+          label: Payments # Payment operations overview.
+          icon: payment # Payment icon key.
+          priority: 100 # Payment section order.
+          path: /payment/invoice/index # Payment index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: payment.invoice.index # Canonical route name.
+            domain: payment # Logical domain.
+            resource: invoice # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        billing:
+          type: link # Clickable index link.
+          label: Billing # Invoices/billing area.
+          icon: billing # Billing icon key.
+          priority: 110 # Billing section order.
+          path: /billing/invoice/index # Billing invoice index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: billing.invoice.index # Canonical route name.
+            domain: billing # Logical domain.
+            resource: invoice # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        shipping:
+          type: link # Clickable index link.
+          label: Shipping # Fulfillment/shipment area.
+          icon: shipment # Shipment icon key.
+          priority: 120 # Shipping section order.
+          path: /shipment/package/index # Shipment package index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: shipment.package.index # Canonical route name.
+            domain: shipment # Logical domain.
+            resource: package # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        taxes:
+          type: link # Clickable index link.
+          label: Taxes # Tax rules/rates area.
+          icon: tax # Tax icon key.
+          priority: 130 # Tax section order.
+          path: /tax/rule/index # Tax rule index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: tax.rule.index # Canonical route name.
+            domain: tax # Logical domain.
+            resource: rule # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        analytics:
+          type: link # Clickable index link.
+          label: Analytics # Reports/business analysis.
+          icon: analytics # Analytics icon key.
+          priority: 140 # Analytics section order.
+          path: /analysis/report/index # Report index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: analysis.report.index # Canonical route name.
+            domain: analysis # Logical domain.
+            resource: report # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        reviews:
+          type: link # Clickable index link.
+          label: Reviews # Product/customer reviews.
+          icon: review # Review icon key.
+          priority: 150 # Review section order.
+          path: /review/product/index # Review index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: review.product.index # Canonical route name.
+            domain: review # Logical domain.
+            resource: product # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+    left_bottom_platform: # Admin/system area; still index-only because it is in left menu.
+      label: Platform # Admin/system section label.
+      location: shell.left.bottom # Interfacing location: bottom of left menu.
+      type: navigation # Render as navigation links.
+      priority: 90 # After business menu.
+      visible_for_roles: # Section visible only for admin roles.
+        - ROLE_ADMIN # Admin can see platform tools.
+        - ROLE_SUPER_ADMIN # Super admin can see platform tools.
+      items:
+        navigation:
+          type: link # Clickable index link.
+          label: Navigation # Navigation admin index.
+          icon: navigation # Icon key.
+          priority: 10 # Item order.
+          path: /navigation/index # Navigation index surface.
+          metadata:
+            business_visible: true # Still renderable in business shell for admins.
+            route_name: navigation.index # Canonical route name.
+            domain: navigation # Logical domain.
+            resource: navigation # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: system # System/admin navigation scope.
+            root_only: true # Root-level system section only.
+            crud_index_only: true # No CRUD action links in left menu.
+            admin_only: true # Admin-only semantic marker.
+          visible_for_roles:
+            - ROLE_ADMIN # Admin can see this item.
+            - ROLE_SUPER_ADMIN # Super admin can see this item.
+        access:
+          type: link # Clickable index link.
+          label: Access # Access management index.
+          icon: lock # Lock/access icon key.
+          priority: 20 # Item order.
+          path: /access/index # Access index surface; avoids old User-token route.
+          metadata:
+            business_visible: true # Renderable in business shell for admins.
+            route_name: access.index # Canonical route name if route exists.
+            domain: access # Logical domain.
+            resource: access # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: system # System/admin navigation scope.
+            root_only: true # Root-level system section only.
+            crud_index_only: true # No CRUD action links in left menu.
+            admin_only: true # Admin-only semantic marker.
+          visible_for_roles:
+            - ROLE_ADMIN # Admin can see this item.
+            - ROLE_SUPER_ADMIN # Super admin can see this item.
+        config:
+          type: link # Clickable index link.
+          label: Configuration # Configuration index.
+          icon: setting # Settings icon key.
+          priority: 30 # Item order.
+          path: /config/option/index # Config option index surface.
+          metadata:
+            business_visible: true # Renderable in business shell for admins.
+            route_name: config.option.index # Canonical route name.
+            domain: config # Logical domain.
+            resource: option # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: system # System/admin navigation scope.
+            root_only: true # Root-level system section only.
+            crud_index_only: true # No CRUD action links in left menu.
+            admin_only: true # Admin-only semantic marker.
+          visible_for_roles:
+            - ROLE_ADMIN # Admin can see this item.
+            - ROLE_SUPER_ADMIN # Super admin can see this item.
+
+    context_top_business: # Business context links related to the current page.
+      label: Related # User-friendly context heading.
+      location: shell.context.top # Interfacing location: top context panel.
+      type: context # Render as contextual business navigation.
+      priority: 40 # Before any optional lower context blocks.
+      items:
+        product_media:
+          type: link # Context business link, not a CRUD action.
+          label: Product media # Related product media.
+          icon: attachment # Attachment/media icon key.
+          priority: 10 # Item order.
+          path: /attachment/media/index # Related media index.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            route_name: attachment.media.index # Canonical route name.
+            domain: attachment # Logical domain.
+            resource: media # Logical resource.
+            operation: index # Context opens index surface, not CRUD action.
+            navigation_scope: business_context # Business context scope.
+            related_entity: true # Related to the active business entity.
+            relation_role: media # Semantic relation.
+            no_crud_action: true # CONTEXT RULE: no new/edit/import/export/archive.
+        documents:
+          type: link # Context business link, not a CRUD action.
+          label: Documents # Related documents/content.
+          icon: document # Document icon key.
+          priority: 20 # Item order.
+          path: /document/page/index # Document page index.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            route_name: document.page.index # Canonical route name.
+            domain: document # Logical domain.
+            resource: page # Logical resource.
+            operation: index # Context opens index surface, not CRUD action.
+            navigation_scope: business_context # Business context scope.
+            related_entity: true # Related to the active business entity.
+            relation_role: document # Semantic relation.
+            no_crud_action: true # CONTEXT RULE: no CRUD actions.
+        addresses:
+          type: link # Context business link, not a CRUD action.
+          label: Addresses # Related addresses/locations.
+          icon: address # Address icon key.
+          priority: 30 # Item order.
+          path: /address/location/index # Address location index.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            route_name: address.location.index # Canonical route name.
+            domain: address # Logical domain.
+            resource: location # Logical resource.
+            operation: index # Context opens index surface, not CRUD action.
+            navigation_scope: business_context # Business context scope.
+            related_entity: true # Related to the active business entity.
+            relation_role: address # Semantic relation.
+            no_crud_action: true # CONTEXT RULE: no CRUD actions.
+        tags:
+          type: link # Context business link, not a CRUD action.
+          label: Tags # Related tags/classification.
+          icon: tag # Tag icon key.
+          priority: 40 # Item order.
+          path: /tag/item/index # Tag item index.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            route_name: tag.item.index # Canonical route name.
+            domain: tag # Logical domain.
+            resource: item # Logical resource.
+            operation: index # Context opens index surface, not CRUD action.
+            navigation_scope: business_context # Business context scope.
+            related_entity: true # Related to the active business entity.
+            relation_role: tag # Semantic relation.
+            no_crud_action: true # CONTEXT RULE: no CRUD actions.
+
+    context_middle_commerce: # Commerce-specific context links; no CRUD actions.
+      label: Commerce context # Context heading for commerce workflows.
+      location: shell.context.middle # Interfacing location: middle context panel.
+      type: context # Render as contextual business links.
+      priority: 45 # After generic related links.
+      items:
+        related_orders:
+          type: link # Context business link, not a CRUD action.
+          label: Related orders # Orders connected to current entity.
+          icon: order # Order icon key.
+          priority: 10 # Item order.
+          path: /order/checkout/index # Order index surface.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            route_name: order.checkout.index # Canonical route name.
+            domain: order # Logical domain.
+            resource: checkout # Logical resource.
+            operation: index # Context opens index surface, not CRUD action.
+            navigation_scope: business_context # Business context scope.
+            related_entity: true # Related business context.
+            relation_role: order # Semantic relation.
+            no_crud_action: true # CONTEXT RULE: no CRUD actions.
+        related_payments:
+          type: link # Context business link, not a CRUD action.
+          label: Payments # Payments connected to current entity.
+          icon: payment # Payment icon key.
+          priority: 20 # Item order.
+          path: /payment/invoice/index # Payment index surface.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            route_name: payment.invoice.index # Canonical route name.
+            domain: payment # Logical domain.
+            resource: invoice # Logical resource.
+            operation: index # Context opens index surface, not CRUD action.
+            navigation_scope: business_context # Business context scope.
+            related_entity: true # Related business context.
+            relation_role: payment # Semantic relation.
+            no_crud_action: true # CONTEXT RULE: no CRUD actions.
+        related_shipments:
+          type: link # Context business link, not a CRUD action.
+          label: Shipments # Shipments connected to current entity.
+          icon: shipment # Shipment icon key.
+          priority: 30 # Item order.
+          path: /shipment/package/index # Shipment index surface.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            route_name: shipment.package.index # Canonical route name.
+            domain: shipment # Logical domain.
+            resource: package # Logical resource.
+            operation: index # Context opens index surface, not CRUD action.
+            navigation_scope: business_context # Business context scope.
+            related_entity: true # Related business context.
+            relation_role: shipment # Semantic relation.
+            no_crud_action: true # CONTEXT RULE: no CRUD actions.
+        related_reviews:
+          type: link # Context business link, not a CRUD action.
+          label: Reviews # Reviews connected to current entity.
+          icon: review # Review icon key.
+          priority: 40 # Item order.
+          path: /review/product/index # Review index surface.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            route_name: review.product.index # Canonical route name.
+            domain: review # Logical domain.
+            resource: product # Logical resource.
+            operation: index # Context opens index surface, not CRUD action.
+            navigation_scope: business_context # Business context scope.
+            related_entity: true # Related business context.
+            relation_role: review # Semantic relation.
+            no_crud_action: true # CONTEXT RULE: no CRUD actions.
+
+    main_toolbar_actions: # Page-level non-CRUD commerce actions.
+      label: Page tools # Toolbar section label.
+      location: shell.main.toolbar # Interfacing location: toolbar above main content.
+      type: toolbar # Render as toolbar buttons/actions.
+      priority: 50 # Main toolbar order.
+      items:
+        refresh:
+          type: action # UI action, not a route CRUD link.
+          label: Refresh # Refresh current surface.
+          icon: refresh # Refresh icon key.
+          action: page.refresh # Frontend/action dispatcher key.
+          priority: 10 # Item order.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            operation: refresh # Non-CRUD utility operation.
+            no_crud_action: true # Not create/edit/import/export/archive.
+        export_view:
+          type: action # UI action, not a route CRUD link.
+          label: Export view # Export current visible view/report.
+          icon: export # Export icon key.
+          action: page.export_view # Frontend/action dispatcher key.
+          priority: 20 # Item order.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            operation: export_view # View utility, not CRUD export route.
+            no_crud_action: true # Not a CRUD action route.
+        help:
+          type: link # Help/documentation link.
+          label: Help # Help entry.
+          icon: help # Help icon key.
+          priority: 30 # Item order.
+          path: /help # Static/help route.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            static_path: true # Static route, not CRUD.
+            no_crud_action: true # Not a CRUD action.
+
+    right_top_toggles: # Right-side UI toggles.
+      label: View options # User-friendly label for toggles.
+      location: shell.right.top # Interfacing location: top right rail.
+      type: toggle # Render as toggle controls.
+      priority: 60 # Right-panel order.
+      items:
+        command_palette:
+          type: action # UI action.
+          label: Command palette # Opens command palette.
+          icon: command # Command icon key.
+          action: navigation.toggle.command_palette # Frontend/action dispatcher key.
+          priority: 10 # Item order.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            toggle: command_palette # Toggle semantic key.
+        filters:
+          type: action # UI action.
+          label: Filters # Opens filters panel.
+          icon: filter # Filter icon key.
+          action: navigation.toggle.filter_panel # Frontend/action dispatcher key.
+          priority: 20 # Item order.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            toggle: filter_panel # Toggle semantic key.
+
+    right_filter_panel: # Commerce filters, not navigation.
+      label: Filters # Panel label.
+      location: shell.right.filter # Interfacing location: right filter panel.
+      type: filter # Render as filter controls.
+      priority: 70 # Right filter panel order.
+      items:
+        status:
+          type: action # Filter action/control.
+          label: Status # Status filter.
+          icon: status # Status icon key.
+          action: filter.status # Filter action key.
+          priority: 10 # Item order.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            filter: status # Filter semantic key.
+        owner:
+          type: action # Filter action/control.
+          label: Owner # Owner filter.
+          icon: owner # Owner icon key.
+          action: filter.owner # Filter action key.
+          priority: 20 # Item order.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            filter: owner # Filter semantic key.
+        date:
+          type: action # Filter action/control.
+          label: Date # Date filter.
+          icon: calendar # Calendar icon key.
+          action: filter.date # Filter action key.
+          priority: 30 # Item order.
+          metadata:
+            business_visible: true # Visible on business surfaces.
+            filter: date # Filter semantic key.
+
+    footer_left_system: # Footer system links.
+      label: System # Footer section label.
+      location: shell.footer.left # Interfacing location: footer left.
+      type: footer # Render as footer links.
+      priority: 80 # Footer order.
+      items:
+        status:
+          type: link # Footer link.
+          label: System status # Status page link.
+          icon: status # Status icon key.
+          priority: 10 # Item order.
+          path: /observability/metric/index # Metrics/status index.
+          metadata:
+            business_visible: true # Visible in footer.
+            route_name: observability.metric.index # Canonical route name.
+            domain: observability # Logical domain.
+            resource: metric # Logical resource.
+            operation: index # Footer link opens index surface.
+
+    footer_main_support: # Footer support links.
+      label: Support # Footer section label.
+      location: shell.footer.main # Interfacing location: footer main.
+      type: footer # Render as footer links.
+      priority: 90 # Footer order.
+      items:
+        documentation:
+          type: link # Footer link.
+          label: Documentation # Documentation link.
+          icon: document # Document icon key.
+          priority: 10 # Item order.
+          path: /document/page/index # Documentation index.
+          metadata:
+            business_visible: true # Visible in footer.
+            route_name: document.page.index # Canonical route name.
+            domain: document # Logical domain.
+            resource: page # Logical resource.
+            operation: index # Footer link opens index surface.
+        help:
+          type: link # Footer link.
+          label: Help # Help link.
+          icon: help # Help icon key.
+          priority: 20 # Item order.
+          path: /help # Static help path.
+          metadata:
+            business_visible: true # Visible in footer.
+            static_path: true # Static path, not CRUD.
+
+    footer_right_legal: # Footer legal links.
+      label: Legal # Footer section label.
+      location: shell.footer.right # Interfacing location: footer right.
+      type: footer # Render as footer links.
+      priority: 100 # Footer order.
+      items:
+        privacy:
+          type: link # Footer legal link.
+          label: Privacy # Privacy page.
+          icon: privacy # Privacy icon key.
+          priority: 10 # Item order.
+          path: /privacy # Static privacy path.
+          metadata:
+            business_visible: true # Visible in footer.
+            static_path: true # Static path, not CRUD.
+        terms:
+          type: link # Footer legal link.
+          label: Terms # Terms page.
+          icon: terms # Terms icon key.
+          priority: 20 # Item order.
+          path: /terms # Static terms path.
+          metadata:
+            business_visible: true # Visible in footer.
+            static_path: true # Static path, not CRUD.
+
+  runtime_roles:
+    fallback_roles: # Roles used when no authenticated role context is available.
+      - ROLE_USER # Default user role; admin sections require real Security role or explicit request role.
+
+  runtime_scopes:
+    fallback_scopes: # Scopes used when no runtime scope context is available.
+      - user # User/business scope.
+      - system # System/admin scope.
+
+  runtime_environment:
+    fallback_environment: dev # Default environment used for environment-gated items.

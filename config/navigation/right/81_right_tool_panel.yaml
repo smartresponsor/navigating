@@ -1,0 +1,66 @@
+# Navigation shell group: right_tool_panel.
+navigation:
+  shell_groups:
+    right_tool_panel:
+      label: Tools
+      location: shell.right.tool
+      type: tool
+      priority: 60
+      items:
+        route_map:
+          type: widget
+          label: Route map
+          icon: NodeIndexOutlined
+          widget: platform.route_map
+          priority: 10
+          metadata:
+            business_visible: true
+            tool: route_map
+            source: platform-route-map-id-slug-with-cruding-grammar
+        cruding_grammar:
+          type: widget
+          label: Cruding grammar
+          icon: ReadOutlined
+          widget: platform.cruding_grammar
+          priority: 20
+          metadata:
+            business_visible: true
+            tool: cruding_grammar
+        inspector:
+          type: widget
+          label: Inspector
+          icon: EyeOutlined
+          widget: shell.inspector
+          priority: 30
+          metadata:
+            business_visible: true
+            tool: inspector
+        ai_assistant:
+          type: widget
+          label: AI assistant
+          icon: RobotOutlined
+          widget: shell.ai_assistant
+          priority: 40
+          metadata:
+            business_visible: true
+            tool: ai_assistant
+        activity:
+          type: widget
+          label: Activity
+          icon: HistoryOutlined
+          widget: shell.activity
+          priority: 50
+          metadata:
+            business_visible: true
+            tool: activity
+        permission:
+          type: widget
+          label: Permissions
+          icon: KeyOutlined
+          widget: shell.permission
+          priority: 60
+          visible_for_roles:
+          - ROLE_ADMIN
+          metadata:
+            business_visible: true
+            tool: permission

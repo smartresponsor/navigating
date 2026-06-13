@@ -28,10 +28,12 @@ final readonly class NavigationTemplateDataProvideService implements NavigationT
         return [
             'surface' => self::SURFACE,
             'template' => self::TEMPLATE,
-            'navigation' => [
+            'interface' => [
                 'locations' => $shell->toLocationsArray(),
-                'groups' => $shell->toArray()['groups'],
                 'active' => $this->shellProvideService->provideActiveState($request),
+            ],
+            'navigation' => [
+                'groups' => $shell->toArray()['groups'],
             ],
         ];
     }

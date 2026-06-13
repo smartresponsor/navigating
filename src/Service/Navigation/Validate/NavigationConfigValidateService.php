@@ -23,6 +23,7 @@ final class NavigationConfigValidateService implements \App\Navigating\ServiceIn
         }
 
         $this->validateRemovedKeys($config, $errors);
+        $this->validateShellLocations($config, $errors);
         $this->validateRuntimeRoles($config, $errors);
         $this->validateRuntimeScopes($config, $errors);
         $this->validateRuntimeEnvironment($config, $errors);
@@ -85,7 +86,7 @@ final class NavigationConfigValidateService implements \App\Navigating\ServiceIn
             if (!is_string($location) || '' === trim($location)) {
                 $errors[] = sprintf('navigation.shell_groups.%s.location must be configured as a non-empty shell location string.', $groupKey);
             } else {
-                $this->validateShellLocationValue(sprintf('navigation.shell_groups.%s.location', $groupKey), $location, $errors);
+                $this->validateShellLocationValue(sprintf('navigation.shell_groups.%s.location', $groupKey), $location, $config, $errors);
             }
 
             if (isset($groupConfig['type']) && (!is_string($groupConfig['type']) || '' === trim($groupConfig['type']))) {
@@ -126,14 +127,62 @@ final class NavigationConfigValidateService implements \App\Navigating\ServiceIn
     }
 
     /**
-     * @param list<string> $errors
+     * @param array<string, mixed> $config
+     * @param list<string>         $errors
      */
-    private function validateShellLocationValue(string $path, string $location, array &$errors): void
+    private function validateShellLocations(array $config, array &$errors): void
+    {
+        $locations = $config['shell_locations'] ?? [];
+
+        if (!is_array($locations)) {
+            $errors[] = 'navigation.shell_locations must be a map when configured.';
+
+            return;
+        }
+
+        foreach ($locations as $location => $locationConfig) {
+            if (!is_string($location) || '' === trim($location)) {
+                $errors[] = 'navigation.shell_locations contains an empty or non-string location key.';
+                continue;
+            }
+
+            $normalizedLocation = trim($location);
+
+            if (!str_starts_with($normalizedLocation, 'shell.')) {
+                $errors[] = sprintf('navigation.shell_locations.%s must start with "shell.".', $normalizedLocation);
+            }
+
+            if (!is_array($locationConfig)) {
+                $errors[] = sprintf('navigation.shell_locations.%s must be a map.', $normalizedLocation);
+                continue;
+            }
+
+            foreach (array_keys($locationConfig) as $locationConfigKey) {
+                if (!is_string($locationConfigKey)) {
+                    continue;
+                }
+
+                if (!in_array($locationConfigKey, ['label', 'description', 'region', 'slot', 'type', 'priority', 'enabled', 'metadata'], true)) {
+                    $errors[] = sprintf('navigation.shell_locations.%s.%s is not supported.', $normalizedLocation, $locationConfigKey);
+                }
+            }
+
+            if (isset($locationConfig['metadata']) && !is_array($locationConfig['metadata'])) {
+                $errors[] = sprintf('navigation.shell_locations.%s.metadata must be a map when configured.', $normalizedLocation);
+            }
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     * @param list<string>         $errors
+     */
+    private function validateShellLocationValue(string $path, string $location, array $config, array &$errors): void
     {
         $normalizedLocation = trim($location);
 
-        if (!NavigationShellLocationRegistry::isCanonical($normalizedLocation)) {
-            $errors[] = sprintf('%s must use a canonical shell location; got "%s". Allowed locations: %s.', $path, $normalizedLocation, NavigationShellLocationRegistry::canonicalListForMessage());
+        if (!NavigationShellLocationRegistry::isCanonical($normalizedLocation, $config)) {
+            $errors[] = sprintf('%s must use a config-owned shell location; got "%s". Declare it under navigation.shell_locations. Allowed locations: %s.', $path, $normalizedLocation, NavigationShellLocationRegistry::canonicalListForMessage($config));
         }
     }
 
@@ -445,7 +494,7 @@ final class NavigationConfigValidateService implements \App\Navigating\ServiceIn
                 continue;
             }
 
-            if (!in_array($targetKey, ['type', 'path', 'route', 'name', 'params', 'parameters', 'query'], true)) {
+            if (!in_array($targetKey, ['type', 'path', 'route', 'nameEntity', 'params', 'parameters', 'query'], true)) {
                 $errors[] = sprintf('%s.%s is not supported.', $path, $targetKey);
             }
         }
@@ -455,7 +504,7 @@ final class NavigationConfigValidateService implements \App\Navigating\ServiceIn
         }
 
         if ('route' === $type) {
-            foreach (['route', 'name'] as $routeKey) {
+            foreach (['route', 'nameEntity'] as $routeKey) {
                 if (isset($target[$routeKey]) && (!is_string($target[$routeKey]) || '' === trim($target[$routeKey]))) {
                     $errors[] = sprintf('%s.%s must be a non-empty string when configured.', $path, $routeKey);
                 }
@@ -474,8 +523,8 @@ final class NavigationConfigValidateService implements \App\Navigating\ServiceIn
             }
         }
 
-        if ('route' === $type && !isset($target['route']) && !isset($target['name'])) {
-            $errors[] = sprintf('%s route target must configure route or name.', $path);
+        if ('route' === $type && !isset($target['route']) && !isset($target['nameEntity'])) {
+            $errors[] = sprintf('%s route target must configure route or nameEntity.', $path);
         }
     }
 }

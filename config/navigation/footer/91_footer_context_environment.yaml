@@ -1,0 +1,29 @@
+# Navigation shell group: footer_context_environment.
+navigation:
+  shell_groups:
+    footer_context_environment:
+      label: Environment
+      location: shell.footer.context
+      type: footer
+      priority: 90
+      visible_for_scopes:
+      - system
+      items:
+        environment:
+          type: badge
+          label: Environment
+          badge: dev
+          priority: 10
+          visible_for_environments:
+          - dev
+          metadata:
+            business_visible: true
+            environment: dev
+        build:
+          type: badge
+          label: Build
+          badge: local
+          priority: 20
+          metadata:
+            business_visible: true
+            build: local

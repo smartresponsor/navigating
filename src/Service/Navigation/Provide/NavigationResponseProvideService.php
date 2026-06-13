@@ -32,7 +32,7 @@ final readonly class NavigationResponseProvideService implements NavigationRespo
                 'intent' => 'navigation',
                 'template_path' => sprintf('%s/%s.html.twig', $section, $template),
             ],
-            'locations' => $data['navigation']['locations'] ?? [],
+            'interface' => \is_array($data['interface'] ?? null) ? $data['interface'] : ['locations' => []],
             'groups' => $data['navigation']['groups'] ?? [],
             'data' => $data,
             'meta' => [

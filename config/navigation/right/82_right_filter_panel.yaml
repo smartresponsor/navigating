@@ -1,0 +1,54 @@
+# Navigation shell group: right_filter_panel.
+navigation:
+  shell_groups:
+    right_filter_panel:
+      label: Filters
+      location: shell.right.filter
+      type: filter
+      priority: 70
+      items:
+        status:
+          type: action
+          label: Status
+          icon: CheckCircleOutlined
+          action: filter.status
+          priority: 10
+          metadata:
+            business_visible: true
+            filter: status
+        owner:
+          type: action
+          label: Owner
+          icon: UserOutlined
+          action: filter.owner
+          priority: 20
+          metadata:
+            business_visible: true
+            filter: owner
+        date:
+          type: action
+          label: Date
+          icon: CalendarOutlined
+          action: filter.date
+          priority: 30
+          metadata:
+            business_visible: true
+            filter: date
+        tag:
+          type: action
+          label: Tag
+          icon: TagOutlined
+          action: filter.tag
+          priority: 40
+          metadata:
+            business_visible: true
+            filter: tag
+        tenant:
+          type: action
+          label: Tenant
+          icon: TeamOutlined
+          action: filter.tenant
+          priority: 50
+          metadata:
+            business_visible: true
+            filter: tenant

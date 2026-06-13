@@ -1,0 +1,40 @@
+# Navigation shell group: footer_main_support.
+navigation:
+  shell_groups:
+    footer_main_support:
+      label: Support
+      location: shell.footer.main
+      type: footer
+      priority: 100
+      items:
+        documentation:
+          type: link
+          label: Documentation
+          icon: FileTextOutlined
+          priority: 10
+          path: /document/page/index
+          metadata:
+            business_visible: true
+            route_name: document.page.index
+            domain: document
+            resource: page
+        content:
+          type: link
+          label: Content pages
+          icon: FileOutlined
+          priority: 20
+          path: /page/content/index
+          metadata:
+            business_visible: true
+            route_name: page.content.index
+            domain: page
+            resource: content
+        help:
+          type: link
+          label: Help
+          icon: QuestionCircleOutlined
+          priority: 30
+          path: /help
+          metadata:
+            business_visible: true
+            static_path: true

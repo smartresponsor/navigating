@@ -46,6 +46,35 @@ final class NavigationConfigValidateServiceTest extends TestCase
         self::assertStringContainsString('navigation.footer has been removed', implode(' ', $result->errors));
     }
 
+    public function testAcceptsConfigDefinedShellLocation(): void
+    {
+        $result = (new NavigationConfigValidateService())->validate([
+            'schema' => 3,
+            'shell_locations' => [
+                'shell.header.right.quick.menu' => [
+                    'label' => 'Header right quick menu',
+                    'region' => 'header',
+                    'slot' => 'right.quick.menu',
+                    'type' => 'navigation',
+                ],
+            ],
+            'shell_groups' => [
+                'right_toolbar_quick' => [
+                    'location' => 'shell.header.right.quick.menu',
+                    'items' => [
+                        'dashboard' => [
+                            'type' => 'link',
+                            'label' => 'Dashboard',
+                            'path' => '/app/',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        self::assertTrue($result->isValid(), implode(' ', $result->errors));
+    }
+
     public function testRejectsNonCanonicalShellLocation(): void
     {
         $result = (new NavigationConfigValidateService())->validate([

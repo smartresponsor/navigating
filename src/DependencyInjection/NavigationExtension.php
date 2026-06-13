@@ -10,6 +10,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\Yaml\Yaml;
 
 final class NavigationExtension extends Extension
 {
@@ -19,7 +20,7 @@ final class NavigationExtension extends Extension
     public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration($configuration, array_merge($this->defaultNavigationConfigs(), $configs));
         $validationResult = (new NavigationConfigValidateService())->validate($config);
 
         if (!$validationResult->isValid()) {
@@ -30,6 +31,32 @@ final class NavigationExtension extends Extension
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
         $loader->load('services.yaml');
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function defaultNavigationConfigs(): array
+    {
+        $path = __DIR__.'/../../config/navigation.yaml';
+
+        if (!is_file($path)) {
+            return [];
+        }
+
+        $data = Yaml::parseFile($path);
+
+        if (!is_array($data)) {
+            return [];
+        }
+
+        $config = $data['navigation'] ?? $data;
+
+        if (!is_array($config)) {
+            return [];
+        }
+
+        return [$config];
     }
 
     public function getAlias(): string

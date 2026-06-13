@@ -23,9 +23,8 @@ final readonly class NavigationShellPayloadProvideService implements NavigationS
         $shell = $this->shellProvideService->provideShell($request);
 
         return [
-            'navigation' => [
+            'interface' => [
                 'locations' => $shell->toLocationsArray(),
-                'groups' => $shell->toArray()['groups'],
                 'active' => $this->shellProvideService->provideActiveState($request),
             ],
         ];

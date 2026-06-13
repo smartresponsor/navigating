@@ -1,0 +1,27 @@
+# Navigation shell group: footer_right_legal.
+navigation:
+  shell_groups:
+    footer_right_legal:
+      label: Legal
+      location: shell.footer.right
+      type: footer
+      priority: 110
+      items:
+        privacy:
+          type: link
+          label: Privacy
+          icon: SafetyOutlined
+          priority: 10
+          path: /privacy
+          metadata:
+            business_visible: true
+            static_path: true
+        terms:
+          type: link
+          label: Terms
+          icon: FileProtectOutlined
+          priority: 20
+          path: /terms
+          metadata:
+            business_visible: true
+            static_path: true

@@ -1,58 +1,231 @@
 navigation:
   schema: 3
+
+  shell_locations:
+    shell.body.top:
+      label: Body top
+      description: Shell-wide status or workspace strip.
+      region: body
+      slot: top
+      type: status
+      priority: 10
+      metadata:
+        interface_location: true
+    shell.header.bottom:
+      label: Header bottom
+      description: Breadcrumb or header-bottom secondary navigation row.
+      region: header
+      slot: bottom
+      type: breadcrumb
+      priority: 20
+      metadata:
+        interface_location: true
+    shell.header.right.quick.menu:
+      label: Header right quick menu
+      description: Quick-access popover menu in the right side of the application header.
+      region: header
+      slot: right.quick.menu
+      type: navigation
+      priority: 30
+      metadata:
+        interface_location: true
+    shell.left.top:
+      label: Left top
+      description: Workspace shortcuts at the top of the left rail.
+      region: left
+      slot: top
+      type: navigation
+      priority: 40
+      metadata:
+        interface_location: true
+    shell.left.middle:
+      label: Left middle
+      description: Primary business navigation in the left rail.
+      region: left
+      slot: middle
+      type: navigation
+      priority: 50
+      metadata:
+        interface_location: true
+    shell.left.bottom:
+      label: Left bottom
+      description: System/admin navigation at the bottom of the left rail.
+      region: left
+      slot: bottom
+      type: navigation
+      priority: 60
+      metadata:
+        interface_location: true
+    shell.context.top:
+      label: Context top
+      description: Top related business context area.
+      region: context
+      slot: top
+      type: context
+      priority: 70
+      metadata:
+        interface_location: true
+    shell.context.middle:
+      label: Context middle
+      description: Main related business context area.
+      region: context
+      slot: middle
+      type: context
+      priority: 80
+      metadata:
+        interface_location: true
+    shell.context.bottom:
+      label: Context bottom
+      description: Bottom related/system context area.
+      region: context
+      slot: bottom
+      type: context
+      priority: 90
+      metadata:
+        interface_location: true
+    shell.main.top:
+      label: Main top
+      description: Top content-area location before toolbar/content.
+      region: main
+      slot: top
+      type: generic
+      priority: 100
+      metadata:
+        interface_location: true
+    shell.main.toolbar:
+      label: Main toolbar
+      description: Primary page toolbar/actions location.
+      region: main
+      slot: toolbar
+      type: toolbar
+      priority: 110
+      metadata:
+        interface_location: true
+    shell.main.content:
+      label: Main content
+      description: Main content projection location.
+      region: main
+      slot: content
+      type: content
+      priority: 120
+      metadata:
+        interface_location: true
+    shell.main.bottom:
+      label: Main bottom
+      description: Bottom content-area location after content.
+      region: main
+      slot: bottom
+      type: generic
+      priority: 130
+      metadata:
+        interface_location: true
+    shell.right.top:
+      label: Right top
+      description: Top right rail toggles/location.
+      region: right
+      slot: top
+      type: toggle
+      priority: 140
+      metadata:
+        interface_location: true
+    shell.right.tool:
+      label: Right tool
+      description: Right rail tools/widgets panel.
+      region: right
+      slot: tool
+      type: tool
+      priority: 150
+      metadata:
+        interface_location: true
+    shell.right.filter:
+      label: Right filter
+      description: Right rail filter controls panel.
+      region: right
+      slot: filter
+      type: filter
+      priority: 160
+      metadata:
+        interface_location: true
+    shell.right.middle:
+      label: Right middle
+      description: Middle right rail generic location.
+      region: right
+      slot: middle
+      type: generic
+      priority: 170
+      metadata:
+        interface_location: true
+    shell.right.bottom:
+      label: Right bottom
+      description: Bottom right rail generic location.
+      region: right
+      slot: bottom
+      type: generic
+      priority: 180
+      metadata:
+        interface_location: true
+    shell.footer.top:
+      label: Footer top
+      description: Top footer strip.
+      region: footer
+      slot: top
+      type: footer
+      priority: 190
+      metadata:
+        interface_location: true
+    shell.footer.left:
+      label: Footer left
+      description: Left footer links.
+      region: footer
+      slot: left
+      type: footer
+      priority: 200
+      metadata:
+        interface_location: true
+    shell.footer.context:
+      label: Footer context
+      description: Footer environment/runtime context area.
+      region: footer
+      slot: context
+      type: footer
+      priority: 210
+      metadata:
+        interface_location: true
+    shell.footer.main:
+      label: Footer main
+      description: Main footer support links.
+      region: footer
+      slot: main
+      type: footer
+      priority: 220
+      metadata:
+        interface_location: true
+    shell.footer.right:
+      label: Footer right
+      description: Right footer legal links.
+      region: footer
+      slot: right
+      type: footer
+      priority: 230
+      metadata:
+        interface_location: true
+  runtime_roles:
+    fallback_roles:
+    - ROLE_USER
+  runtime_scopes:
+    fallback_scopes:
+    - user
+    - system
+  runtime_environment:
+    fallback_environment: dev
   shell_groups:
-    body_top_workspace:
+    body_top:
       label: Workspace status
       location: shell.body.top
       type: status
       priority: 10
-      items:
-        workspace:
-          type: badge
-          label: Platform workspace
-          icon: workspace
-          badge: ready
-          priority: 10
-          metadata:
-            business_visible: true
-            surface: workspace
-        admin_boundary:
-          type: badge
-          label: Admin boundary
-          icon: shield
-          badge: ROLE_ADMIN
-          priority: 20
-          visible_for_roles:
-          - ROLE_ADMIN
-          metadata:
-            business_visible: true
-            surface: admin
-    header_bottom_breadcrumb:
-      label: Breadcrumb
-      location: shell.header.bottom
-      type: breadcrumb
-      priority: 20
-      items:
-        home:
-          type: link
-          label: Home
-          icon: home
-          priority: 10
-          path: /
-          metadata:
-            business_visible: true
-            surface: breadcrumb
-        platform:
-          type: link
-          label: Platform
-          icon: platform
-          priority: 20
-          path: /app/dashboard/index
-          metadata:
-            business_visible: true
-            route_name: app.dashboard.index
-            surface: breadcrumb
-    left_top_workspace:
+      items: {}
+    left_top:
       label: Workspace
       location: shell.left.top
       type: navigation
@@ -61,29 +234,17 @@ navigation:
         dashboard:
           type: link
           label: Dashboard
-          icon: dashboard
+          icon: DashboardOutlined
           priority: 10
-          path: /app/dashboard/index
+          path: /app
           metadata:
             business_visible: true
-            route_name: app.dashboard.index
+            route_name: app.index
             domain: app
             resource: dashboard
             operation: index
-        search:
-          type: link
-          label: Search
-          icon: search
-          priority: 20
-          path: /search/query/index
-          metadata:
-            business_visible: true
-            route_name: search.query.index
-            domain: search
-            resource: query
-            operation: index
     left_middle_business:
-      label: Business roots
+      label: Business
       location: shell.left.middle
       type: navigation
       priority: 30
@@ -91,12 +252,12 @@ navigation:
         vendor:
           type: link
           label: Vendor
-          icon: vendor
+          icon: ShopOutlined
           priority: 10
-          path: /vendor/profile/index
+          path: /vendor/index
           metadata:
             business_visible: true
-            route_name: vendor.profile.index
+            route_name: vendor.index
             domain: vendor
             resource: profile
             operation: index
@@ -106,14 +267,14 @@ navigation:
         catalog:
           type: link
           label: Catalog
-          icon: catalog
+          icon: AppstoreOutlined
           priority: 20
-          path: /catalog/product/index
+          path: /catalog/index
           metadata:
             business_visible: true
-            route_name: catalog.product.index
+            route_name: catalog.index
             domain: catalog
-            resource: product
+            resource: catalog
             operation: index
             navigation_scope: business
             root_only: true
@@ -121,14 +282,14 @@ navigation:
         merchandise:
           type: link
           label: Merchandise
-          icon: product
+          icon: ShoppingOutlined
           priority: 30
-          path: /merchandise/product/index
+          path: /merchandise/index
           metadata:
             business_visible: true
-            route_name: merchandise.product.index
+            route_name: merchandise.index
             domain: merchandise
-            resource: product
+            resource: merchandise
             operation: index
             navigation_scope: business
             root_only: true
@@ -136,12 +297,12 @@ navigation:
         commerce:
           type: link
           label: Commerce
-          icon: commerce
+          icon: ShopOutlined
           priority: 40
-          path: /commerce/offer/index
+          path: /commerce/index
           metadata:
             business_visible: true
-            route_name: commerce.offer.index
+            route_name: commerce.index
             domain: commerce
             resource: offer
             operation: index
@@ -151,14 +312,14 @@ navigation:
         cart:
           type: link
           label: Cart
-          icon: cart
+          icon: ShoppingCartOutlined
           priority: 50
-          path: /cart/item/index
+          path: /cart/index
           metadata:
             business_visible: true
-            route_name: cart.item.index
+            route_name: cart.index
             domain: cart
-            resource: item
+            resource: cart
             operation: index
             navigation_scope: business
             root_only: true
@@ -166,29 +327,14 @@ navigation:
         order:
           type: link
           label: Order
-          icon: order
+          icon: FileDoneOutlined
           priority: 60
-          path: /order/checkout/index
+          path: /order/index
           metadata:
             business_visible: true
-            route_name: order.checkout.index
+            route_name: order.index
             domain: order
-            resource: checkout
-            operation: index
-            navigation_scope: business
-            root_only: true
-            crud_index_only: true
-        consumer:
-          type: link
-          label: Consumer
-          icon: consumer
-          priority: 70
-          path: /consumer/profile/index
-          metadata:
-            business_visible: true
-            route_name: consumer.profile.index
-            domain: consumer
-            resource: profile
+            resource: order
             operation: index
             navigation_scope: business
             root_only: true
@@ -196,14 +342,14 @@ navigation:
         retail:
           type: link
           label: Retail
-          icon: store
+          icon: ShopOutlined
           priority: 80
-          path: /retail/store/index
+          path: /retail/index
           metadata:
             business_visible: true
-            route_name: retail.store.index
+            route_name: retail.index
             domain: retail
-            resource: store
+            resource: retail
             operation: index
             navigation_scope: business
             root_only: true
@@ -211,14 +357,14 @@ navigation:
         promotion:
           type: link
           label: Promotion
-          icon: promotion
+          icon: TagsOutlined
           priority: 90
-          path: /promotion/coupon/index
+          path: /promotion/index
           metadata:
             business_visible: true
-            route_name: promotion.coupon.index
+            route_name: promotion.index
             domain: promotion
-            resource: coupon
+            resource: promotion
             operation: index
             navigation_scope: business
             root_only: true
@@ -226,13 +372,13 @@ navigation:
         pricing:
           type: link
           label: Pricing
-          icon: price
+          icon: DollarOutlined
           priority: 100
-          path: /pricing/price/index
+          path: /price/index
           metadata:
             business_visible: true
-            route_name: pricing.price.index
-            domain: pricing
+            route_name: price.index
+            domain: price
             resource: price
             operation: index
             navigation_scope: business
@@ -241,14 +387,14 @@ navigation:
         billing:
           type: link
           label: Billing
-          icon: billing
+          icon: FileTextOutlined
           priority: 110
-          path: /billing/invoice/index
+          path: /billing/index
           metadata:
             business_visible: true
-            route_name: billing.invoice.index
+            route_name: billing.index
             domain: billing
-            resource: invoice
+            resource: billing
             operation: index
             navigation_scope: business
             root_only: true
@@ -256,14 +402,14 @@ navigation:
         payment:
           type: link
           label: Payment
-          icon: payment
+          icon: CreditCardOutlined
           priority: 120
-          path: /payment/invoice/index
+          path: /payment/index
           metadata:
             business_visible: true
-            route_name: payment.invoice.index
+            route_name: payment.index
             domain: payment
-            resource: invoice
+            resource: payment
             operation: index
             navigation_scope: business
             root_only: true
@@ -271,14 +417,14 @@ navigation:
         finance:
           type: link
           label: Finance
-          icon: finance
+          icon: BankOutlined
           priority: 130
-          path: /finance/account/index
+          path: /finance/index
           metadata:
             business_visible: true
-            route_name: finance.account.index
+            route_name: finance.index
             domain: finance
-            resource: account
+            resource: finance
             operation: index
             navigation_scope: business
             root_only: true
@@ -286,14 +432,14 @@ navigation:
         subscription:
           type: link
           label: Subscription
-          icon: subscription
+          icon: CalendarOutlined
           priority: 140
-          path: /subscription/plan/index
+          path: /subscription/index
           metadata:
             business_visible: true
-            route_name: subscription.plan.index
+            route_name: subscription.index
             domain: subscription
-            resource: plan
+            resource: subscription
             operation: index
             navigation_scope: business
             root_only: true
@@ -301,14 +447,14 @@ navigation:
         shipment:
           type: link
           label: Shipment
-          icon: shipment
+          icon: TruckOutlined
           priority: 150
-          path: /shipment/package/index
+          path: /shipment/index
           metadata:
             business_visible: true
-            route_name: shipment.package.index
+            route_name: shipment.index
             domain: shipment
-            resource: package
+            resource: shipment
             operation: index
             navigation_scope: business
             root_only: true
@@ -316,14 +462,14 @@ navigation:
         review:
           type: link
           label: Review
-          icon: review
+          icon: StarOutlined
           priority: 160
-          path: /review/product/index
+          path: /review/index
           metadata:
             business_visible: true
-            route_name: review.product.index
+            route_name: review.index
             domain: review
-            resource: product
+            resource: review
             operation: index
             navigation_scope: business
             root_only: true
@@ -331,14 +477,14 @@ navigation:
         tax:
           type: link
           label: Tax
-          icon: tax
+          icon: PercentageOutlined
           priority: 170
-          path: /tax/rule/index
+          path: /tax/index
           metadata:
             business_visible: true
-            route_name: tax.rule.index
+            route_name: tax.index
             domain: tax
-            resource: rule
+            resource: tax
             operation: index
             navigation_scope: business
             root_only: true
@@ -346,14 +492,14 @@ navigation:
         commission:
           type: link
           label: Commission
-          icon: commission
+          icon: TransactionOutlined
           priority: 180
-          path: /commission/payout/index
+          path: /commission/index
           metadata:
             business_visible: true
-            route_name: commission.payout.index
+            route_name: commission.index
             domain: commission
-            resource: payout
+            resource: commission
             operation: index
             navigation_scope: business
             root_only: true
@@ -361,14 +507,14 @@ navigation:
         currency:
           type: link
           label: Currency
-          icon: currency
+          icon: DollarCircleOutlined
           priority: 190
-          path: /currency/rate/index
+          path: /currency/index
           metadata:
             business_visible: true
-            route_name: currency.rate.index
+            route_name: currency.index
             domain: currency
-            resource: rate
+            resource: currency
             operation: index
             navigation_scope: business
             root_only: true
@@ -376,14 +522,14 @@ navigation:
         exchange:
           type: link
           label: Exchange
-          icon: exchange
+          icon: SwapOutlined
           priority: 200
-          path: /exchange/rate/index
+          path: /exchange/index
           metadata:
             business_visible: true
-            route_name: exchange.rate.index
+            route_name: exchange.index
             domain: exchange
-            resource: rate
+            resource: exchange
             operation: index
             navigation_scope: business
             root_only: true
@@ -391,14 +537,14 @@ navigation:
         attachment:
           type: link
           label: Attachment
-          icon: attachment
+          icon: PaperClipOutlined
           priority: 210
-          path: /attachment/media/index
+          path: /attachment/index
           metadata:
             business_visible: true
-            route_name: attachment.media.index
+            route_name: attachment.index
             domain: attachment
-            resource: media
+            resource: attachment
             operation: index
             navigation_scope: business
             root_only: true
@@ -406,14 +552,14 @@ navigation:
         address:
           type: link
           label: Address
-          icon: address
+          icon: EnvironmentOutlined
           priority: 220
-          path: /address/location/index
+          path: /address/index
           metadata:
             business_visible: true
-            route_name: address.location.index
+            route_name: address.index
             domain: address
-            resource: location
+            resource: address
             operation: index
             navigation_scope: business
             root_only: true
@@ -421,14 +567,14 @@ navigation:
         locator:
           type: link
           label: Locator
-          icon: locator
+          icon: AimOutlined
           priority: 230
-          path: /locator/place/index
+          path: /location/index
           metadata:
             business_visible: true
-            route_name: locator.place.index
-            domain: locator
-            resource: place
+            route_name: location.index
+            domain: location
+            resource: location
             operation: index
             navigation_scope: business
             root_only: true
@@ -436,31 +582,31 @@ navigation:
         analysis:
           type: link
           label: Analysis
-          icon: analytics
+          icon: BarChartOutlined
           priority: 240
-          path: /analysis/report/index
+          path: /analysis/index
           metadata:
             business_visible: true
-            route_name: analysis.report.index
+            route_name: analysis.index
             domain: analysis
-            resource: report
+            resource: analysis
             operation: index
             navigation_scope: business
             root_only: true
             crud_index_only: true
-    left_bottom_platform:
+    left_bottom:
       label: System roots
       location: shell.left.bottom
       type: navigation
       priority: 35
-      visible_for_roles: &id001
+      visible_for_roles:
       - ROLE_ADMIN
       - ROLE_SUPER_ADMIN
       items:
         navigation:
           type: link
           label: Navigation
-          icon: navigation
+          icon: MenuOutlined
           priority: 10
           path: /navigation/index
           metadata:
@@ -473,33 +619,37 @@ navigation:
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         management:
           type: link
           label: Management
-          icon: user
+          icon: UserSwitchOutlined
           priority: 20
-          path: /management/user/index
+          path: /manage/index
           metadata:
             business_visible: true
-            route_name: management.user.index
-            domain: management
-            resource: user
+            route_name: manage.index
+            domain: manage
+            resource: manage
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         access:
           type: link
           label: Access
-          icon: lock
+          icon: LockOutlined
           priority: 30
-          path: /access/user/index
+          path: /access/index
           metadata:
             business_visible: true
-            route_name: access.user.index
+            route_name: access.index
             domain: access
             resource: user
             operation: index
@@ -507,347 +657,389 @@ navigation:
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         governance:
           type: link
           label: Governance
-          icon: governance
+          icon: SafetyCertificateOutlined
           priority: 40
-          path: /governance/decision/index
+          path: /governance/index
           metadata:
             business_visible: true
-            route_name: governance.decision.index
+            route_name: governance.index
             domain: governance
-            resource: decision
+            resource: governance
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         gating:
           type: link
           label: Gating
-          icon: gate
+          icon: ControlOutlined
           priority: 50
-          path: /gate/policy/index
+          path: /gate/index
           metadata:
             business_visible: true
-            route_name: gate.policy.index
+            route_name: gate.index
             domain: gate
-            resource: policy
+            resource: gate
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
-        rollout:
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
+        rolling:
           type: link
-          label: Rollout
-          icon: release
+          label: Role
+          icon: RocketOutlined
           priority: 60
-          path: /rollout/release/index
+          path: /role/index
           metadata:
             business_visible: true
-            route_name: rollout.release.index
-            domain: rollout
-            resource: release
+            route_name: role.index
+            domain: role
+            resource: role
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         config:
           type: link
           label: Config
-          icon: setting
+          icon: SettingOutlined
           priority: 70
-          path: /config/option/index
+          path: /configuration/index
           metadata:
             business_visible: true
-            route_name: config.option.index
-            domain: config
-            resource: option
+            route_name: configuration.index
+            domain: configuration
+            resource: configuration
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         automation:
           type: link
           label: Automation
-          icon: automation
+          icon: ThunderboltOutlined
           priority: 80
-          path: /automation/job/index
+          path: /automation/index
           metadata:
             business_visible: true
-            route_name: automation.job.index
+            route_name: automation.index
             domain: automation
-            resource: job
+            resource: automation
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         codex:
           type: link
           label: Codex
-          icon: agent
+          icon: RobotOutlined
           priority: 90
-          path: /codex/agent/index
+          path: /codex/index
           metadata:
             business_visible: true
-            route_name: codex.agent.index
+            route_name: codex.index
             domain: codex
-            resource: agent
+            resource: codex
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         command:
           type: link
           label: Command
-          icon: command
+          icon: CodeOutlined
           priority: 100
-          path: /command/task/index
+          path: /command/index
           metadata:
             business_visible: true
-            route_name: command.task.index
+            route_name: command.index
             domain: command
-            resource: task
+            resource: command
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         compliance:
           type: link
           label: Compliance
-          icon: compliance
+          icon: AuditOutlined
           priority: 110
-          path: /compliance/policy/index
+          path: /compliance/index
           metadata:
             business_visible: true
-            route_name: compliance.policy.index
+            route_name: compliance.index
             domain: compliance
-            resource: policy
+            resource: compliance
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         canon:
           type: link
           label: Canon
-          icon: canon
+          icon: BookOutlined
           priority: 120
-          path: /canon/rule/index
+          path: /canon/index
           metadata:
             business_visible: true
-            route_name: canon.rule.index
+            route_name: canon.index
             domain: canon
-            resource: rule
+            resource: canon
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         boundary:
           type: link
           label: Boundary
-          icon: boundary
+          icon: BorderOuterOutlined
           priority: 130
-          path: /boundary/rule/index
+          path: /boundary/index
           metadata:
             business_visible: true
-            route_name: boundary.rule.index
+            route_name: boundary.index
             domain: boundary
-            resource: rule
+            resource: boundary
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         runtime:
           type: link
           label: Runtime
-          icon: runtime
+          icon: CloudServerOutlined
           priority: 140
-          path: /runtime/scope/index
+          path: /runtime/index
           metadata:
             business_visible: true
-            route_name: runtime.scope.index
+            route_name: runtime.index
             domain: runtime
-            resource: scope
+            resource: runtime
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         operation:
           type: link
           label: Operation
-          icon: operation
+          icon: ToolOutlined
           priority: 150
-          path: /operation/action/index
+          path: /operation/index
           metadata:
             business_visible: true
-            route_name: operation.action.index
+            route_name: operation.index
             domain: operation
-            resource: action
+            resource: operation
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         orchestration:
           type: link
           label: Orchestration
-          icon: workflow
+          icon: BranchesOutlined
           priority: 160
-          path: /orchestration/workflow/index
+          path: /orchestration/index
           metadata:
             business_visible: true
-            route_name: orchestration.workflow.index
+            route_name: orchestration.index
             domain: orchestration
-            resource: workflow
+            resource: orchestration
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         container:
           type: link
           label: Container
-          icon: container
+          icon: DatabaseOutlined
           priority: 170
-          path: /container/service/index
+          path: /container/index
           metadata:
             business_visible: true
-            route_name: container.service.index
+            route_name: container.index
             domain: container
-            resource: service
+            resource: container
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         observability:
           type: link
           label: Observability
-          icon: observability
+          icon: LineChartOutlined
           priority: 180
-          path: /observability/metric/index
+          path: /observability/index
           metadata:
             business_visible: true
-            route_name: observability.metric.index
+            route_name: observability.index
             domain: observability
-            resource: metric
+            resource: observability
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         incident:
           type: link
           label: Incident
-          icon: incident
+          icon: WarningOutlined
           priority: 190
-          path: /incident/report/index
+          path: /incident/index
           metadata:
             business_visible: true
-            route_name: incident.report.index
+            route_name: incident.index
             domain: incident
-            resource: report
+            resource: incident
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         locale:
           type: link
           label: Locale
-          icon: locale
+          icon: GlobalOutlined
           priority: 200
-          path: /locale/translation/index
+          path: /locale/index
           metadata:
             business_visible: true
-            route_name: locale.translation.index
+            route_name: locale.index
             domain: locale
-            resource: translation
+            resource: locale
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         domain:
           type: link
           label: Domain model
-          icon: domain
+          icon: ApartmentOutlined
           priority: 210
-          path: /domain/model/index
+          path: /domain/index
           metadata:
             business_visible: true
-            route_name: domain.model.index
+            route_name: domain.index
             domain: domain
-            resource: model
+            resource: domain
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
-        object_schema:
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
+        object:
           type: link
-          label: Object schema
-          icon: schema
+          label: Object
+          icon: ClusterOutlined
           priority: 220
-          path: /object/schema/index
+          path: /object/index
           metadata:
             business_visible: true
-            route_name: object.schema.index
+            route_name: object.index
             domain: object
-            resource: schema
+            resource: object
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
-        interface_widget:
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
+        interface:
           type: link
-          label: Interface widget
-          icon: widget
+          label: Interface
+          icon: BlockOutlined
           priority: 230
-          path: /interface/widget/index
+          path: /interface/index
           metadata:
             business_visible: true
-            route_name: interface.widget.index
+            route_name: interface.index
             domain: interface
-            resource: widget
+            resource: interface
             operation: index
             navigation_scope: system
             root_only: true
             crud_index_only: true
             admin_only: true
-          visible_for_roles: *id001
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
     context_middle_crud:
       label: CRUD actions
       location: shell.context.middle
@@ -859,7 +1051,7 @@ navigation:
         index:
           type: link
           label: List
-          icon: list
+          icon: UnorderedListOutlined
           priority: 10
           path: /navigation/index
           metadata:
@@ -872,7 +1064,7 @@ navigation:
         new:
           type: link
           label: New
-          icon: create
+          icon: PlusOutlined
           priority: 20
           path: /navigation/new
           metadata:
@@ -885,7 +1077,7 @@ navigation:
         edit:
           type: link
           label: Edit by id
-          icon: edit
+          icon: EditOutlined
           priority: 30
           path: /navigation/edit/0
           metadata:
@@ -899,7 +1091,7 @@ navigation:
         import:
           type: link
           label: Import
-          icon: import
+          icon: ImportOutlined
           priority: 40
           path: /navigation/import
           metadata:
@@ -912,7 +1104,7 @@ navigation:
         export:
           type: link
           label: Export
-          icon: export
+          icon: ExportOutlined
           priority: 50
           path: /navigation/export
           metadata:
@@ -925,7 +1117,7 @@ navigation:
         archive:
           type: link
           label: Archive by id
-          icon: archive
+          icon: InboxOutlined
           priority: 60
           path: /navigation/archive/0
           metadata:
@@ -947,7 +1139,7 @@ navigation:
         create:
           type: link
           label: Create
-          icon: create
+          icon: PlusOutlined
           priority: 10
           path: /navigation/new
           metadata:
@@ -959,7 +1151,7 @@ navigation:
         import:
           type: link
           label: Import
-          icon: import
+          icon: ImportOutlined
           priority: 20
           path: /navigation/import
           metadata:
@@ -971,7 +1163,7 @@ navigation:
         export:
           type: link
           label: Export
-          icon: export
+          icon: ExportOutlined
           priority: 30
           path: /navigation/export
           metadata:
@@ -983,7 +1175,7 @@ navigation:
         refresh:
           type: action
           label: Refresh
-          icon: refresh
+          icon: ReloadOutlined
           action: navigation.refresh
           priority: 40
           metadata:
@@ -992,12 +1184,154 @@ navigation:
         publish:
           type: action
           label: Publish
-          icon: publish
+          icon: CloudUploadOutlined
           action: navigation.publish
           priority: 50
           metadata:
             business_visible: true
             operation: publish
+    right_toolbar_quick:
+      label: My
+      location: shell.header.right.quick.menu
+      type: navigation
+      priority: 30
+      items:
+        vendor:
+          type: link
+          label: My Vendor
+          icon: ShopOutlined
+          priority: 10
+          path: /my/vendor/index
+          metadata:
+            business_visible: true
+            actor_scope: my
+            route_name: my.vendor.index
+            domain: vendor
+            resource: vendor
+            operation: index
+            navigation_scope: business
+            quick_menu: true
+            root_only: true
+            crud_index_only: true
+        catalog:
+          type: link
+          label: My Catalog
+          icon: AppstoreOutlined
+          priority: 20
+          path: /my/catalog/index
+          metadata:
+            business_visible: true
+            actor_scope: my
+            route_name: my.catalog.index
+            domain: catalog
+            resource: catalog
+            operation: index
+            navigation_scope: business
+            quick_menu: true
+            root_only: true
+            crud_index_only: true
+        merchandise:
+          type: link
+          label: My Products
+          icon: ShoppingOutlined
+          priority: 30
+          path: /my/merchandise/index
+          metadata:
+            business_visible: true
+            actor_scope: my
+            route_name: my.merchandise.index
+            domain: merchandise
+            resource: merchandise
+            operation: index
+            navigation_scope: business
+            quick_menu: true
+            root_only: true
+            crud_index_only: true
+        cart:
+          type: link
+          label: My Cart
+          icon: ShoppingCartOutlined
+          priority: 40
+          path: /my/cart/index
+          metadata:
+            business_visible: true
+            actor_scope: my
+            route_name: my.cart.index
+            domain: cart
+            resource: cart
+            operation: index
+            navigation_scope: business
+            quick_menu: true
+            root_only: true
+            crud_index_only: true
+        order:
+          type: link
+          label: My Orders
+          icon: FileDoneOutlined
+          priority: 50
+          path: /my/order/index
+          metadata:
+            business_visible: true
+            actor_scope: my
+            route_name: my.order.index
+            domain: order
+            resource: order
+            operation: index
+            navigation_scope: business
+            quick_menu: true
+            root_only: true
+            crud_index_only: true
+        payment:
+          type: link
+          label: My Payments
+          icon: CreditCardOutlined
+          priority: 60
+          path: /my/payment/index
+          metadata:
+            business_visible: true
+            actor_scope: my
+            route_name: my.payment.index
+            domain: payment
+            resource: payment
+            operation: index
+            navigation_scope: business
+            quick_menu: true
+            root_only: true
+            crud_index_only: true
+        shipment:
+          type: link
+          label: My Shipments
+          icon: TruckOutlined
+          priority: 70
+          path: /my/shipment/index
+          metadata:
+            business_visible: true
+            actor_scope: my
+            route_name: my.shipment.index
+            domain: shipment
+            resource: shipment
+            operation: index
+            navigation_scope: business
+            quick_menu: true
+            root_only: true
+            crud_index_only: true
+        attachment:
+          type: link
+          label: My Attachments
+          icon: PaperClipOutlined
+          priority: 80
+          path: /my/attachment/index
+          metadata:
+            business_visible: true
+            actor_scope: my
+            route_name: my.attachment.index
+            domain: attachment
+            resource: attachment
+            operation: index
+            navigation_scope: business
+            quick_menu: true
+            root_only: true
+            crud_index_only: true
     right_top_toggles:
       label: Toggles
       location: shell.right.top
@@ -1007,7 +1341,7 @@ navigation:
         command_palette:
           type: action
           label: Command palette
-          icon: command
+          icon: CodeOutlined
           action: navigation.toggle.command_palette
           priority: 10
           metadata:
@@ -1016,7 +1350,7 @@ navigation:
         tools_panel:
           type: action
           label: Tools panel
-          icon: tool
+          icon: ToolOutlined
           action: navigation.toggle.tools_panel
           priority: 20
           metadata:
@@ -1025,7 +1359,7 @@ navigation:
         filter_panel:
           type: action
           label: Filters
-          icon: filter
+          icon: FilterOutlined
           action: navigation.toggle.filter_panel
           priority: 30
           metadata:
@@ -1034,7 +1368,7 @@ navigation:
         compact_navigation:
           type: action
           label: Compact navigation
-          icon: compact
+          icon: CompressOutlined
           action: navigation.toggle.compact_navigation
           priority: 40
           metadata:
@@ -1043,7 +1377,7 @@ navigation:
         developer_surface:
           type: action
           label: Developer surface
-          icon: code
+          icon: CodeOutlined
           action: navigation.toggle.developer_surface
           priority: 50
           visible_for_environments:
@@ -1060,7 +1394,7 @@ navigation:
         route_map:
           type: widget
           label: Route map
-          icon: route
+          icon: NodeIndexOutlined
           widget: platform.route_map
           priority: 10
           metadata:
@@ -1070,7 +1404,7 @@ navigation:
         cruding_grammar:
           type: widget
           label: Cruding grammar
-          icon: grammar
+          icon: ReadOutlined
           widget: platform.cruding_grammar
           priority: 20
           metadata:
@@ -1079,7 +1413,7 @@ navigation:
         inspector:
           type: widget
           label: Inspector
-          icon: inspector
+          icon: EyeOutlined
           widget: shell.inspector
           priority: 30
           metadata:
@@ -1088,7 +1422,7 @@ navigation:
         ai_assistant:
           type: widget
           label: AI assistant
-          icon: ai
+          icon: RobotOutlined
           widget: shell.ai_assistant
           priority: 40
           metadata:
@@ -1097,7 +1431,7 @@ navigation:
         activity:
           type: widget
           label: Activity
-          icon: activity
+          icon: HistoryOutlined
           widget: shell.activity
           priority: 50
           metadata:
@@ -1106,7 +1440,7 @@ navigation:
         permission:
           type: widget
           label: Permissions
-          icon: permission
+          icon: KeyOutlined
           widget: shell.permission
           priority: 60
           visible_for_roles:
@@ -1123,7 +1457,7 @@ navigation:
         status:
           type: action
           label: Status
-          icon: status
+          icon: CheckCircleOutlined
           action: filter.status
           priority: 10
           metadata:
@@ -1132,7 +1466,7 @@ navigation:
         owner:
           type: action
           label: Owner
-          icon: owner
+          icon: UserOutlined
           action: filter.owner
           priority: 20
           metadata:
@@ -1141,7 +1475,7 @@ navigation:
         date:
           type: action
           label: Date
-          icon: calendar
+          icon: CalendarOutlined
           action: filter.date
           priority: 30
           metadata:
@@ -1150,7 +1484,7 @@ navigation:
         tag:
           type: action
           label: Tag
-          icon: tag
+          icon: TagOutlined
           action: filter.tag
           priority: 40
           metadata:
@@ -1159,7 +1493,7 @@ navigation:
         tenant:
           type: action
           label: Tenant
-          icon: tenant
+          icon: TeamOutlined
           action: filter.tenant
           priority: 50
           metadata:
@@ -1174,7 +1508,7 @@ navigation:
         system_status:
           type: link
           label: System status
-          icon: status
+          icon: CheckCircleOutlined
           priority: 10
           path: /observability/metric/index
           metadata:
@@ -1185,7 +1519,7 @@ navigation:
         releases:
           type: link
           label: Releases
-          icon: release
+          icon: RocketOutlined
           priority: 20
           path: /rollout/release/index
           metadata:
@@ -1228,7 +1562,7 @@ navigation:
         documentation:
           type: link
           label: Documentation
-          icon: document
+          icon: FileTextOutlined
           priority: 10
           path: /document/page/index
           metadata:
@@ -1239,7 +1573,7 @@ navigation:
         content:
           type: link
           label: Content pages
-          icon: page
+          icon: FileOutlined
           priority: 20
           path: /page/content/index
           metadata:
@@ -1250,7 +1584,7 @@ navigation:
         help:
           type: link
           label: Help
-          icon: help
+          icon: QuestionCircleOutlined
           priority: 30
           path: /help
           metadata:
@@ -1265,7 +1599,7 @@ navigation:
         privacy:
           type: link
           label: Privacy
-          icon: privacy
+          icon: SafetyOutlined
           priority: 10
           path: /privacy
           metadata:
@@ -1274,7 +1608,7 @@ navigation:
         terms:
           type: link
           label: Terms
-          icon: terms
+          icon: FileProtectOutlined
           priority: 20
           path: /terms
           metadata:
@@ -1289,7 +1623,7 @@ navigation:
         attachment:
           type: link
           label: Attachment
-          icon: attachment
+          icon: PaperClipOutlined
           priority: 10
           path: /attachment/media/index
           metadata:
@@ -1306,7 +1640,7 @@ navigation:
         tag:
           type: link
           label: Tag
-          icon: tag
+          icon: TagOutlined
           priority: 20
           path: /tag/item/index
           metadata:
@@ -1323,7 +1657,7 @@ navigation:
         address:
           type: link
           label: Address
-          icon: address
+          icon: EnvironmentOutlined
           priority: 30
           path: /address/location/index
           metadata:
@@ -1340,7 +1674,7 @@ navigation:
         document:
           type: link
           label: Document
-          icon: document
+          icon: FileTextOutlined
           priority: 40
           path: /document/page/index
           metadata:
@@ -1356,7 +1690,7 @@ navigation:
         message:
           type: link
           label: Message
-          icon: message
+          icon: MessageOutlined
           priority: 50
           path: /message/thread/index
           metadata:
@@ -1372,7 +1706,7 @@ navigation:
         review:
           type: link
           label: Review
-          icon: review
+          icon: StarOutlined
           priority: 60
           path: /review/product/index
           metadata:
@@ -1390,14 +1724,14 @@ navigation:
       location: shell.context.bottom
       type: context
       priority: 48
-      visible_for_roles: &id002
+      visible_for_roles:
       - ROLE_ADMIN
       - ROLE_SUPER_ADMIN
       items:
         access:
           type: link
           label: Access
-          icon: lock
+          icon: LockOutlined
           priority: 10
           path: /access/user/index
           metadata:
@@ -1411,11 +1745,13 @@ navigation:
             crud_index_only: true
             relation_role: permission
             admin_only: true
-          visible_for_roles: *id002
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         governance:
           type: link
           label: Governance
-          icon: governance
+          icon: SafetyCertificateOutlined
           priority: 20
           path: /governance/decision/index
           metadata:
@@ -1429,11 +1765,13 @@ navigation:
             crud_index_only: true
             relation_role: decision
             admin_only: true
-          visible_for_roles: *id002
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         audit:
           type: link
           label: Incident
-          icon: incident
+          icon: WarningOutlined
           priority: 30
           path: /incident/report/index
           metadata:
@@ -1447,11 +1785,13 @@ navigation:
             crud_index_only: true
             relation_role: audit
             admin_only: true
-          visible_for_roles: *id002
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         observability:
           type: link
           label: Metric
-          icon: observability
+          icon: LineChartOutlined
           priority: 40
           path: /observability/metric/index
           metadata:
@@ -1465,11 +1805,13 @@ navigation:
             crud_index_only: true
             relation_role: metric
             admin_only: true
-          visible_for_roles: *id002
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         boundary:
           type: link
           label: Boundary
-          icon: boundary
+          icon: BorderOuterOutlined
           priority: 50
           path: /boundary/rule/index
           metadata:
@@ -1483,11 +1825,13 @@ navigation:
             crud_index_only: true
             relation_role: boundary
             admin_only: true
-          visible_for_roles: *id002
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN
         schema:
           type: link
           label: Object schema
-          icon: schema
+          icon: ClusterOutlined
           priority: 60
           path: /object/schema/index
           metadata:
@@ -1501,14 +1845,6 @@ navigation:
             crud_index_only: true
             relation_role: schema
             admin_only: true
-          visible_for_roles: *id002
-  runtime_roles:
-    fallback_roles:
-    - ROLE_USER
-    - ROLE_ADMIN
-  runtime_scopes:
-    fallback_scopes:
-    - user
-    - system
-  runtime_environment:
-    fallback_environment: dev
+          visible_for_roles:
+          - ROLE_ADMIN
+          - ROLE_SUPER_ADMIN

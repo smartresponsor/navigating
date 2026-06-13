@@ -29,7 +29,7 @@ final readonly class NavigationTarget
         return new self(
             type: $type,
             path: isset($data['path']) ? (string) $data['path'] : null,
-            route: isset($data['route']) ? (string) $data['route'] : (isset($data['name']) ? (string) $data['name'] : null),
+            route: isset($data['route']) ? (string) $data['route'] : (isset($data['nameEntity']) ? (string) $data['nameEntity'] : null),
             params: self::parametersFromArray($data),
             query: is_array($data['query'] ?? null) ? $data['query'] : [],
         );

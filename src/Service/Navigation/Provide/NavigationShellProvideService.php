@@ -84,7 +84,7 @@ final readonly class NavigationShellProvideService implements NavigationShellPro
     {
         $groups = [];
 
-        foreach (NavigationShellLocationRegistry::all() as $location) {
+        foreach (NavigationShellLocationRegistry::all($this->navigationConfig) as $location) {
             $groups[$location] = new NavigationGroupView(location: $location, label: $location);
         }
 

@@ -1,0 +1,120 @@
+# Navigation shell group: context_bottom_related_system.
+navigation:
+  shell_groups:
+    context_bottom_related_system:
+      label: Related system entities
+      location: shell.context.bottom
+      type: context
+      priority: 48
+      visible_for_roles: &id001
+      - ROLE_ADMIN
+      - ROLE_SUPER_ADMIN
+      items:
+        access:
+          type: link
+          label: Access
+          icon: LockOutlined
+          priority: 10
+          path: /access/user/index
+          metadata:
+            business_visible: true
+            route_name: access.user.index
+            domain: access
+            resource: user
+            operation: index
+            navigation_scope: system
+            related_entity: true
+            crud_index_only: true
+            relation_role: permission
+            admin_only: true
+          visible_for_roles: *id001
+        governance:
+          type: link
+          label: Governance
+          icon: SafetyCertificateOutlined
+          priority: 20
+          path: /governance/decision/index
+          metadata:
+            business_visible: true
+            route_name: governance.decision.index
+            domain: governance
+            resource: decision
+            operation: index
+            navigation_scope: system
+            related_entity: true
+            crud_index_only: true
+            relation_role: decision
+            admin_only: true
+          visible_for_roles: *id001
+        audit:
+          type: link
+          label: Incident
+          icon: WarningOutlined
+          priority: 30
+          path: /incident/report/index
+          metadata:
+            business_visible: true
+            route_name: incident.report.index
+            domain: incident
+            resource: report
+            operation: index
+            navigation_scope: system
+            related_entity: true
+            crud_index_only: true
+            relation_role: audit
+            admin_only: true
+          visible_for_roles: *id001
+        observability:
+          type: link
+          label: Metric
+          icon: LineChartOutlined
+          priority: 40
+          path: /observability/metric/index
+          metadata:
+            business_visible: true
+            route_name: observability.metric.index
+            domain: observability
+            resource: metric
+            operation: index
+            navigation_scope: system
+            related_entity: true
+            crud_index_only: true
+            relation_role: metric
+            admin_only: true
+          visible_for_roles: *id001
+        boundary:
+          type: link
+          label: Boundary
+          icon: BorderOuterOutlined
+          priority: 50
+          path: /boundary/rule/index
+          metadata:
+            business_visible: true
+            route_name: boundary.rule.index
+            domain: boundary
+            resource: rule
+            operation: index
+            navigation_scope: system
+            related_entity: true
+            crud_index_only: true
+            relation_role: boundary
+            admin_only: true
+          visible_for_roles: *id001
+        schema:
+          type: link
+          label: Object schema
+          icon: ClusterOutlined
+          priority: 60
+          path: /object/schema/index
+          metadata:
+            business_visible: true
+            route_name: object.schema.index
+            domain: object
+            resource: schema
+            operation: index
+            navigation_scope: system
+            related_entity: true
+            crud_index_only: true
+            relation_role: schema
+            admin_only: true
+          visible_for_roles: *id001

@@ -1,0 +1,31 @@
+# Navigation shell group: footer_left_system.
+navigation:
+  shell_groups:
+    footer_left_system:
+      label: System
+      location: shell.footer.left
+      type: footer
+      priority: 80
+      items:
+        system_status:
+          type: link
+          label: System status
+          icon: CheckCircleOutlined
+          priority: 10
+          path: /observability/metric/index
+          metadata:
+            business_visible: true
+            route_name: observability.metric.index
+            domain: observability
+            resource: metric
+        releases:
+          type: link
+          label: Releases
+          icon: RocketOutlined
+          priority: 20
+          path: /rollout/release/index
+          metadata:
+            business_visible: true
+            route_name: rollout.release.index
+            domain: rollout
+            resource: release

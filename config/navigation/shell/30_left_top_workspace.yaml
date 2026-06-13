@@ -1,0 +1,21 @@
+# Navigation shell group: left_top.
+navigation:
+  shell_groups:
+    left_top:
+      label: Workspace
+      location: shell.left.top
+      type: navigation
+      priority: 25
+      items:
+        dashboard:
+          type: link
+          label: Dashboard
+          icon: DashboardOutlined
+          priority: 10
+          path: /app
+          metadata:
+            business_visible: true
+            route_name: app.index
+            domain: app
+            resource: dashboard
+            operation: index
