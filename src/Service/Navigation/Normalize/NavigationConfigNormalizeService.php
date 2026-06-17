@@ -102,19 +102,20 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
             return [];
         }
 
+        $domain = strtolower(trim($domain));
         $runtimeActivation = $config['runtime_activation'] ?? [];
 
         if (!is_array($runtimeActivation)) {
-            return [];
+            return 'scope_by_domain' === $mapKey ? [$domain] : [];
         }
 
         $map = $runtimeActivation[$mapKey] ?? [];
 
         if (!is_array($map)) {
-            return [];
+            return 'scope_by_domain' === $mapKey ? [$domain] : [];
         }
 
-        return $this->tokenList($map[strtolower(trim($domain))] ?? []);
+        return $this->tokenList($map[$domain] ?? ('scope_by_domain' === $mapKey ? [$domain] : []));
     }
 
     /** @return list<string> */
