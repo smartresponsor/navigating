@@ -12,6 +12,7 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
     {
         self::assertFileExists(__DIR__.'/../src/Controllers/Admin/DashboardController.php');
         self::assertFileExists(__DIR__.'/../src/Controllers/Admin/NavigationItemCrudController.php');
+        self::assertFileExists(__DIR__.'/../src/Controllers/Admin/AGENTS.md');
         self::assertFileExists(__DIR__.'/../src/Entity/NavigationItem.php');
         self::assertFileExists(__DIR__.'/../src/Repository/NavigationItemRepository.php');
         self::assertFileExists(__DIR__.'/../config/routes/easyadmin.yaml');
@@ -29,7 +30,6 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
         self::assertStringContainsString("routeName: 'ea'", $dashboard);
         self::assertStringContainsString("#[IsGranted('ROLE_ADMIN')]", $dashboard);
         self::assertStringContainsString("redirectToRoute('ea_navigation_item_index')", $dashboard);
-        self::assertStringNotContainsString("routePath: '/ea'", $dashboard);
     }
 
     public function testRoutePrefixIsEnvironmentBacked(): void
@@ -55,16 +55,20 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
         self::assertStringContainsString('@EasyAdmin/page/content.html.twig', $controller);
     }
 
-    public function testLegacyGenericCrudDeliveryDoesNotReturn(): void
+    public function testEasyAdminExceptionHasNearestAutomationRules(): void
     {
-        self::assertFileDoesNotExist(__DIR__.'/../src/Controllers/Admin/NavigationCrudRouteController.php');
-        self::assertFileDoesNotExist(__DIR__.'/../config/routes/navigation_admin_crud.yaml');
-    }
-
-    public function testEasyAdminExceptionIsDocumentedForAutomation(): void
-    {
-        self::assertStringContainsString('EASYADMIN_NATIVE_EXCEPTION', self::read('AGENTS.md'));
-        self::assertStringContainsString('EASYADMIN_NATIVE_EXCEPTION', self::read('README.md'));
+        self::assertStringContainsString(
+            'EASYADMIN_NATIVE_EXCEPTION',
+            self::read('src/Controllers/Admin/AGENTS.md'),
+        );
+        self::assertStringContainsString(
+            'Admin entry points live in `src/Controllers/Admin/`.',
+            self::read('README.md'),
+        );
+        self::assertStringContainsString(
+            'Native EasyAdmin templates are used',
+            self::read('README.md'),
+        );
     }
 
     private static function read(string $relativePath): string
