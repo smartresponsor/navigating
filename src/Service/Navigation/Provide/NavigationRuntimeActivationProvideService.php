@@ -10,14 +10,13 @@ use App\Navigating\ServiceInterface\Navigation\Provide\NavigationRuntimeActivati
 final readonly class NavigationRuntimeActivationProvideService implements NavigationRuntimeActivationProvideServiceInterface
 {
     /**
-     * @param string|list<string>   $runtimeScope
-     * @param string|list<string>   $runtimeEntity
-     * @param array<string, mixed> $navigationConfig
+     * @param string|list<string> $runtimeScope
+     * @param string|list<string> $runtimeEntity
      */
     public function __construct(
         private string|array $runtimeScope = '',
         private string|array $runtimeEntity = '',
-        private array $navigationConfig = [],
+        private bool $runtimeActivationStrict = true,
     ) {
     }
 
@@ -26,7 +25,7 @@ final readonly class NavigationRuntimeActivationProvideService implements Naviga
         return new NavigationRuntimeActivationContext(
             scopeTokens: $this->normalize($this->runtimeScope),
             entityTokens: $this->normalize($this->runtimeEntity),
-            strict: (bool) ($this->navigationConfig['runtime_activation']['strict'] ?? true),
+            strict: $this->runtimeActivationStrict,
         );
     }
 
