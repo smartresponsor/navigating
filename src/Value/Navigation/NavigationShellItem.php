@@ -11,6 +11,8 @@ final readonly class NavigationShellItem
      * @param list<string>         $visibleForScopes
      * @param list<string>         $visibleForEnvironments
      * @param array<string, mixed> $metadata
+     * @param list<string>         $runtimeScopes
+     * @param list<string>         $runtimeEntities
      */
     public function __construct(
         public string $key,
@@ -28,6 +30,8 @@ final readonly class NavigationShellItem
         public ?string $icon = null,
         public ?string $badge = null,
         public array $metadata = [],
+        public array $runtimeScopes = [],
+        public array $runtimeEntities = [],
     ) {
     }
 }
