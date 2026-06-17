@@ -40,7 +40,7 @@ services:
     arguments:
       $runtimeScope: '%env(default:navigation.runtime_scope_default:APP_RUNTIME_SCOPE)%'
       $runtimeEntity: '%env(default:navigation.runtime_entity_default:APP_RUNTIME_ENTITY)%'
-      $runtimeActivationStrict: '%navigation.runtime_activation.strict%'
+      $runtimeActivationStrict: true
 
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationShellProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationShellProvideService
