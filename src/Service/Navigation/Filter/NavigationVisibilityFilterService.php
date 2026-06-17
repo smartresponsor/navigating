@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Navigating\Service\Navigation\Filter;
 
 use App\Navigating\ServiceInterface\Navigation\Provide\NavigationRequestRoleProvideServiceInterface;
+use App\Navigating\ServiceInterface\Navigation\Provide\NavigationRuntimeActivationProvideServiceInterface;
 use App\Navigating\Value\Navigation\NavigationShellGroup;
 use Symfony\Component\HttpFoundation\Request;
 
 final readonly class NavigationVisibilityFilterService implements \App\Navigating\ServiceInterface\Navigation\Filter\NavigationVisibilityFilterServiceInterface
 {
-    /**
-     * @param array<string, mixed> $navigationConfig
-     */
+    /** @param array<string, mixed> $navigationConfig */
     public function __construct(
         private NavigationRequestRoleProvideServiceInterface $roleProvider,
+        private NavigationRuntimeActivationProvideServiceInterface $runtimeActivationProvider,
         private array $navigationConfig = [],
     ) {
     }
@@ -29,6 +29,7 @@ final readonly class NavigationVisibilityFilterService implements \App\Navigatin
         $roles = $this->roleProvider->provideRoles($request);
         $scopes = $this->provideScopes($request);
         $environment = $this->provideEnvironment($request);
+        $runtimeActivation = $this->runtimeActivationProvider->provide();
         $visibleGroups = [];
 
         foreach ($groups as $group) {
@@ -52,6 +53,14 @@ final readonly class NavigationVisibilityFilterService implements \App\Navigatin
                 }
 
                 if (!$this->matchesEnvironment($item->visibleForEnvironments, $environment)) {
+                    continue;
+                }
+
+                if (!$runtimeActivation->allowsScope($item->runtimeScopes)) {
+                    continue;
+                }
+
+                if (!$runtimeActivation->allowsEntity($item->runtimeEntities)) {
                     continue;
                 }
 
@@ -131,9 +140,7 @@ final readonly class NavigationVisibilityFilterService implements \App\Navigatin
         return false;
     }
 
-    /**
-     * @param list<string> $requiredEnvironments
-     */
+    /** @param list<string> $requiredEnvironments */
     private function matchesEnvironment(array $requiredEnvironments, ?string $environment): bool
     {
         if ([] === $requiredEnvironments) {
@@ -143,9 +150,7 @@ final readonly class NavigationVisibilityFilterService implements \App\Navigatin
         return null !== $environment && in_array($environment, $requiredEnvironments, true);
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     private function provideScopes(Request $request): array
     {
         $requestScopes = $request->attributes->get('_navigation_scopes', $request->attributes->get('navigation_scopes'));
