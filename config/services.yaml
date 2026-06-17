@@ -21,6 +21,9 @@ services:
   App\Navigating\ServiceInterface\Navigation\Filter\NavigationVisibilityFilterServiceInterface:
     alias: App\Navigating\Service\Navigation\Filter\NavigationVisibilityFilterService
 
+  App\Navigating\ServiceInterface\Navigation\Filter\NavigationRuntimeTargetFilterServiceInterface:
+    alias: App\Navigating\Service\Navigation\Filter\NavigationRuntimeTargetFilterService
+
   App\Navigating\ServiceInterface\Navigation\Build\NavigationTreeBuildServiceInterface:
     alias: App\Navigating\Service\Navigation\Build\NavigationTreeBuildService
 
@@ -37,7 +40,7 @@ services:
     arguments:
       $runtimeScope: '%env(default:navigation.runtime_scope_default:APP_RUNTIME_SCOPE)%'
       $runtimeEntity: '%env(default:navigation.runtime_entity_default:APP_RUNTIME_ENTITY)%'
-      $runtimeActivationStrict: true
+      $runtimeActivationStrict: '%navigation.runtime_activation.strict%'
 
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationShellProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationShellProvideService
