@@ -13,16 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class NavigationRuntimeActivationTest extends TestCase
 {
-    public function testMissingRuntimeScopeRemovesComponentMenuItem(): void
+    public function testEntityMappedBusinessItemDoesNotRequireComponentScope(): void
     {
         $items = $this->filter(runtimeScope: 'cruding,viewing', runtimeEntity: 'vendor');
-
-        self::assertSame(['help'], array_column($items, 'key'));
-    }
-
-    public function testRuntimeScopeAndEntityPublishComponentMenuItem(): void
-    {
-        $items = $this->filter(runtimeScope: 'cruding,vendoring', runtimeEntity: 'vendor');
 
         self::assertSame(['vendor', 'help'], array_column($items, 'key'));
     }
@@ -37,15 +30,18 @@ final class NavigationRuntimeActivationTest extends TestCase
     public function testRequestScopeCannotExpandDeploymentActivation(): void
     {
         $request = new Request(attributes: ['_navigation_scopes' => ['business', 'vendoring']]);
-        $items = $this->filter(runtimeScope: 'cruding', runtimeEntity: 'vendor', request: $request);
+        $items = $this->filter(runtimeScope: 'vendoring', runtimeEntity: 'order', request: $request);
 
         self::assertSame(['help'], array_column($items, 'key'));
     }
 
-    public function testUnmappedDomainFallsBackToItsOwnRuntimeScopeToken(): void
+    public function testUnmappedDomainFallsBackToItsOwnRuntimeEntityToken(): void
     {
         $config = [
-            'runtime_activation' => ['scope_by_domain' => []],
+            'runtime_activation' => [
+                'scope_by_domain' => [],
+                'entity_by_domain' => [],
+            ],
             'shell_groups' => [
                 'business' => [
                     'location' => 'shell.left.middle',
@@ -61,8 +57,66 @@ final class NavigationRuntimeActivationTest extends TestCase
         ];
 
         $groups = (new NavigationConfigNormalizeService())->normalizeShellGroups($config);
+        $item = $groups[0]->items[0];
 
-        self::assertSame(['inventory'], $groups[0]->items[0]->runtimeScopes);
+        self::assertSame([], $item->runtimeScopes);
+        self::assertSame(['inventory'], $item->runtimeEntities);
+    }
+
+    public function testExplicitSystemDomainUsesRuntimeScope(): void
+    {
+        $config = [
+            'runtime_activation' => [
+                'scope_by_domain' => ['interface' => ['interfacing']],
+                'entity_by_domain' => [],
+            ],
+            'shell_groups' => [
+                'system' => [
+                    'location' => 'shell.left.bottom',
+                    'items' => [
+                        'interface' => [
+                            'type' => 'link',
+                            'path' => '/interface/index',
+                            'metadata' => ['domain' => 'interface'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $groups = (new NavigationConfigNormalizeService())->normalizeShellGroups($config);
+        $item = $groups[0]->items[0];
+
+        self::assertSame(['interfacing'], $item->runtimeScopes);
+        self::assertSame([], $item->runtimeEntities);
+    }
+
+    public function testEntityMappingTakesPrecedenceOverScopeAlias(): void
+    {
+        $config = [
+            'runtime_activation' => [
+                'scope_by_domain' => ['vendor' => ['vendoring']],
+                'entity_by_domain' => ['vendor' => ['vendor']],
+            ],
+            'shell_groups' => [
+                'business' => [
+                    'location' => 'shell.left.middle',
+                    'items' => [
+                        'vendor' => [
+                            'type' => 'link',
+                            'path' => '/vendor/index',
+                            'metadata' => ['domain' => 'vendor'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $groups = (new NavigationConfigNormalizeService())->normalizeShellGroups($config);
+        $item = $groups[0]->items[0];
+
+        self::assertSame([], $item->runtimeScopes);
+        self::assertSame(['vendor'], $item->runtimeEntities);
     }
 
     /** @return list<array<string, mixed>> */
