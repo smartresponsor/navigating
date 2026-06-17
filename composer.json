@@ -32,6 +32,12 @@
       "App\\Navigating\\Tests\\": "tests/"
     }
   },
+  "scripts": {
+    "qa:navigating-easyadmin": "@php vendor/bin/phpunit tests/NavigationEasyAdminSurfaceTest.php tests/NavigationEasyAdminSymfonyTypeTest.php",
+    "qa": [
+      "@qa:navigating-easyadmin"
+    ]
+  },
   "extra": {
     "symfony": {
       "allow-contrib": false,
