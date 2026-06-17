@@ -42,6 +42,29 @@ final class NavigationRuntimeActivationTest extends TestCase
         self::assertSame(['help'], array_column($items, 'key'));
     }
 
+    public function testUnmappedDomainFallsBackToItsOwnRuntimeScopeToken(): void
+    {
+        $config = [
+            'runtime_activation' => ['scope_by_domain' => []],
+            'shell_groups' => [
+                'business' => [
+                    'location' => 'shell.left.middle',
+                    'items' => [
+                        'inventory' => [
+                            'type' => 'link',
+                            'path' => '/inventory/index',
+                            'metadata' => ['domain' => 'inventory'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $groups = (new NavigationConfigNormalizeService())->normalizeShellGroups($config);
+
+        self::assertSame(['inventory'], $groups[0]->items[0]->runtimeScopes);
+    }
+
     /** @return list<array<string, mixed>> */
     private function filter(string $runtimeScope, string $runtimeEntity, ?Request $request = null): array
     {
