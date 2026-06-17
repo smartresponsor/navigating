@@ -1,5 +1,3 @@
 navigation:
   runtime_activation:
     strict: true
-    scope_by_domain: {}
-    entity_by_domain: {}
