@@ -54,6 +54,10 @@ final class NavigationRenderSurfaceTest extends TestCase
 
         $html = $this->renderService()->renderGroup('shell.left.middle', $request);
 
+        self::assertStringContainsString('class="interfacing-navigation-provider interfacing-provider-navigation-menu interfacing-provider-navigation-menu--native"', $html);
+        self::assertStringContainsString('<ul class="interfacing-menu-list">', $html);
+        self::assertStringContainsString('class="interfacing-list-item is-active"', $html);
+        self::assertStringContainsString('class="interfacing-nav-link is-active"', $html);
         self::assertStringContainsString('data-navigation-location="shell.left.middle"', $html);
         self::assertStringContainsString('data-navigation-key="catalog"', $html);
         self::assertStringContainsString('href="/catalog/product/index"', $html);
@@ -86,6 +90,16 @@ final class NavigationRenderSurfaceTest extends TestCase
     {
         $config = [
             'schema' => 3,
+            'shell_locations' => [
+                'shell.left.middle' => [
+                    'label' => 'Primary navigation',
+                    'region' => 'left',
+                    'slot' => 'middle',
+                    'type' => 'navigation',
+                    'priority' => 50,
+                    'metadata' => ['interface_location' => true],
+                ],
+            ],
             'shell_groups' => [
                 'left_middle_business' => [
                     'label' => 'Business roots',

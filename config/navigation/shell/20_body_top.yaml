@@ -1,9 +1,0 @@
-# Navigation shell group: body_top.
-navigation:
-  shell_groups:
-    body_top:
-      label: Workspace status
-      location: shell.body.top
-      type: status
-      priority: 10
-      items: {}

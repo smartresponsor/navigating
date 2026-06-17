@@ -543,25 +543,6 @@ navigation:
         - ROLE_ADMIN # Admin can see platform tools.
         - ROLE_SUPER_ADMIN # Super admin can see platform tools.
       items:
-        navigation:
-          type: link # Clickable index link.
-          label: Navigation # Navigation admin index.
-          icon: navigation # Icon key.
-          priority: 10 # Item order.
-          path: /navigation/index # Navigation index surface.
-          metadata:
-            business_visible: true # Still renderable in business shell for admins.
-            route_name: navigation.index # Canonical route name.
-            domain: navigation # Logical domain.
-            resource: navigation # Logical resource.
-            operation: index # LEFT MENU RULE: index only.
-            navigation_scope: system # System/admin navigation scope.
-            root_only: true # Root-level system section only.
-            crud_index_only: true # No CRUD action links in left menu.
-            admin_only: true # Admin-only semantic marker.
-          visible_for_roles:
-            - ROLE_ADMIN # Admin can see this item.
-            - ROLE_SUPER_ADMIN # Super admin can see this item.
         access:
           type: link # Clickable index link.
           label: Access # Access management index.

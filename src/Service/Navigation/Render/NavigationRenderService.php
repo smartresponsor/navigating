@@ -24,7 +24,10 @@ final readonly class NavigationRenderService implements NavigationRenderServiceI
             $this->escape($group->location),
             $this->escape($group->type),
         );
-        $html = sprintf('<nav %s><ul>', $attributes);
+        $html = sprintf(
+            '<nav class="interfacing-navigation-provider interfacing-provider-navigation-menu interfacing-provider-navigation-menu--native" %s><ul class="interfacing-menu-list">',
+            $attributes,
+        );
 
         foreach ($group->items as $item) {
             if (!$item->visible) {
@@ -39,15 +42,19 @@ final readonly class NavigationRenderService implements NavigationRenderServiceI
 
     private function renderItem(NavigationItemView $item): string
     {
-        $class = $item->active ? ' class="is-active"' : '';
+        $class = $item->active ? ' class="interfacing-list-item is-active"' : ' class="interfacing-list-item"';
+        $linkClass = $item->active
+            ? ' class="interfacing-nav-link is-active"'
+            : ' class="interfacing-nav-link"';
         $href = '' !== $item->target->href ? $item->target->href : '#';
         $icon = null === $item->icon ? '' : sprintf('<span data-navigation-icon="%s"></span>', $this->escape($item->icon));
         $badge = null === $item->badge ? '' : sprintf('<span data-navigation-badge>%s</span>', $this->escape($item->badge));
 
         return sprintf(
-            '<li data-navigation-key="%s"%s><a href="%s">%s<span>%s</span>%s</a></li>',
+            '<li data-navigation-key="%s"%s><a%s href="%s">%s<span class="interfacing-nav-link__label">%s</span>%s</a></li>',
             $this->escape($item->key),
             $class,
+            $linkClass,
             $this->escape($href),
             $icon,
             $this->escape($item->label),

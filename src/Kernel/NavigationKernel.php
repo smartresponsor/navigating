@@ -6,7 +6,6 @@ namespace App\Navigating\Kernel;
 
 use App\Navigating\NavigatingBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
@@ -29,10 +28,6 @@ final class NavigationKernel extends Kernel
 
         if (class_exists(DoctrineBundle::class)) {
             yield new DoctrineBundle();
-        }
-
-        if (class_exists(EasyAdminBundle::class)) {
-            yield new EasyAdminBundle();
         }
 
         yield new NavigatingBundle();

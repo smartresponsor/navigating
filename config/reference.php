@@ -1230,6 +1230,16 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  * }
  * @psalm-type NavigationConfig = array{
  *     schema?: int|Param, // Default: 3
+ *     shell_locations?: array<string, array{ // Default: []
+ *         label?: scalar|Param|null, // Default: null
+ *         description?: scalar|Param|null, // Default: null
+ *         region?: scalar|Param|null, // Default: null
+ *         slot?: scalar|Param|null, // Default: null
+ *         type?: scalar|Param|null, // Default: "generic"
+ *         priority?: int|Param, // Default: 100
+ *         enabled?: bool|Param, // Default: true
+ *         metadata?: list<mixed>,
+ *     }>,
  *     runtime_roles?: array{
  *         fallback_roles?: list<scalar|Param|null>,
  *     },
