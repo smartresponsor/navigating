@@ -19,7 +19,9 @@ final class NavigationRuntimeActivationConfigTest extends TestCase
         self::assertIsArray($config);
         self::assertSame(['vendoring'], $config['runtime_activation']['scope_by_domain']['vendor']);
         self::assertSame(['accessing'], $config['runtime_activation']['scope_by_domain']['access']);
+        self::assertSame(['app'], $config['runtime_activation']['entity_by_domain']['app']);
         self::assertSame(['vendor'], $config['runtime_activation']['entity_by_domain']['vendor']);
+        self::assertSame(['payment'], $config['runtime_activation']['entity_by_domain']['payment']);
         self::assertTrue($config['runtime_activation']['strict']);
     }
 }

@@ -1,6 +1,7 @@
 navigation:
   runtime_activation:
     entity_by_domain:
+      app: [app]
       vendor: [vendor]
       catalog: [catalog, category]
       merchandise: [merchandise, product]
@@ -9,6 +10,7 @@ navigation:
       order: [order]
       retail: [retail]
       promotion: [promotion]
+      payment: [payment]
       subscription: [subscription]
       shipment: [shipment]
       review: [review]
@@ -24,3 +26,6 @@ navigation:
       page: [page]
       tag: [tag]
       message: [message, thread]
+      project: [project]
+      search: [search]
+      role: [role]
