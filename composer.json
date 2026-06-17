@@ -34,8 +34,10 @@
   },
   "scripts": {
     "qa:navigating-easyadmin": "@php vendor/bin/phpunit tests/NavigationEasyAdminSurfaceTest.php tests/NavigationEasyAdminSymfonyTypeTest.php tests/NavigationEasyAdminBoundaryTest.php",
+    "qa:navigating-runtime": "@php vendor/bin/phpunit tests/NavigationRuntimeActivationTest.php tests/NavigationRuntimeActivationConfigTest.php",
     "qa": [
-      "@qa:navigating-easyadmin"
+      "@qa:navigating-easyadmin",
+      "@qa:navigating-runtime"
     ]
   },
   "extra": {

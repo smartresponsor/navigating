@@ -1,3 +1,7 @@
+parameters:
+  navigation.runtime_scope_default: ''
+  navigation.runtime_entity_default: ''
+
 services:
   _defaults:
     autowire: true
@@ -26,6 +30,15 @@ services:
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationRequestRoleProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationRequestRoleProvideService
 
+  App\Navigating\ServiceInterface\Navigation\Provide\NavigationRuntimeActivationProvideServiceInterface:
+    alias: App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService
+
+  App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService:
+    arguments:
+      $runtimeScope: '%env(default:navigation.runtime_scope_default:APP_RUNTIME_SCOPE)%'
+      $runtimeEntity: '%env(default:navigation.runtime_entity_default:APP_RUNTIME_ENTITY)%'
+      $runtimeActivationStrict: true
+
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationShellProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationShellProvideService
 
@@ -44,8 +57,6 @@ services:
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationInterfaceLocationProjectionProviderInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationInterfaceLocationProjectionProvider
 
-  # Public host-facing projection endpoint. Keep this ID concrete so App-host
-  # wiring cannot resolve to an older navigation service with a different API.
   navigating.interface_location_projection_provider:
     class: App\Navigating\Service\Navigation\Provide\NavigationInterfaceLocationProjectionProvider
     public: true

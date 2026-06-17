@@ -42,6 +42,7 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
 
                     $type = (string) ($itemConfig['type'] ?? '');
                     $targetConfig = $this->targetConfig($itemConfig);
+                    $metadata = is_array($itemConfig['metadata'] ?? null) ? $itemConfig['metadata'] : [];
 
                     $items[] = new NavigationShellItem(
                         key: $itemKey,
@@ -58,7 +59,9 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
                         widget: isset($itemConfig['widget']) ? (string) $itemConfig['widget'] : null,
                         icon: isset($itemConfig['icon']) ? (string) $itemConfig['icon'] : null,
                         badge: isset($itemConfig['badge']) ? (string) $itemConfig['badge'] : null,
-                        metadata: is_array($itemConfig['metadata'] ?? null) ? $itemConfig['metadata'] : [],
+                        metadata: $metadata,
+                        runtimeScopes: $this->runtimeActivationTokens($config, $metadata, 'scope_by_domain'),
+                        runtimeEntities: $this->runtimeActivationTokens($config, $metadata, 'entity_by_domain'),
                     );
                 }
             }
@@ -86,8 +89,36 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
     }
 
     /**
+     * @param array<string, mixed> $config
+     * @param array<string, mixed> $metadata
+     *
      * @return list<string>
      */
+    private function runtimeActivationTokens(array $config, array $metadata, string $mapKey): array
+    {
+        $domain = $metadata['domain'] ?? null;
+
+        if (!is_string($domain) || '' === trim($domain)) {
+            return [];
+        }
+
+        $domain = strtolower(trim($domain));
+        $runtimeActivation = $config['runtime_activation'] ?? [];
+
+        if (!is_array($runtimeActivation)) {
+            return 'scope_by_domain' === $mapKey ? [$domain] : [];
+        }
+
+        $map = $runtimeActivation[$mapKey] ?? [];
+
+        if (!is_array($map)) {
+            return 'scope_by_domain' === $mapKey ? [$domain] : [];
+        }
+
+        return $this->tokenList($map[$domain] ?? ('scope_by_domain' === $mapKey ? [$domain] : []));
+    }
+
+    /** @return list<string> */
     private function roleList(mixed $roles): array
     {
         if (!is_array($roles)) {
@@ -111,9 +142,7 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
         return array_values($normalized);
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     private function tokenList(mixed $tokens): array
     {
         if (!is_array($tokens)) {
@@ -164,9 +193,7 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
         return null;
     }
 
-    /**
-     * @param array<string, mixed> $config
-     */
+    /** @param array<string, mixed> $config */
     private function hasConfiguredValue(array $config, string $key): bool
     {
         if (!array_key_exists($key, $config)) {
