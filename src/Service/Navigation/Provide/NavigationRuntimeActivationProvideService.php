@@ -10,12 +10,12 @@ use App\Navigating\ServiceInterface\Navigation\Provide\NavigationRuntimeActivati
 final readonly class NavigationRuntimeActivationProvideService implements NavigationRuntimeActivationProvideServiceInterface
 {
     /**
-     * @param list<string> $runtimeScopeTokens
-     * @param list<string> $runtimeEntityTokens
+     * @param string|list<string> $runtimeScope
+     * @param string|list<string> $runtimeEntity
      */
     public function __construct(
-        private array $runtimeScopeTokens = [],
-        private array $runtimeEntityTokens = [],
+        private string|array $runtimeScope = '',
+        private string|array $runtimeEntity = '',
         private bool $runtimeActivationStrict = true,
     ) {
     }
@@ -23,22 +23,30 @@ final readonly class NavigationRuntimeActivationProvideService implements Naviga
     public function provide(): NavigationRuntimeActivationContext
     {
         return new NavigationRuntimeActivationContext(
-            scopeTokens: $this->normalize($this->runtimeScopeTokens),
-            entityTokens: $this->normalize($this->runtimeEntityTokens),
+            scopeTokens: $this->normalize($this->runtimeScope),
+            entityTokens: $this->normalize($this->runtimeEntity),
             strict: $this->runtimeActivationStrict,
         );
     }
 
     /**
-     * @param list<string> $tokens
+     * @param string|list<string> $tokens
      *
      * @return list<string>
      */
-    private function normalize(array $tokens): array
+    private function normalize(string|array $tokens): array
     {
+        if (is_string($tokens)) {
+            $tokens = preg_split('/[,\s]+/', $tokens) ?: [];
+        }
+
         $normalized = [];
 
         foreach ($tokens as $token) {
+            if (!is_string($token)) {
+                continue;
+            }
+
             $token = strtolower(trim($token));
 
             if ('' !== $token) {
