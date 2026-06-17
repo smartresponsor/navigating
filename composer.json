@@ -33,7 +33,7 @@
     }
   },
   "scripts": {
-    "qa:navigating-easyadmin": "@php vendor/bin/phpunit tests/NavigationEasyAdminSurfaceTest.php tests/NavigationEasyAdminSymfonyTypeTest.php",
+    "qa:navigating-easyadmin": "@php vendor/bin/phpunit tests/NavigationEasyAdminSurfaceTest.php tests/NavigationEasyAdminSymfonyTypeTest.php tests/NavigationEasyAdminBoundaryTest.php",
     "qa": [
       "@qa:navigating-easyadmin"
     ]
