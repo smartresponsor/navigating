@@ -1,0 +1,7 @@
+navigation:
+  runtime_activation:
+    scope_env: APP_RUNTIME_SCOPE
+    entity_env: APP_RUNTIME_ENTITY
+    strict: true
+    scope_by_domain: {}
+    entity_by_domain: {}
