@@ -4,172 +4,90 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Service\Navigation\Filter\NavigationVisibilityFilterService;
-use App\Navigating\Service\Navigation\Normalize\NavigationConfigNormalizeService;
+use App\Navigating\Service\Navigation\Filter\NavigationRuntimeTargetFilterService;
 use App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService;
-use App\Navigating\ServiceInterface\Navigation\Provide\NavigationRequestRoleProvideServiceInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 final class NavigationRuntimeActivationTest extends TestCase
 {
-    public function testEntityMappedBusinessItemDoesNotRequireComponentScope(): void
+    public function testExactEntityTokenAllowsMatchingFirstPathSegment(): void
     {
-        $items = $this->filter(runtimeScope: 'cruding,viewing', runtimeEntity: 'vendor');
+        $filter = $this->filter(runtimeScope: 'cruding,viewing', runtimeEntity: 'vendor');
 
-        self::assertSame(['vendor', 'help'], array_column($items, 'key'));
+        self::assertTrue($filter->allows('/vendor/index', Request::create('/app')));
     }
 
-    public function testMissingRuntimeEntityRemovesBusinessMenuItem(): void
+    public function testSemanticAliasCannotActivateDifferentUrlPrefix(): void
     {
-        $items = $this->filter(runtimeScope: 'vendoring', runtimeEntity: 'order');
+        $filter = $this->filter(runtimeScope: '', runtimeEntity: 'category,product');
+        $request = Request::create('/app');
 
-        self::assertSame(['help'], array_column($items, 'key'));
+        self::assertFalse($filter->allows('/catalog/index', $request));
+        self::assertFalse($filter->allows('/merchandise/index', $request));
     }
 
-    public function testRequestScopeCannotExpandDeploymentActivation(): void
+    public function testArchitecturalAliasCannotActivateDifferentUrlPrefix(): void
     {
-        $request = new Request(attributes: ['_navigation_scopes' => ['business', 'vendoring']]);
-        $items = $this->filter(runtimeScope: 'vendoring', runtimeEntity: 'order', request: $request);
+        $filter = $this->filter(runtimeScope: 'interfacing', runtimeEntity: '');
 
-        self::assertSame(['help'], array_column($items, 'key'));
+        self::assertFalse($filter->allows('/interface/index', Request::create('/app')));
     }
 
-    public function testUnmappedDomainFallsBackToItsOwnRuntimeEntityToken(): void
+    public function testTokenMayComeFromScopeOrEntityRuntimeList(): void
     {
-        $config = [
-            'runtime_activation' => [
-                'scope_by_domain' => [],
-                'entity_by_domain' => [],
-            ],
-            'shell_groups' => [
-                'business' => [
-                    'location' => 'shell.left.middle',
-                    'items' => [
-                        'inventory' => [
-                            'type' => 'link',
-                            'path' => '/inventory/index',
-                            'metadata' => ['domain' => 'inventory'],
-                        ],
-                    ],
-                ],
-            ],
-        ];
+        $request = Request::create('/app');
 
-        $groups = (new NavigationConfigNormalizeService())->normalizeShellGroups($config);
-        $item = $groups[0]->items[0];
-
-        self::assertSame([], $item->runtimeScopes);
-        self::assertSame(['inventory'], $item->runtimeEntities);
+        self::assertTrue($this->filter('catalog', '')->allows('/catalog/index', $request));
+        self::assertTrue($this->filter('', 'catalog')->allows('/catalog/index', $request));
     }
 
-    public function testExplicitSystemDomainUsesRuntimeScope(): void
+    public function testPrefixMatchingUsesTheWholeFirstPathSegment(): void
     {
-        $config = [
-            'runtime_activation' => [
-                'scope_by_domain' => ['interface' => ['interfacing']],
-                'entity_by_domain' => [],
-            ],
-            'shell_groups' => [
-                'system' => [
-                    'location' => 'shell.left.bottom',
-                    'items' => [
-                        'interface' => [
-                            'type' => 'link',
-                            'path' => '/interface/index',
-                            'metadata' => ['domain' => 'interface'],
-                        ],
-                    ],
-                ],
-            ],
-        ];
+        $filter = $this->filter(runtimeScope: '', runtimeEntity: 'vendor');
 
-        $groups = (new NavigationConfigNormalizeService())->normalizeShellGroups($config);
-        $item = $groups[0]->items[0];
-
-        self::assertSame(['interfacing'], $item->runtimeScopes);
-        self::assertSame([], $item->runtimeEntities);
+        self::assertFalse($filter->allows('/vendor-extra/index', Request::create('/app')));
     }
 
-    public function testEntityMappingTakesPrecedenceOverScopeAlias(): void
+    public function testSameHostAbsoluteUrlIsRuntimeGated(): void
     {
-        $config = [
-            'runtime_activation' => [
-                'scope_by_domain' => ['vendor' => ['vendoring']],
-                'entity_by_domain' => ['vendor' => ['vendor']],
-            ],
-            'shell_groups' => [
-                'business' => [
-                    'location' => 'shell.left.middle',
-                    'items' => [
-                        'vendor' => [
-                            'type' => 'link',
-                            'path' => '/vendor/index',
-                            'metadata' => ['domain' => 'vendor'],
-                        ],
-                    ],
-                ],
-            ],
-        ];
+        $filter = $this->filter(runtimeScope: '', runtimeEntity: 'vendor');
+        $request = Request::create('https://smartresponsor.com/app');
 
-        $groups = (new NavigationConfigNormalizeService())->normalizeShellGroups($config);
-        $item = $groups[0]->items[0];
-
-        self::assertSame([], $item->runtimeScopes);
-        self::assertSame(['vendor'], $item->runtimeEntities);
+        self::assertTrue($filter->allows('https://smartresponsor.com/vendor/index', $request));
+        self::assertFalse($filter->allows('https://smartresponsor.com/catalog/index', $request));
     }
 
-    /** @return list<array<string, mixed>> */
-    private function filter(string $runtimeScope, string $runtimeEntity, ?Request $request = null): array
+    public function testExternalUrlDoesNotRepresentAnInstalledLocalComponent(): void
     {
-        $config = [
-            'runtime_scopes' => ['fallback_scopes' => ['business']],
-            'runtime_environment' => ['fallback_environment' => 'prod'],
-            'runtime_activation' => [
-                'scope_by_domain' => ['vendor' => ['vendoring']],
-                'entity_by_domain' => ['vendor' => ['vendor']],
-            ],
-            'shell_groups' => [
-                'business' => [
-                    'label' => 'Business',
-                    'location' => 'shell.left.middle',
-                    'type' => 'navigation',
-                    'items' => [
-                        'vendor' => [
-                            'type' => 'link',
-                            'label' => 'Vendor',
-                            'path' => '/vendor/index',
-                            'metadata' => ['domain' => 'vendor'],
-                        ],
-                        'help' => [
-                            'type' => 'link',
-                            'label' => 'Help',
-                            'path' => '/help',
-                            'metadata' => ['static_path' => true],
-                        ],
-                    ],
-                ],
-            ],
-        ];
+        $filter = $this->filter(runtimeScope: '', runtimeEntity: 'vendor');
+        $request = Request::create('https://smartresponsor.com/app');
 
-        $groups = (new NavigationConfigNormalizeService())->normalizeShellGroups($config);
-        $roleProvider = new class implements NavigationRequestRoleProvideServiceInterface {
-            public function provideRoles(Request $request): array
-            {
-                return ['ROLE_USER'];
-            }
-        };
-        $activationProvider = new NavigationRuntimeActivationProvideService(
-            runtimeScope: $runtimeScope,
-            runtimeEntity: $runtimeEntity,
-            runtimeActivationStrict: true,
-        );
-        $filter = new NavigationVisibilityFilterService($roleProvider, $activationProvider, $config);
-        $visibleGroups = $filter->filterShellGroups($groups, $request ?? new Request());
+        self::assertTrue($filter->allows('https://example.com/catalog/index', $request));
+    }
 
-        return array_map(
-            static fn ($item): array => ['key' => $item->key],
-            $visibleGroups[0]->items,
+    public function testHostRootIsNotAComponentPrefix(): void
+    {
+        $filter = $this->filter(runtimeScope: '', runtimeEntity: '');
+
+        self::assertTrue($filter->allows('/', Request::create('/')));
+    }
+
+    public function testEmptyLinkTargetIsRejected(): void
+    {
+        $filter = $this->filter(runtimeScope: 'vendor', runtimeEntity: 'vendor');
+
+        self::assertFalse($filter->allows('', Request::create('/app')));
+    }
+
+    private function filter(string $runtimeScope, string $runtimeEntity): NavigationRuntimeTargetFilterService
+    {
+        return new NavigationRuntimeTargetFilterService(
+            new NavigationRuntimeActivationProvideService(
+                runtimeScope: $runtimeScope,
+                runtimeEntity: $runtimeEntity,
+                runtimeActivationStrict: true,
+            ),
         );
     }
 }
