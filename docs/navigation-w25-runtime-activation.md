@@ -24,6 +24,8 @@ Request attributes can narrow navigation but cannot activate a component absent 
 
 ## Mapping
 
-Activation requirements are resolved from explicit `runtime_activation.scope_by_domain` and `runtime_activation.entity_by_domain` maps. Labels, route names, paths, and repository-name transformations are not used for runtime inference.
+Component activation starts from item-level `metadata.domain`. An explicit `runtime_activation.scope_by_domain` entry may replace that domain with component aliases. When no alias is configured, the normalized domain itself is required in `APP_RUNTIME_SCOPE`; this is fail-closed rather than visible-by-default behavior.
 
-Items without a mapped domain remain outside the deployment activation gate. This preserves structural shell locations, static legal/help links, and component-owned actions that do not represent another deployable component.
+Optional `runtime_activation.entity_by_domain` entries add the second `APP_RUNTIME_ENTITY` ceiling for business resources. Labels, route names, paths, and repository-name transformations are not inspected at runtime.
+
+Items without `metadata.domain` remain outside the deployment activation gate. This preserves structural shell locations and static legal/help links that do not represent a deployable component.
