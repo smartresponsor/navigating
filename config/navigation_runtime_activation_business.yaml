@@ -1,26 +1,38 @@
 navigation:
-  runtime_activation:
-    scope_by_domain:
-      vendor: [vendoring]
-      catalog: [cataloging]
-      merchandise: [merchandising]
-      commerce: [commercializing, commerce]
-      cart: [carting]
-      order: [ordering]
-      retail: [retailing]
-      promotion: [promoting]
-      price: [pricing]
-      billing: [billing]
-      payment: [paying, payment]
-      finance: [financing, finance]
-      subscription: [subscribing]
-      shipment: [shipping]
-      review: [reviewing]
-      tax: [taxating]
-      commission: [commissioning]
-      currency: [currencing]
-      exchange: [exchanging]
-      attachment: [attaching]
-      address: [addressing]
-      location: [locating, locator]
-      analysis: [analysing]
+  shell_groups:
+    left_middle_business:
+      items:
+        vendor: { namespace_provider: App\Vendoring }
+        catalog: { namespace_provider: App\Cataloging }
+        merchandise: { namespace_provider: App\Merchandising }
+        commerce: { namespace_provider: App\Commercializing }
+        cart: { namespace_provider: App\Carting }
+        order: { namespace_provider: App\Ordering }
+        retail: { namespace_provider: App\Retailing }
+        promotion: { namespace_provider: App\Promoting }
+        pricing: { namespace_provider: App\Pricing }
+        billing: { namespace_provider: App\Billing }
+        payment: { namespace_provider: App\Paying }
+        finance: { namespace_provider: App\Financing }
+        subscription: { namespace_provider: App\Subscribing }
+        shipment: { namespace_provider: App\Shipping }
+        review: { namespace_provider: App\Reviewing }
+        tax: { namespace_provider: App\Taxating }
+        commission: { namespace_provider: App\Commissioning }
+        currency: { namespace_provider: App\Currencing }
+        exchange: { namespace_provider: App\Exchanging }
+        attachment: { namespace_provider: App\Attaching }
+        address: { namespace_provider: App\Addressing }
+        locator: { namespace_provider: App\Locating }
+        analysis: { namespace_provider: App\Analysing }
+
+    right_toolbar_quick:
+      items:
+        vendor: { namespace_provider: App\Vendoring }
+        catalog: { namespace_provider: App\Cataloging }
+        merchandise: { namespace_provider: App\Merchandising }
+        cart: { namespace_provider: App\Carting }
+        order: { namespace_provider: App\Ordering }
+        payment: { namespace_provider: App\Paying }
+        shipment: { namespace_provider: App\Shipping }
+        attachment: { namespace_provider: App\Attaching }
