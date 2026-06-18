@@ -32,6 +32,9 @@ final readonly class NavigationShellItem
         public array $metadata = [],
         public array $runtimeScopes = [],
         public array $runtimeEntities = [],
+        public ?string $namespaceProvider = null,
+        public ?string $namespace = null,
+        public ?string $runtimeScope = null,
     ) {
     }
 }
