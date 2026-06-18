@@ -1,32 +1,36 @@
-# W27 — Runtime URL-prefix gate
+# W28 — Namespace-owned runtime scope gate
 
-Navigating treats the installed App runtime lists as an exact allowlist for local component links.
+This decision supersedes the W27 URL-prefix rule.
 
 ## Canonical rule
 
-For every local navigation link, Navigating resolves the final URL and extracts the first path segment.
+A navigation item is published only when its provider workspace is active in `APP_RUNTIME_SCOPE`.
 
-Examples:
+Ownership is resolved in this order:
 
-- `/vendor/index` requires `vendor`;
-- `/catalog/index` requires `catalog`;
-- `/interface/index` requires `interface`.
+1. `namespace_provider`;
+2. `namespace`;
+3. group-level `namespace_provider` or `namespace` inheritance.
 
-The required token must occur exactly in either `APP_RUNTIME_SCOPE` or `APP_RUNTIME_ENTITY`. Semantic aliases and `metadata.domain` do not activate a different URL prefix.
+For an App namespace, the first segment after `App` is the runtime scope:
 
-Therefore:
+- `App\Cruding\Service\...` becomes `cruding`;
+- `App\Vendoring\Service\...` becomes `vendoring`;
+- `App\Interfacing\...` becomes `interfacing`.
 
-- `category` does not activate `/catalog/index`;
-- `product` does not activate `/merchandise/index`;
-- `interfacing` does not activate `/interface/index`;
-- `vendor` does not activate `/vendor-extra/index`.
+The resulting value must occur exactly in `APP_RUNTIME_SCOPE`. Missing ownership fails closed.
 
-## Boundary behavior
+## Non-inputs
 
-- Same-host absolute URLs are checked as local links.
-- External-host URLs are not treated as App component links and pass this gate.
-- `/` is the host root and has no component prefix.
-- Empty or unresolved link targets fail closed.
-- Actions and widgets without link targets are unaffected by URL-prefix activation.
+Runtime publication does not infer component ownership from:
 
-Role, request-scope, and environment visibility remain separate filters. Runtime activation is applied after target resolution, before a link enters the shell view model.
+- URI prefixes;
+- labels;
+- `metadata.domain`;
+- `APP_RUNTIME_ENTITY`.
+
+Therefore `/payment/index` may be published under `cruding` when its actual namespace provider belongs to `App\Cruding`; the URI itself does not imply `paying`.
+
+## Pipeline position
+
+Namespace scope filtering runs in the visibility layer before view-model build and rendering. Role, request-scope, and environment visibility remain independent filters.

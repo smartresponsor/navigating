@@ -21,9 +21,6 @@ services:
   App\Navigating\ServiceInterface\Navigation\Filter\NavigationVisibilityFilterServiceInterface:
     alias: App\Navigating\Service\Navigation\Filter\NavigationVisibilityFilterService
 
-  App\Navigating\ServiceInterface\Navigation\Filter\NavigationRuntimeTargetFilterServiceInterface:
-    alias: App\Navigating\Service\Navigation\Filter\NavigationRuntimeTargetFilterService
-
   App\Navigating\ServiceInterface\Navigation\Build\NavigationTreeBuildServiceInterface:
     alias: App\Navigating\Service\Navigation\Build\NavigationTreeBuildService
 

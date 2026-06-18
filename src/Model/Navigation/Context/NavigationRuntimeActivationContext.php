@@ -29,33 +29,6 @@ final readonly class NavigationRuntimeActivationContext
         return $this->allows($requiredTokens, $this->entityTokens);
     }
 
-    public function allowsRuntimeToken(string $requiredToken): bool
-    {
-        $requiredToken = strtolower(trim($requiredToken));
-
-        if ('' === $requiredToken) {
-            return true;
-        }
-
-        return $this->allows([$requiredToken], $this->runtimeTokens());
-    }
-
-    /** @return list<string> */
-    public function runtimeTokens(): array
-    {
-        $tokens = [];
-
-        foreach ([...$this->scopeTokens, ...$this->entityTokens] as $token) {
-            $token = strtolower(trim($token));
-
-            if ('' !== $token) {
-                $tokens[$token] = $token;
-            }
-        }
-
-        return array_values($tokens);
-    }
-
     /**
      * @param list<string> $requiredTokens
      * @param list<string> $activeTokens

@@ -8,18 +8,15 @@ use App\Navigating\Model\Navigation\View\NavigationGroupView;
 use App\Navigating\Model\Navigation\View\NavigationItemView;
 use App\Navigating\Model\Navigation\View\NavigationTargetView;
 use App\Navigating\ServiceInterface\Navigation\Build\NavigationTreeBuildServiceInterface;
-use App\Navigating\ServiceInterface\Navigation\Filter\NavigationRuntimeTargetFilterServiceInterface;
 use App\Navigating\ServiceInterface\Navigation\Resolve\NavigationTargetResolveServiceInterface;
 use App\Navigating\Value\Navigation\NavigationShellGroup;
 use App\Navigating\Value\Navigation\NavigationShellItem;
-use App\Navigating\Value\Navigation\NavigationShellItemTypeRegistry;
 use Symfony\Component\HttpFoundation\Request;
 
 final readonly class NavigationTreeBuildService implements NavigationTreeBuildServiceInterface
 {
     public function __construct(
         private NavigationTargetResolveServiceInterface $targetResolveService,
-        private NavigationRuntimeTargetFilterServiceInterface $runtimeTargetFilterService,
     ) {
     }
 
@@ -33,14 +30,6 @@ final readonly class NavigationTreeBuildService implements NavigationTreeBuildSe
             }
 
             $href = null === $item->target ? '' : $this->targetResolveService->resolveUrl($item->target);
-
-            if (
-                NavigationShellItemTypeRegistry::LINK === $item->type
-                && !$this->runtimeTargetFilterService->allows($href, $request)
-            ) {
-                continue;
-            }
-
             $items[] = $this->buildItem($group, $item, $request, $href);
         }
 
@@ -70,6 +59,9 @@ final readonly class NavigationTreeBuildService implements NavigationTreeBuildSe
             'location' => $group->location,
             'item_type' => $item->type,
             'target_type' => null === $item->target ? null : $item->target->type,
+            'namespace_provider' => $item->namespaceProvider,
+            'namespace' => $item->namespace,
+            'runtime_scope' => $item->runtimeScope,
         ]);
 
         if (null !== $item->icon) {

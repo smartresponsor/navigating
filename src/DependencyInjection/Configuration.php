@@ -78,6 +78,7 @@ final class Configuration implements ConfigurationInterface
                             ->arrayNode('visible_for_roles')->scalarPrototype()->end()->end()
                             ->arrayNode('visible_for_scopes')->scalarPrototype()->end()->end()
                             ->arrayNode('visible_for_environments')->scalarPrototype()->end()->end()
+                            ->arrayNode('metadata')->variablePrototype()->end()->end()
                             ->arrayNode('items')
                                 ->useAttributeAsKey('key')
                                 ->arrayPrototype()

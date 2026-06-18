@@ -1,26 +1,42 @@
 navigation:
-  runtime_activation:
-    scope_by_domain:
-      vendor: [vendoring]
-      catalog: [cataloging]
-      merchandise: [merchandising]
-      commerce: [commercializing, commerce]
-      cart: [carting]
-      order: [ordering]
-      retail: [retailing]
-      promotion: [promoting]
-      price: [pricing]
-      billing: [billing]
-      payment: [paying, payment]
-      finance: [financing, finance]
-      subscription: [subscribing]
-      shipment: [shipping]
-      review: [reviewing]
-      tax: [taxating]
-      commission: [commissioning]
-      currency: [currencing]
-      exchange: [exchanging]
-      attachment: [attaching]
-      address: [addressing]
-      location: [locating, locator]
-      analysis: [analysing]
+  shell_groups:
+    left_top:
+      items:
+        dashboard: { metadata: { namespace_provider: App\Interfacing } }
+
+    left_middle_business:
+      items:
+        vendor: { metadata: { namespace_provider: App\Vendoring } }
+        catalog: { metadata: { namespace_provider: App\Cataloging } }
+        merchandise: { metadata: { namespace_provider: App\Merchandising } }
+        commerce: { metadata: { namespace_provider: App\Commercializing } }
+        cart: { metadata: { namespace_provider: App\Carting } }
+        order: { metadata: { namespace_provider: App\Ordering } }
+        retail: { metadata: { namespace_provider: App\Retailing } }
+        promotion: { metadata: { namespace_provider: App\Promoting } }
+        pricing: { metadata: { namespace_provider: App\Pricing } }
+        billing: { metadata: { namespace_provider: App\Billing } }
+        payment: { metadata: { namespace_provider: App\Paying } }
+        finance: { metadata: { namespace_provider: App\Financing } }
+        subscription: { metadata: { namespace_provider: App\Subscribing } }
+        shipment: { metadata: { namespace_provider: App\Shipping } }
+        review: { metadata: { namespace_provider: App\Reviewing } }
+        tax: { metadata: { namespace_provider: App\Taxating } }
+        commission: { metadata: { namespace_provider: App\Commissioning } }
+        currency: { metadata: { namespace_provider: App\Currencing } }
+        exchange: { metadata: { namespace_provider: App\Exchanging } }
+        attachment: { metadata: { namespace_provider: App\Attaching } }
+        address: { metadata: { namespace_provider: App\Addressing } }
+        locator: { metadata: { namespace_provider: App\Locating } }
+        analysis: { metadata: { namespace_provider: App\Analysing } }
+
+    right_toolbar_quick:
+      items:
+        vendor: { metadata: { namespace_provider: App\Vendoring } }
+        catalog: { metadata: { namespace_provider: App\Cataloging } }
+        merchandise: { metadata: { namespace_provider: App\Merchandising } }
+        cart: { metadata: { namespace_provider: App\Carting } }
+        order: { metadata: { namespace_provider: App\Ordering } }
+        payment: { metadata: { namespace_provider: App\Paying } }
+        shipment: { metadata: { namespace_provider: App\Shipping } }
+        attachment: { metadata: { namespace_provider: App\Attaching } }
