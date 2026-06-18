@@ -103,7 +103,7 @@ final class NavigationRuntimeActivationTest extends TestCase
         ];
 
         if (null !== $groupNamespaceProvider) {
-            $group['namespace_provider'] = $groupNamespaceProvider;
+            $group['metadata'] = ['namespace_provider' => $groupNamespaceProvider];
         }
 
         $config = [
@@ -144,20 +144,21 @@ final class NavigationRuntimeActivationTest extends TestCase
         ?string $namespaceProvider = null,
         ?string $namespace = null,
     ): array {
-        $item = [
-            'type' => 'link',
-            'label' => ucfirst(trim($path, '/')),
-            'path' => $path,
-        ];
+        $metadata = [];
 
         if (null !== $namespaceProvider) {
-            $item['namespace_provider'] = $namespaceProvider;
+            $metadata['namespace_provider'] = $namespaceProvider;
         }
 
         if (null !== $namespace) {
-            $item['namespace'] = $namespace;
+            $metadata['namespace'] = $namespace;
         }
 
-        return $item;
+        return [
+            'type' => 'link',
+            'label' => ucfirst(trim($path, '/')),
+            'path' => $path,
+            'metadata' => $metadata,
+        ];
     }
 }
