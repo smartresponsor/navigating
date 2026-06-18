@@ -1,0 +1,128 @@
+navigation:
+  shell_groups:
+    right_toolbar_quick:
+      label: Access
+      location: shell.header.right.quick.menu
+      type: navigation
+      priority: 30
+      items:
+        access_signin:
+          type: link
+          label: Sign in
+          icon: LoginOutlined
+          priority: 10
+          path: /access/signin
+          visible_for_roles: [ROLE_GUEST]
+          metadata:
+            namespace_provider: App\Accessing\Service\Http\Access\AccessSignInService
+            route_name: access.signin
+            domain: access
+            resource: access
+            operation: sign_in
+            navigation_scope: guest
+            quick_menu: true
+        access_register:
+          type: link
+          label: Register
+          icon: UserAddOutlined
+          priority: 20
+          path: /access/register
+          visible_for_roles: [ROLE_GUEST]
+          metadata:
+            namespace_provider: App\Accessing\Service\Http\Access\AccessRegisterService
+            route_name: access.register
+            domain: access
+            resource: access
+            operation: register
+            navigation_scope: guest
+            quick_menu: true
+        access_recovery:
+          type: link
+          label: Recover access
+          icon: KeyOutlined
+          priority: 30
+          path: /access/recovery/request
+          visible_for_roles: [ROLE_GUEST]
+          metadata:
+            namespace_provider: App\Accessing\Service\Http\Access\AccessRecoveryRequestService
+            route_name: access.recovery.request
+            domain: access
+            resource: access.recovery
+            operation: request
+            navigation_scope: guest
+            quick_menu: true
+        access_second_factor:
+          type: link
+          label: Second factor
+          icon: SafetyCertificateOutlined
+          priority: 40
+          path: /access/second-factor
+          visible_for_roles: [ROLE_USER]
+          metadata:
+            namespace_provider: App\Accessing\Service\Http\Access\AccessSecondFactorService
+            route_name: access.second_factor
+            domain: access
+            resource: access.second_factor
+            operation: manage
+            navigation_scope: user
+            quick_menu: true
+        access_sessions:
+          type: link
+          label: Sessions
+          icon: DesktopOutlined
+          priority: 50
+          path: /access/sessions
+          visible_for_roles: [ROLE_USER]
+          metadata:
+            namespace_provider: App\Accessing\Service\Http\Access\AccessSessionsService
+            route_name: access.sessions
+            domain: access
+            resource: access.session
+            operation: index
+            navigation_scope: user
+            quick_menu: true
+        access_security_events:
+          type: link
+          label: Security events
+          icon: AuditOutlined
+          priority: 60
+          path: /access/security-events
+          visible_for_roles: [ROLE_USER]
+          metadata:
+            namespace_provider: App\Accessing\Service\Http\Access\AccessSecurityEventsService
+            route_name: access.security_events
+            domain: access
+            resource: access.security_event
+            operation: index
+            navigation_scope: user
+            quick_menu: true
+        access_operator_users:
+          type: link
+          label: Access users
+          icon: TeamOutlined
+          priority: 70
+          path: /access/operator/users
+          visible_for_roles: [ROLE_ADMIN, ROLE_SUPER_ADMIN]
+          metadata:
+            namespace_provider: App\Accessing\Service\Http\Access\AccessOperatorUsersService
+            route_name: access.operator.users
+            domain: access
+            resource: access.operator
+            operation: users
+            navigation_scope: operator
+            quick_menu: true
+        access_operator_events:
+          type: link
+          label: Access audit
+          icon: FileProtectOutlined
+          priority: 80
+          path: /access/operator/security-events
+          visible_for_roles: [ROLE_ADMIN, ROLE_SUPER_ADMIN]
+          metadata:
+            namespace_provider: App\Accessing\Service\Http\Access\AccessOperatorSecurityEventsService
+            route_name: access.operator.security_events
+            domain: access
+            resource: access.operator.security_event
+            operation: index
+            navigation_scope: operator
+            quick_menu: true
