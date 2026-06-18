@@ -33,6 +33,15 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
 
             $items = [];
             $itemsConfig = $groupConfig['items'] ?? [];
+            $groupMetadata = is_array($groupConfig['metadata'] ?? null) ? $groupConfig['metadata'] : [];
+            $groupNamespaceProvider = $this->firstString(
+                $groupConfig['namespace_provider'] ?? null,
+                $groupMetadata['namespace_provider'] ?? null,
+            );
+            $groupNamespace = $this->firstString(
+                $groupConfig['namespace'] ?? null,
+                $groupMetadata['namespace'] ?? null,
+            );
 
             if (is_array($itemsConfig)) {
                 foreach ($itemsConfig as $itemKey => $itemConfig) {
@@ -43,6 +52,16 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
                     $type = (string) ($itemConfig['type'] ?? '');
                     $targetConfig = $this->targetConfig($itemConfig);
                     $metadata = is_array($itemConfig['metadata'] ?? null) ? $itemConfig['metadata'] : [];
+                    $namespaceProvider = $this->firstString(
+                        $itemConfig['namespace_provider'] ?? null,
+                        $metadata['namespace_provider'] ?? null,
+                        $groupNamespaceProvider,
+                    );
+                    $namespace = $this->firstString(
+                        $itemConfig['namespace'] ?? null,
+                        $metadata['namespace'] ?? null,
+                        $groupNamespace,
+                    );
 
                     $items[] = new NavigationShellItem(
                         key: $itemKey,
@@ -60,6 +79,9 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
                         icon: isset($itemConfig['icon']) ? (string) $itemConfig['icon'] : null,
                         badge: isset($itemConfig['badge']) ? (string) $itemConfig['badge'] : null,
                         metadata: $metadata,
+                        namespaceProvider: $namespaceProvider,
+                        namespace: $namespace,
+                        runtimeScope: $this->runtimeScope($namespaceProvider ?? $namespace),
                     );
                 }
             }
@@ -132,6 +154,42 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
         }
 
         return array_values($normalized);
+    }
+
+    private function runtimeScope(?string $namespace): ?string
+    {
+        if (null === $namespace) {
+            return null;
+        }
+
+        $namespace = trim($namespace, " \\t\\n\\r\\0\\x0B\\\\");
+        if ('' === $namespace) {
+            return null;
+        }
+
+        $segments = preg_split('/\\\\+/', $namespace) ?: [];
+        $segments = array_values(array_filter(array_map('trim', $segments), static fn (string $segment): bool => '' !== $segment));
+
+        if ([] === $segments) {
+            return null;
+        }
+
+        if ('app' === strtolower($segments[0])) {
+            return isset($segments[1]) ? strtolower($segments[1]) : null;
+        }
+
+        return strtolower($segments[0]);
+    }
+
+    private function firstString(mixed ...$candidates): ?string
+    {
+        foreach ($candidates as $candidate) {
+            if (is_string($candidate) && '' !== trim($candidate)) {
+                return trim($candidate);
+            }
+        }
+
+        return null;
     }
 
     /**
