@@ -2,5 +2,5 @@ navigation:
   shell_groups:
     left_bottom:
       items:
-        access: { namespace_provider: App\Accessing }
-        interface: { namespace_provider: App\Interfacing }
+        access: { metadata: { namespace_provider: App\Accessing } }
+        interface: { metadata: { namespace_provider: App\Interfacing } }
