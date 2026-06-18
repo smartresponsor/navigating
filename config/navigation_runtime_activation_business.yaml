@@ -1,5 +1,9 @@
 navigation:
   shell_groups:
+    left_top:
+      items:
+        dashboard: { namespace_provider: App\Interfacing }
+
     left_middle_business:
       items:
         vendor: { namespace_provider: App\Vendoring }
