@@ -53,7 +53,7 @@ navigation:
             quick_menu: true
         access_password:
           type: link
-          label: Password
+          label: Change password
           icon: LockOutlined
           priority: 40
           path: /access/password
@@ -63,14 +63,29 @@ navigation:
             route_name: access.password
             domain: access
             resource: access.password
-            operation: manage
+            operation: change_password
+            navigation_scope: user
+            quick_menu: true
+        access_switch:
+          type: link
+          label: Switch user
+          icon: SwapOutlined
+          priority: 50
+          path: /access/switch
+          visible_for_roles: [ROLE_USER, ROLE_ALLOWED_TO_SWITCH, ROLE_ADMIN, ROLE_SUPER_ADMIN]
+          metadata:
+            namespace_provider: App\Accessing\Service\Http\Access\AccessSecurityFlowService
+            route_name: access.switch
+            domain: access
+            resource: access
+            operation: switch_user
             navigation_scope: user
             quick_menu: true
         access_sign_out:
           type: link
           label: Sign out
           icon: LogoutOutlined
-          priority: 50
+          priority: 60
           path: /access/sign-out
           visible_for_roles: [ROLE_USER]
           metadata:
