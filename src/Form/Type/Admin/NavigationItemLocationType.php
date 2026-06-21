@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Navigating\Form\Type\Admin;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class NavigationItemLocationType extends AbstractType
@@ -24,6 +24,6 @@ final class NavigationItemLocationType extends AbstractType
 
     public function getParent(): string
     {
-        return TextType::class;
+        return ChoiceType::class;
     }
 }

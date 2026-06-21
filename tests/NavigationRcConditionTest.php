@@ -66,6 +66,13 @@ final class NavigationRcConditionTest extends TestCase
                     continue;
                 }
 
+                $normalizedPath = str_replace('\\', '/', $file->getPathname());
+                $normalizedSelf = str_replace('\\', '/', $root.'/tests/NavigationRcConditionTest.php');
+
+                if ($normalizedPath === $normalizedSelf) {
+                    continue;
+                }
+
                 $paths[] = substr($file->getPathname(), strlen($root) + 1);
             }
         }

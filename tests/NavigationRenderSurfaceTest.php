@@ -9,6 +9,7 @@ use App\Navigating\Service\Navigation\Filter\NavigationVisibilityFilterService;
 use App\Navigating\Service\Navigation\Normalize\NavigationConfigNormalizeService;
 use App\Navigating\Service\Navigation\Provide\NavigationGroupProvideService;
 use App\Navigating\Service\Navigation\Provide\NavigationRequestRoleProvideService;
+use App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService;
 use App\Navigating\Service\Navigation\Provide\NavigationShellProvideService;
 use App\Navigating\Service\Navigation\Render\NavigationRenderService;
 use App\Navigating\Service\Navigation\Resolve\NavigationTargetResolveService;
@@ -99,12 +100,37 @@ final class NavigationRenderSurfaceTest extends TestCase
                     'priority' => 50,
                     'metadata' => ['interface_location' => true],
                 ],
+                'shell.main.toolbar' => [
+                    'label' => 'Main toolbar',
+                    'region' => 'main',
+                    'slot' => 'toolbar',
+                    'type' => 'toolbar',
+                    'priority' => 110,
+                    'metadata' => ['interface_location' => true],
+                ],
+                'shell.right.tool' => [
+                    'label' => 'Right tool',
+                    'region' => 'right',
+                    'slot' => 'tool',
+                    'type' => 'tool',
+                    'priority' => 150,
+                    'metadata' => ['interface_location' => true],
+                ],
+                'shell.footer.context' => [
+                    'label' => 'Footer context',
+                    'region' => 'footer',
+                    'slot' => 'context',
+                    'type' => 'footer',
+                    'priority' => 210,
+                    'metadata' => ['interface_location' => true],
+                ],
             ],
             'shell_groups' => [
                 'left_middle_business' => [
                     'label' => 'Business roots',
                     'location' => 'shell.left.middle',
                     'type' => 'navigation',
+                    'namespace_provider' => 'App\\User\\Navigation',
                     'items' => [
                         'vendor' => [
                             'type' => 'link',
@@ -126,7 +152,15 @@ final class NavigationRenderSurfaceTest extends TestCase
         return new NavigationShellProvideService(
             new NavigationConfigNormalizeService(),
             new NavigationConfigValidateService(),
-            new NavigationVisibilityFilterService(new NavigationRequestRoleProvideService($config), $config),
+            new NavigationVisibilityFilterService(
+                new NavigationRequestRoleProvideService($config),
+                new NavigationRuntimeActivationProvideService(
+                    runtimeScope: ['user', 'system'],
+                    runtimeEntity: [],
+                    runtimeActivationStrict: false,
+                ),
+                $config,
+            ),
             new NavigationTreeBuildService(new NavigationTargetResolveService()),
             $config,
         );

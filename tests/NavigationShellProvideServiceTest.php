@@ -8,6 +8,7 @@ use App\Navigating\Service\Navigation\Build\NavigationTreeBuildService;
 use App\Navigating\Service\Navigation\Filter\NavigationVisibilityFilterService;
 use App\Navigating\Service\Navigation\Normalize\NavigationConfigNormalizeService;
 use App\Navigating\Service\Navigation\Provide\NavigationRequestRoleProvideService;
+use App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService;
 use App\Navigating\Service\Navigation\Provide\NavigationShellProvideService;
 use App\Navigating\Service\Navigation\Resolve\NavigationTargetResolveService;
 use App\Navigating\Service\Navigation\Validate\NavigationConfigValidateService;
@@ -19,11 +20,36 @@ final class NavigationShellProvideServiceTest extends TestCase
 {
     public function testShellProviderAlwaysReturnsFullCanonicalShellMap(): void
     {
-        $locations = $this->provider([])->provideShell(Request::create('/'))->toLocationsArray();
+        $locations = $this->provider([
+            'schema' => 3,
+            'shell_locations' => [
+                'shell.left.middle' => [
+                    'label' => 'Left middle',
+                    'region' => 'left',
+                    'slot' => 'middle',
+                    'type' => 'navigation',
+                ],
+                'shell.main.toolbar' => [
+                    'label' => 'Main toolbar',
+                    'region' => 'main',
+                    'slot' => 'toolbar',
+                    'type' => 'toolbar',
+                ],
+            ],
+            'shell_groups' => [],
+        ])->provideShell(Request::create('/'))->toLocationsArray();
 
-        foreach (NavigationShellLocationRegistry::all() as $slot) {
+        self::assertSame(['shell.left.middle', 'shell.main.toolbar'], array_keys($locations));
+
+        foreach (NavigationShellLocationRegistry::all([
+            'shell_locations' => [
+                'shell.left.middle' => [],
+                'shell.main.toolbar' => [],
+            ],
+        ]) as $slot) {
             self::assertArrayHasKey($slot, $locations);
             self::assertIsArray($locations[$slot]);
+            self::assertSame([], $locations[$slot]);
         }
     }
 
@@ -205,12 +231,65 @@ final class NavigationShellProvideServiceTest extends TestCase
      */
     private function provider(array $config): NavigationShellProvideService
     {
-        $config += ['schema' => 3, 'shell_groups' => []];
+        $config += [
+            'schema' => 3,
+            'shell_groups' => [],
+            'shell_locations' => [
+                'shell.left.middle' => [
+                    'label' => 'Primary navigation',
+                    'region' => 'left',
+                    'slot' => 'middle',
+                    'type' => 'navigation',
+                    'priority' => 50,
+                    'metadata' => ['interface_location' => true],
+                ],
+                'shell.main.toolbar' => [
+                    'label' => 'Main toolbar',
+                    'region' => 'main',
+                    'slot' => 'toolbar',
+                    'type' => 'toolbar',
+                    'priority' => 110,
+                    'metadata' => ['interface_location' => true],
+                ],
+                'shell.right.tool' => [
+                    'label' => 'Right tool',
+                    'region' => 'right',
+                    'slot' => 'tool',
+                    'type' => 'tool',
+                    'priority' => 150,
+                    'metadata' => ['interface_location' => true],
+                ],
+                'shell.footer.context' => [
+                    'label' => 'Footer context',
+                    'region' => 'footer',
+                    'slot' => 'context',
+                    'type' => 'footer',
+                    'priority' => 210,
+                    'metadata' => ['interface_location' => true],
+                ],
+            ],
+        ];
+
+        foreach ($config['shell_groups'] as &$group) {
+            if (!isset($group['namespace_provider']) && !isset($group['namespace']) && !isset($group['metadata']['namespace_provider'])) {
+                $group['namespace_provider'] = 'App\\User\\Navigation';
+            }
+        }
+
+        unset($group);
 
         return new NavigationShellProvideService(
             new NavigationConfigNormalizeService(),
             new NavigationConfigValidateService(),
-            new NavigationVisibilityFilterService(new NavigationRequestRoleProvideService($config), $config),
+            new NavigationVisibilityFilterService(
+                new NavigationRequestRoleProvideService($config),
+                new NavigationRuntimeActivationProvideService(
+                    runtimeScope: ['user', 'system'],
+                    runtimeEntity: [],
+                    runtimeActivationStrict: false,
+                ),
+                $config,
+            ),
             new NavigationTreeBuildService(new NavigationTargetResolveService()),
             $config,
         );

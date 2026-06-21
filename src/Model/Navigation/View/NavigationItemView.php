@@ -34,6 +34,7 @@ final readonly class NavigationItemView
             'type' => $this->type,
             'label' => $this->label,
             'href' => $this->target->href,
+            'url' => $this->target->href,
             'target' => $this->target->toArray(),
             'active' => $this->active,
             'disabled' => $this->disabled,

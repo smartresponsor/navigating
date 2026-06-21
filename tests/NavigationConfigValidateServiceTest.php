@@ -13,6 +13,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
     {
         $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
+            'shell_locations' => $this->shellLocations('shell.left.middle'),
             'shell_groups' => [
                 'left_middle_primary' => [
                     'location' => 'shell.left.middle',
@@ -88,7 +89,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
         ]);
 
         self::assertFalse($result->isValid());
-        self::assertStringContainsString('must use a canonical shell location', implode(' ', $result->errors));
+        self::assertStringContainsString('must use a config-owned shell location', implode(' ', $result->errors));
         self::assertStringContainsString('shell.left.primary', implode(' ', $result->errors));
     }
 
@@ -96,6 +97,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
     {
         $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
+            'shell_locations' => $this->shellLocations('shell.left.middle', 'shell.main.toolbar', 'shell.footer.context'),
             'shell_groups' => [
                 'left_middle_primary' => [
                     'location' => 'shell.left.middle',
@@ -145,6 +147,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
     {
         $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
+            'shell_locations' => $this->shellLocations('shell.left.middle'),
             'shell_groups' => [
                 'left_middle_primary' => [
                     'location' => 'shell.left.middle',
@@ -189,6 +192,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
     {
         $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
+            'shell_locations' => $this->shellLocations('shell.main.toolbar'),
             'shell_groups' => [
                 'main_toolbar_actions' => [
                     'location' => 'shell.main.toolbar',
@@ -210,6 +214,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
     {
         $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
+            'shell_locations' => $this->shellLocations('shell.left.middle'),
             'shell_groups' => [
                 'left_middle_primary' => [
                     'location' => 'shell.left.middle',
@@ -285,6 +290,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
     {
         $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
+            'shell_locations' => $this->shellLocations('shell.main.toolbar'),
             'shell_groups' => [
                 'main_toolbar_actions' => [
                     'location' => 'shell.main.toolbar',
@@ -312,6 +318,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
     {
         $result = (new NavigationConfigValidateService())->validate([
             'schema' => 3,
+            'shell_locations' => $this->shellLocations('shell.footer.context'),
             'runtime_scopes' => [
                 'fallback_scopes' => ['user', 'system'],
             ],
@@ -335,6 +342,25 @@ final class NavigationConfigValidateServiceTest extends TestCase
         ]);
 
         self::assertTrue($result->isValid(), implode(' ', $result->errors));
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    private function shellLocations(string ...$locations): array
+    {
+        $shellLocations = [];
+
+        foreach ($locations as $location) {
+            $shellLocations[$location] = [
+                'label' => $location,
+                'region' => 'test',
+                'slot' => 'test',
+                'type' => 'navigation',
+            ];
+        }
+
+        return $shellLocations;
     }
 
     public function testRejectsInvalidScopeAndEnvironmentVisibility(): void

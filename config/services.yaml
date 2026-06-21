@@ -48,11 +48,23 @@ services:
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationTemplateDataProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationTemplateDataProvideService
 
+  navigating.template_data_provider:
+    alias: App\Navigating\Service\Navigation\Provide\NavigationTemplateDataProvideService
+    public: true
+
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationShellPayloadProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationShellPayloadProvideService
 
+  navigating.shell_payload_provider:
+    alias: App\Navigating\Service\Navigation\Provide\NavigationShellPayloadProvideService
+    public: true
+
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationResponseProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationResponseProvideService
+
+  navigating.response_provider:
+    alias: App\Navigating\Service\Navigation\Provide\NavigationResponseProvideService
+    public: true
 
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationInterfaceLocationProjectionProviderInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationInterfaceLocationProjectionProvider
@@ -67,8 +79,19 @@ services:
   App\Navigating\ServiceInterface\Navigation\Render\NavigationRenderServiceInterface:
     alias: App\Navigating\Service\Navigation\Render\NavigationRenderService
 
+  navigating.renderer:
+    alias: App\Navigating\Service\Navigation\Render\NavigationTemplateRenderService
+    public: true
+
+  App\Navigating\ServiceInterface\Navigation\Render\NavigationTemplateRenderServiceInterface:
+    alias: App\Navigating\Service\Navigation\Render\NavigationTemplateRenderService
+
   App\Navigating\ServiceInterface\Navigation\NavigationRendererInterface:
     alias: App\Navigating\Service\Navigation\Render\NavigationTemplateRenderService
+
+  App\Navigating\Service\Twig\Navigation\NavigationTwigExtension:
+    tags:
+      - twig.extension
 
   App\Navigating\Service\Http\Navigation\NavigationHttpService:
     tags:
