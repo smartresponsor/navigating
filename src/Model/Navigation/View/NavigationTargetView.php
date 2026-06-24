@@ -30,6 +30,7 @@ final readonly class NavigationTargetView
         return [
             'type' => $this->type,
             'href' => $this->href,
+            'url' => $this->href,
             'route' => $this->route,
             'path' => $this->path,
             'action' => $this->action,

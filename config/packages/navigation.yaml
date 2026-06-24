@@ -306,7 +306,8 @@ navigation:
             domain: commerce # Logical domain.
             resource: offer # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No new/edit/import/export/archive here.
 
@@ -322,7 +323,25 @@ navigation:
             domain: catalog # Logical domain.
             resource: product # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
+            root_only: true # Root-level business section only.
+            crud_index_only: true # No CRUD action links in left menu.
+
+        consumer:
+          type: link # Clickable index link.
+          label: Consumer # Consumer management entry.
+          icon: consumer # Consumer icon key.
+          priority: 25 # Customer section order.
+          path: /consumer/index # Consumer index surface.
+          metadata:
+            business_visible: true # Visible for business users.
+            route_name: consumer.index # Canonical route name.
+            domain: consumer # Logical domain.
+            resource: consumer # Logical resource.
+            operation: index # LEFT MENU RULE: index only.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -338,7 +357,8 @@ navigation:
             domain: merchandise # Logical domain.
             resource: product # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -354,7 +374,8 @@ navigation:
             domain: vendor # Logical domain.
             resource: profile # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -370,7 +391,8 @@ navigation:
             domain: consumer # Logical domain.
             resource: profile # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -386,7 +408,8 @@ navigation:
             domain: order # Logical domain.
             resource: checkout # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -402,7 +425,8 @@ navigation:
             domain: cart # Logical domain.
             resource: item # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -418,7 +442,8 @@ navigation:
             domain: promotion # Logical domain.
             resource: coupon # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -434,7 +459,8 @@ navigation:
             domain: pricing # Logical domain.
             resource: price # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -450,7 +476,8 @@ navigation:
             domain: payment # Logical domain.
             resource: invoice # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -466,7 +493,8 @@ navigation:
             domain: billing # Logical domain.
             resource: invoice # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -482,7 +510,8 @@ navigation:
             domain: shipment # Logical domain.
             resource: package # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -498,7 +527,8 @@ navigation:
             domain: tax # Logical domain.
             resource: rule # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -514,7 +544,8 @@ navigation:
             domain: analysis # Logical domain.
             resource: report # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -530,7 +561,8 @@ navigation:
             domain: review # Logical domain.
             resource: product # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: business # Business navigation scope.
+            navigation_scope: business
+            menu_scope: business # Business navigation scope.
             root_only: true # Root-level business section only.
             crud_index_only: true # No CRUD action links in left menu.
 
@@ -555,7 +587,8 @@ navigation:
             domain: access # Logical domain.
             resource: access # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: system # System/admin navigation scope.
+            navigation_scope: system
+            menu_scope: system # System/admin navigation scope.
             root_only: true # Root-level system section only.
             crud_index_only: true # No CRUD action links in left menu.
             admin_only: true # Admin-only semantic marker.
@@ -574,7 +607,8 @@ navigation:
             domain: config # Logical domain.
             resource: option # Logical resource.
             operation: index # LEFT MENU RULE: index only.
-            navigation_scope: system # System/admin navigation scope.
+            navigation_scope: system
+            menu_scope: system # System/admin navigation scope.
             root_only: true # Root-level system section only.
             crud_index_only: true # No CRUD action links in left menu.
             admin_only: true # Admin-only semantic marker.

@@ -26,7 +26,7 @@ navigation:
           label: Register
           icon: UserAddOutlined
           priority: 20
-          path: /access/register
+          path: /access/signup
           visible_for_roles: [ROLE_GUEST]
           metadata:
             namespace_provider: App\Accessing\Service\Http\Access\AccessRegisterService
@@ -41,88 +41,58 @@ navigation:
           label: Recover access
           icon: KeyOutlined
           priority: 30
-          path: /access/recovery/request
+          path: /access/recover
           visible_for_roles: [ROLE_GUEST]
           metadata:
             namespace_provider: App\Accessing\Service\Http\Access\AccessRecoveryRequestService
-            route_name: access.recovery.request
+            route_name: access.recover_request
             domain: access
             resource: access.recovery
             operation: request
             navigation_scope: guest
             quick_menu: true
-        access_second_factor:
+        access_password:
           type: link
-          label: Second factor
-          icon: SafetyCertificateOutlined
+          label: Change password
+          icon: LockOutlined
           priority: 40
-          path: /access/second-factor
+          path: /access/password
           visible_for_roles: [ROLE_USER]
           metadata:
-            namespace_provider: App\Accessing\Service\Http\Access\AccessSecondFactorService
-            route_name: access.second_factor
+            namespace_provider: App\Accessing\Service\Http\Access\AccessPasswordService
+            route_name: access.password
             domain: access
-            resource: access.second_factor
-            operation: manage
+            resource: access.password
+            operation: change_password
             navigation_scope: user
             quick_menu: true
-        access_sessions:
+        access_switch:
           type: link
-          label: Sessions
-          icon: DesktopOutlined
+          label: Switch user
+          icon: SwapOutlined
           priority: 50
-          path: /access/sessions
-          visible_for_roles: [ROLE_USER]
+          path: /access/switch
+          visible_for_roles: [ROLE_USER, ROLE_ALLOWED_TO_SWITCH, ROLE_ADMIN, ROLE_SUPER_ADMIN]
           metadata:
-            namespace_provider: App\Accessing\Service\Http\Access\AccessSessionsService
-            route_name: access.sessions
+            namespace_provider: App\Accessing\Service\Http\Access\AccessSecurityFlowService
+            route_name: access.switch
             domain: access
-            resource: access.session
-            operation: index
+            resource: access
+            operation: switch_user
             navigation_scope: user
             quick_menu: true
-        access_security_events:
+        access_sign_out:
           type: link
-          label: Security events
-          icon: AuditOutlined
+          label: Sign out
+          icon: LogoutOutlined
           priority: 60
-          path: /access/security-events
+          path: /access/sign-out
           visible_for_roles: [ROLE_USER]
           metadata:
-            namespace_provider: App\Accessing\Service\Http\Access\AccessSecurityEventsService
-            route_name: access.security_events
+            namespace_provider: App\Accessing\Service\Http\Access\AccessSecurityFlowService
+            route_name: access.sign_out
             domain: access
-            resource: access.security_event
-            operation: index
+            resource: access
+            operation: sign_out
             navigation_scope: user
-            quick_menu: true
-        access_operator_users:
-          type: link
-          label: Access users
-          icon: TeamOutlined
-          priority: 70
-          path: /access/operator/users
-          visible_for_roles: [ROLE_ADMIN, ROLE_SUPER_ADMIN]
-          metadata:
-            namespace_provider: App\Accessing\Service\Http\Access\AccessOperatorUsersService
-            route_name: access.operator.users
-            domain: access
-            resource: access.operator
-            operation: users
-            navigation_scope: operator
-            quick_menu: true
-        access_operator_events:
-          type: link
-          label: Access audit
-          icon: FileProtectOutlined
-          priority: 80
-          path: /access/operator/security-events
-          visible_for_roles: [ROLE_ADMIN, ROLE_SUPER_ADMIN]
-          metadata:
-            namespace_provider: App\Accessing\Service\Http\Access\AccessOperatorSecurityEventsService
-            route_name: access.operator.security_events
-            domain: access
-            resource: access.operator.security_event
-            operation: index
-            navigation_scope: operator
             quick_menu: true

@@ -33,6 +33,14 @@ final class NavigationExtensionTest extends TestCase
         (new NavigationExtension())->load([
             [
                 'schema' => 3,
+                'shell_locations' => [
+                    'shell.left.middle' => [
+                        'label' => 'Left middle',
+                        'region' => 'left',
+                        'slot' => 'middle',
+                        'type' => 'navigation',
+                    ],
+                ],
                 'shell_groups' => [
                     'left_middle_primary' => [
                         'location' => 'shell.left.middle',

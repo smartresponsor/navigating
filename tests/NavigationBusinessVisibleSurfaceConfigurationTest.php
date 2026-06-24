@@ -8,6 +8,7 @@ use App\Navigating\Service\Navigation\Build\NavigationTreeBuildService;
 use App\Navigating\Service\Navigation\Filter\NavigationVisibilityFilterService;
 use App\Navigating\Service\Navigation\Normalize\NavigationConfigNormalizeService;
 use App\Navigating\Service\Navigation\Provide\NavigationRequestRoleProvideService;
+use App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService;
 use App\Navigating\Service\Navigation\Provide\NavigationShellProvideService;
 use App\Navigating\Service\Navigation\Resolve\NavigationTargetResolveService;
 use App\Navigating\Service\Navigation\Validate\NavigationConfigValidateService;
@@ -175,7 +176,15 @@ final class NavigationBusinessVisibleSurfaceConfigurationTest extends TestCase
         return new NavigationShellProvideService(
             new NavigationConfigNormalizeService(),
             new NavigationConfigValidateService(),
-            new NavigationVisibilityFilterService(new NavigationRequestRoleProvideService($config), $config),
+            new NavigationVisibilityFilterService(
+                new NavigationRequestRoleProvideService($config),
+                new NavigationRuntimeActivationProvideService(
+                    runtimeScope: ['user', 'system'],
+                    runtimeEntity: [],
+                    runtimeActivationStrict: false,
+                ),
+                $config,
+            ),
             new NavigationTreeBuildService(new NavigationTargetResolveService()),
             $config,
         );
