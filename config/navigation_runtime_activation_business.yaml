@@ -25,7 +25,15 @@ navigation:
         commission: { metadata: { namespace_provider: App\Commissioning } }
         currency: { metadata: { namespace_provider: App\Currencing } }
         exchange: { metadata: { namespace_provider: App\Exchanging } }
-        attachment: { metadata: { namespace_provider: App\Attaching } }
+        attachment:
+          metadata:
+            namespace_provider: App\Attaching
+            navigation_mode: workspace
+            context_provider: attachment.tree
+            context_location: shell.context.middle
+            content_location: shell.main.content
+            turbo_frame: _top
+            turbo_action: advance
         address: { metadata: { namespace_provider: App\Addressing } }
         locator: { metadata: { namespace_provider: App\Locating } }
         analysis: { metadata: { namespace_provider: App\Analysing } }
