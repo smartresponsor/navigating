@@ -36,15 +36,39 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString('#[ORM\\PreUpdate]', $menu);
     }
 
-    public function testBootstrapCommandIsExplicitAndNonDestructiveByDefault(): void
+    public function testBootstrapUsesOneReusableTransactionalImportService(): void
     {
         $command = self::read('src/Command/NavigationDatabaseImportCommand.php');
+        $import = self::read('src/Service/Navigation/Import/NavigationConfigImportService.php');
 
         self::assertStringContainsString("name: 'navigation:database:import-config'", $command);
         self::assertStringContainsString("'force'", $command);
         self::assertStringContainsString('Navigation database is not empty', $command);
-        self::assertStringContainsString('wrapInTransaction', $command);
-        self::assertStringContainsString('setParent($parent)', $command);
+        self::assertStringContainsString('NavigationConfigImportService', $command);
+        self::assertStringContainsString('wrapInTransaction', $import);
+        self::assertStringContainsString('setParent($parent)', $import);
+    }
+
+    public function testFixturesManifestAndPortableBackupRecoveryExist(): void
+    {
+        $fixture = self::read('src/DataFixtures/NavigationFixture.php');
+        $snapshot = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotService.php');
+        $backup = self::read('src/Command/NavigationBackupCreateCommand.php');
+        $restore = self::read('src/Command/NavigationBackupRestoreCommand.php');
+        $manifestWrite = self::read('src/Command/NavigationManifestWriteCommand.php');
+        $manifestRestore = self::read('src/Command/NavigationManifestRestoreCommand.php');
+
+        self::assertStringContainsString('extends Fixture', $fixture);
+        self::assertStringContainsString('navigation.install.json', $fixture);
+        self::assertStringContainsString('replaceFromConfig', $fixture);
+        self::assertStringContainsString("public const FORMAT = 'smartresponsor.navigation'", $snapshot);
+        self::assertStringContainsString("public const VERSION = 1", $snapshot);
+        self::assertStringContainsString('sha256', $snapshot);
+        self::assertStringContainsString('hash_equals', $snapshot);
+        self::assertStringContainsString("name: 'navigation:backup:create'", $backup);
+        self::assertStringContainsString("name: 'navigation:backup:restore'", $restore);
+        self::assertStringContainsString("name: 'navigation:manifest:write'", $manifestWrite);
+        self::assertStringContainsString("name: 'navigation:manifest:restore'", $manifestRestore);
     }
 
     public function testRuntimeUsesDoctrineAsTheOnlyMenuInventorySource(): void
@@ -72,7 +96,6 @@ final class NavigationDatabaseBackedModelTest extends TestCase
     {
         $contents = file_get_contents(dirname(__DIR__).'/'.$relativePath);
         self::assertIsString($contents);
-
         return $contents;
     }
 }
