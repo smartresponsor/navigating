@@ -58,6 +58,16 @@
       "@navigation:backup",
       "@navigation:schema:update"
     ],
+    "navigation:acceptance:preflight": [
+      "@php bin/console lint:container",
+      "@navigation:legacy:plan",
+      "@qa"
+    ],
+    "navigation:acceptance:verify": [
+      "@php bin/console doctrine:schema:validate",
+      "@php bin/console navigation:manifest:verify",
+      "@qa"
+    ],
     "qa": [
       "@qa:navigating-easyadmin",
       "@qa:navigating-database",
