@@ -54,6 +54,10 @@ final class NavigationAutoBackupSubscriber implements EventSubscriber
 
         $this->dirty = false;
 
+        if ($event->getObjectManager()->getConnection()->getTransactionNestingLevel() > 0) {
+            return;
+        }
+
         try {
             $this->autoBackup->writeLatest();
         } catch (\Throwable $exception) {
