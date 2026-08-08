@@ -135,7 +135,8 @@ final class NavigationEntityInvariantSubscriber implements EventSubscriber
             $this->requireNonEmpty($value, $field.' cannot be empty.');
         }
 
-        if (mb_strlen($value) > $maxLength) {
+        $length = function_exists('mb_strlen') ? mb_strlen($value) : strlen($value);
+        if ($length > $maxLength) {
             throw new \DomainException(sprintf('%s cannot exceed %d characters.', $field, $maxLength));
         }
     }
