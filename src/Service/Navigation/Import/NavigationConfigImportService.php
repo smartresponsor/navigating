@@ -98,7 +98,7 @@ final readonly class NavigationConfigImportService
 
             $item = (new NavigationItem())
                 ->setNavigationKey($itemKey)
-                ->setSlug($this->nullableString($itemConfig['slug'] ?? null) ?? $this->slugify($itemKey))
+                ->setSlug($this->nullableString($itemConfig['slug'] ?? null))
                 ->setLabel($this->stringValue($itemConfig['label'] ?? null, $itemKey))
                 ->setType($this->stringValue($itemConfig['type'] ?? null, 'link'))
                 ->setOperation($this->stringValue($itemConfig['operation'] ?? $metadata['operation'] ?? null, 'index'))
