@@ -70,7 +70,13 @@ The command is intentionally non-destructive by default. If navigation rows alre
 php bin/console navigation:database:import-config --force
 ```
 
-`NavigationFixture` uses the same transactional import implementation. It prefers the promoted repository install manifest when one exists and otherwise restores the canonical merged configuration.
+`NavigationFixture` uses the same transactional import implementation. It belongs to the `navigating` fixture group and must be loaded with `--append` so host application data is never purged:
+
+```text
+composer navigation:fixtures
+```
+
+The fixture prefers the promoted repository install manifest when one exists and otherwise restores the canonical merged configuration.
 
 ## Install manifest and backups
 
@@ -91,21 +97,45 @@ php bin/console navigation:backup:create
 php bin/console navigation:backup:restore <path> --force
 ```
 
-Snapshots are portable JSON, include the full menu/item configuration state, carry a format version and SHA-256 integrity value, and are restored transactionally through the same entity-first model.
+Snapshots are portable JSON, include the full functional menu/item configuration state, carry a format version and SHA-256 integrity value, and are restored transactionally through the same entity-first model.
+
+Generated row IDs and historical Objecting audit timestamps are intentionally outside the portable recovery contract.
 
 See `docs/navigation-recovery.md` for complete recovery procedures.
 
-## Safe schema update
+## Host-safe schema lifecycle
 
-Administrator-managed navigation data must be backed up before an operation that can rebuild or remove tables.
+Navigating never uses global `doctrine:schema:update --force` as its component maintenance command inside the host application.
 
-Use:
+For normal additive entity evolution use:
+
+```text
+php bin/console navigation:database:update
+```
+
+or:
+
+```text
+composer navigation:schema:update
+```
+
+The command passes only `NavigationMenu` and `NavigationItem` metadata to Doctrine `SchemaTool` and uses safe/save mode, so unrelated host tables are not destructive targets.
+
+For a planned additive update with an explicit recovery point use:
 
 ```text
 composer navigation:schema:safe
 ```
 
-This runs `navigation:backup:create` before `doctrine:schema:update --force`. A complete database loss can then be recovered from the last runtime backup, the promoted install manifest, or canonical fixtures.
+This runs `navigation:backup:create` followed by `navigation:database:update`.
+
+If Navigating entity evolution requires destructive DDL inside the component, use:
+
+```text
+php bin/console navigation:database:rebuild --force
+```
+
+The rebuild snapshots the current navigation state, drops/recreates only Navigating metadata tables, and restores the snapshot. It does not own unrelated host schema.
 
 ## Cache
 
@@ -134,14 +164,17 @@ After dependency update in the workspace, run:
 composer update
 composer validate
 php bin/console lint:container
+php bin/console navigation:database:update
 php bin/console doctrine:schema:validate
 php bin/console navigation:database:import-config
 php bin/console navigation:manifest:write
 php bin/console navigation:manifest:verify
 composer navigation:schema:safe
+php bin/console navigation:database:rebuild --force
+composer navigation:fixtures
 composer qa
 ```
 
-For an existing W31 database with administrator-managed navigation, create a backup before any forced schema update. Use `--force` on import/restore only when an intentional replacement is desired.
+For an existing W31 database with administrator-managed navigation, create a backup before any destructive component rebuild. Use `--force` on import/restore only when an intentional replacement is desired.
 
 The SQLite schema remains generated from entity metadata rather than from a migration file.
