@@ -42,7 +42,7 @@ final class NavigationRecoveryContractTest extends TestCase
         self::assertStringContainsString("'slug' => \$menu->getSlug()", $snapshot);
     }
 
-    public function testAdditiveSchemaUpdateIsComponentScopedAndNonDestructive(): void
+    public function testSchemaUpdateIsComponentScopedForDoctrineOrm36(): void
     {
         $command = self::read('src/Command/NavigationDatabaseUpdateCommand.php');
         $composer = self::read('composer.json');
@@ -50,10 +50,16 @@ final class NavigationRecoveryContractTest extends TestCase
         $workflow = self::read('.github/workflows/sqlite-recovery.yml');
 
         self::assertStringContainsString("name: 'navigation:database:update'", $command);
-        self::assertStringContainsString('NavigationMenu::class', $command);
-        self::assertStringContainsString('NavigationItem::class', $command);
-        self::assertStringContainsString('getUpdateSchemaSql($metadata, true)', $command);
-        self::assertStringContainsString('updateSchema($metadata, true)', $command);
+        self::assertStringContainsString("'navigation_menu' => true", $command);
+        self::assertStringContainsString("'navigation_item' => true", $command);
+        self::assertStringContainsString('getSchemaAssetsFilter()', $command);
+        self::assertStringContainsString('setSchemaAssetsFilter(', $command);
+        self::assertStringContainsString('getUpdateSchemaSql($metadata)', $command);
+        self::assertStringContainsString('updateSchema($metadata)', $command);
+        self::assertStringNotContainsString('getUpdateSchemaSql($metadata, true)', $command);
+        self::assertStringNotContainsString('updateSchema($metadata, true)', $command);
+        self::assertStringContainsString('finally', $command);
+        self::assertStringContainsString('setSchemaAssetsFilter($previousFilter)', $command);
         self::assertStringNotContainsString('dropSchema(', $command);
         self::assertStringNotContainsString('doctrine:schema:update --force', $composer);
         self::assertStringNotContainsString('doctrine:schema:update --force', $makefile);
