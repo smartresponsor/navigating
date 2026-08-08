@@ -14,6 +14,7 @@ final class NavigationRecoveryContractTest extends TestCase
             'src/DataFixtures/NavigationFixture.php',
             'src/Service/Navigation/Import/NavigationConfigImportService.php',
             'src/Service/Navigation/Persistence/NavigationPersistenceFinalizeService.php',
+            'src/Service/Navigation/Snapshot/NavigationSnapshotExportService.php',
             'src/Service/Navigation/Snapshot/NavigationSnapshotService.php',
             'src/Service/Navigation/Snapshot/NavigationAutoBackupService.php',
             'src/EventSubscriber/NavigationAutoBackupSubscriber.php',
@@ -30,17 +31,22 @@ final class NavigationRecoveryContractTest extends TestCase
         }
     }
 
-    public function testPortableSnapshotIsVersionedAndChecksummed(): void
+    public function testPortableSnapshotIsVersionedChecksummedAndCycleFree(): void
     {
+        $export = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotExportService.php');
         $snapshot = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotService.php');
+        $autoBackup = self::read('src/Service/Navigation/Snapshot/NavigationAutoBackupService.php');
 
-        self::assertStringContainsString("public const FORMAT = 'smartresponsor.navigation'", $snapshot);
-        self::assertStringContainsString('public const VERSION = 1', $snapshot);
-        self::assertStringContainsString("\$payload['sha256']", $snapshot);
-        self::assertStringContainsString('hash_equals', $snapshot);
-        self::assertStringContainsString("'archived_items'", $snapshot);
-        self::assertStringContainsString("'slug' => \$item->getSlug()", $snapshot);
-        self::assertStringContainsString("'slug' => \$menu->getSlug()", $snapshot);
+        self::assertStringContainsString("public const FORMAT = 'smartresponsor.navigation'", $export);
+        self::assertStringContainsString('public const VERSION = 1', $export);
+        self::assertStringContainsString("\$payload['sha256']", $export);
+        self::assertStringContainsString('hash_equals', $export);
+        self::assertStringContainsString("'archived_items'", $export);
+        self::assertStringContainsString("'slug' => \$item->getSlug()", $export);
+        self::assertStringContainsString("'slug' => \$menu->getSlug()", $export);
+        self::assertStringContainsString('NavigationSnapshotExportService $exportService', $snapshot);
+        self::assertStringContainsString('NavigationSnapshotExportService $snapshotExportService', $autoBackup);
+        self::assertStringNotContainsString('NavigationSnapshotService $snapshotService', $autoBackup);
     }
 
     public function testSchemaUpdateIsComponentScopedForDoctrineOrm36(): void
