@@ -32,6 +32,10 @@ class NavigationItem implements ObjectAuditedInterface
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
+    #[ORM\Version]
+    #[ORM\Column(type: Types::INTEGER)]
+    private int $version = 1;
+
     #[ORM\ManyToOne(targetEntity: NavigationMenu::class, inversedBy: 'items')]
     #[ORM\JoinColumn(name: 'menu_id', nullable: false, onDelete: 'CASCADE')]
     private ?NavigationMenu $menu = null;
@@ -110,6 +114,11 @@ class NavigationItem implements ObjectAuditedInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getVersion(): int
+    {
+        return $this->version;
     }
 
     public function getMenu(): ?NavigationMenu
