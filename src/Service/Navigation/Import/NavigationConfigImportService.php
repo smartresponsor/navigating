@@ -38,9 +38,11 @@ final readonly class NavigationConfigImportService
             $this->entityManager->flush();
 
             foreach ($groups as $menuKey => $groupConfig) {
-                if (is_string($menuKey) && is_array($groupConfig)) {
-                    $this->importGroup($menuKey, $groupConfig);
+                if (!is_string($menuKey) || '' === trim($menuKey) || !is_array($groupConfig)) {
+                    throw new \InvalidArgumentException('Navigation menu keys must be non-empty strings with object configuration.');
                 }
+
+                $this->importGroup(trim($menuKey), $groupConfig);
             }
 
             $this->entityManager->flush();
@@ -57,6 +59,10 @@ final readonly class NavigationConfigImportService
     private function importGroup(string $menuKey, array $groupConfig): void
     {
         $menuSlug = $this->stringValue($groupConfig['slug'] ?? null, $this->slugify($menuKey));
+        if ('' === trim($menuSlug)) {
+            throw new \InvalidArgumentException(sprintf('Navigation menu "%s" must resolve to a non-empty slug.', $menuKey));
+        }
+
         $menu = (new NavigationMenu())
             ->setMenuKey($menuKey)
             ->setSlug($menuSlug)
@@ -81,9 +87,10 @@ final readonly class NavigationConfigImportService
         $parentKeys = [];
 
         foreach ($itemsConfig as $itemKey => $itemConfig) {
-            if (!is_string($itemKey) || !is_array($itemConfig)) {
-                continue;
+            if (!is_string($itemKey) || '' === trim($itemKey) || !is_array($itemConfig)) {
+                throw new \InvalidArgumentException(sprintf('Navigation items in menu "%s" must use non-empty string keys with object configuration.', $menuKey));
             }
+            $itemKey = trim($itemKey);
 
             $metadata = is_array($itemConfig['metadata'] ?? null) ? $itemConfig['metadata'] : [];
             $parentKey = $metadata['parent_key'] ?? $itemConfig['parent_key'] ?? null;
