@@ -19,6 +19,27 @@ final readonly class NavigationSnapshotFileService
             JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR,
         ).PHP_EOL;
 
+        $lockPath = $directory.DIRECTORY_SEPARATOR.'.'.basename($path).'.lock';
+        $lockHandle = fopen($lockPath, 'c+b');
+        if (false === $lockHandle) {
+            throw new \RuntimeException('Unable to open navigation snapshot lock: '.$lockPath);
+        }
+
+        try {
+            if (!flock($lockHandle, LOCK_EX)) {
+                throw new \RuntimeException('Unable to acquire navigation snapshot lock.');
+            }
+
+            $this->writeLocked($path, $json);
+        } finally {
+            @flock($lockHandle, LOCK_UN);
+            @fclose($lockHandle);
+        }
+    }
+
+    private function writeLocked(string $path, string $json): void
+    {
+        $directory = dirname($path);
         $temporary = $directory.DIRECTORY_SEPARATOR.'.'.basename($path).'.'.bin2hex(random_bytes(6)).'.tmp';
         $rollback = $directory.DIRECTORY_SEPARATOR.'.'.basename($path).'.'.bin2hex(random_bytes(6)).'.rollback';
         $handle = fopen($temporary, 'xb');
@@ -27,10 +48,6 @@ final readonly class NavigationSnapshotFileService
         }
 
         try {
-            if (!flock($handle, LOCK_EX)) {
-                throw new \RuntimeException('Unable to lock temporary navigation snapshot.');
-            }
-
             $written = 0;
             $length = strlen($json);
             while ($written < $length) {
@@ -47,7 +64,6 @@ final readonly class NavigationSnapshotFileService
             if (function_exists('fsync') && !fsync($handle)) {
                 throw new \RuntimeException('Unable to synchronize navigation snapshot to disk.');
             }
-            flock($handle, LOCK_UN);
             fclose($handle);
             $handle = null;
 
@@ -72,7 +88,6 @@ final readonly class NavigationSnapshotFileService
             }
         } finally {
             if (is_resource($handle)) {
-                @flock($handle, LOCK_UN);
                 @fclose($handle);
             }
             if (is_file($temporary)) {
