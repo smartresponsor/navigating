@@ -80,12 +80,15 @@ final readonly class NavigationConfigImportService
             }
 
             $metadata = is_array($itemConfig['metadata'] ?? null) ? $itemConfig['metadata'] : [];
+            $parentKey = $metadata['parent_key'] ?? $itemConfig['parent_key'] ?? null;
+            unset($metadata['parent_key']);
+
             $item = (new NavigationItem())
                 ->setNavigationKey($itemKey)
                 ->setSlug($this->nullableString($itemConfig['slug'] ?? null) ?? $menuSlug.'-'.$this->slugify($itemKey))
                 ->setLabel($this->stringValue($itemConfig['label'] ?? null, $itemKey))
                 ->setType($this->stringValue($itemConfig['type'] ?? null, 'link'))
-                ->setOperation($this->stringValue($metadata['operation'] ?? $itemConfig['operation'] ?? null, 'index'))
+                ->setOperation($this->stringValue($itemConfig['operation'] ?? $metadata['operation'] ?? null, 'index'))
                 ->setIcon($this->nullableString($itemConfig['icon'] ?? null))
                 ->setBadge($this->nullableString($itemConfig['badge'] ?? null))
                 ->setVisibleForRoles($this->stringList($itemConfig['visible_for_roles'] ?? []))
@@ -100,7 +103,6 @@ final readonly class NavigationConfigImportService
             $this->entityManager->persist($item);
             $items[$itemKey] = $item;
 
-            $parentKey = $metadata['parent_key'] ?? $itemConfig['parent_key'] ?? null;
             if (is_string($parentKey) && '' !== trim($parentKey)) {
                 $parentKeys[$itemKey] = trim($parentKey);
             }
