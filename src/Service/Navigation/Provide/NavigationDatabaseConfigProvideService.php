@@ -31,7 +31,7 @@ final readonly class NavigationDatabaseConfigProvideService implements Navigatio
             $items = [];
 
             foreach ($menu->getItems() as $item) {
-                if (!$item->isEnabled() || $item->isArchived()) {
+                if (!$this->isEffectivelyEnabled($item)) {
                     continue;
                 }
 
@@ -55,6 +55,28 @@ final readonly class NavigationDatabaseConfigProvideService implements Navigatio
         }
 
         return [] === $groups ? [] : ['shell_groups' => $groups];
+    }
+
+    private function isEffectivelyEnabled(NavigationItem $item): bool
+    {
+        $cursor = $item;
+        $visited = [];
+
+        while (null !== $cursor) {
+            $objectId = spl_object_id($cursor);
+            if (isset($visited[$objectId])) {
+                throw new \LogicException('Navigation item hierarchy contains a cycle.');
+            }
+            $visited[$objectId] = true;
+
+            if (!$cursor->isEnabled() || $cursor->isArchived()) {
+                return false;
+            }
+
+            $cursor = $cursor->getParent();
+        }
+
+        return true;
     }
 
     /** @return array<string, mixed> */
