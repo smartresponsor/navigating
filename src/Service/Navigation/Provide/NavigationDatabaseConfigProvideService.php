@@ -6,16 +6,24 @@ namespace App\Navigating\Service\Navigation\Provide;
 
 use App\Navigating\Entity\NavigationItem;
 use App\Navigating\Repository\NavigationMenuRepository;
+use App\Navigating\Service\Navigation\Cache\NavigationConfigCacheService;
 use App\Navigating\ServiceInterface\Navigation\Provide\NavigationDatabaseConfigProvideServiceInterface;
 
 final readonly class NavigationDatabaseConfigProvideService implements NavigationDatabaseConfigProvideServiceInterface
 {
     public function __construct(
         private NavigationMenuRepository $menuRepository,
+        private NavigationConfigCacheService $cache,
     ) {
     }
 
     public function provideConfig(): array
+    {
+        return $this->cache->remember(fn (): array => $this->loadConfig());
+    }
+
+    /** @return array<string, mixed> */
+    private function loadConfig(): array
     {
         $groups = [];
 
