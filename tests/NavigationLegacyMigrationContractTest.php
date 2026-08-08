@@ -36,6 +36,16 @@ final class NavigationLegacyMigrationContractTest extends TestCase
         self::assertStringContainsString("isset(\$columns['parent_key'], \$columns['location'], \$columns['required_role'], \$columns['created_at'], \$columns['updated_at'])", $service);
         self::assertStringContainsString('crosses future menu boundaries', $service);
         self::assertStringContainsString('Refusing lossy migration.', $service);
+
+        $foreignKeyRestore = strpos($upgrade, '$this->restoreForeignKeyPragma($foreignKeysEnabled);', strpos($upgrade, '$this->assertForeignKeyIntegrity();'));
+        $shadowDrop = strpos($upgrade, "DROP TABLE '.self::SHADOW_TABLE", $foreignKeyRestore ?: 0);
+        $finalize = strpos($upgrade, '$this->finalizer->finalizeCommittedChange();');
+
+        self::assertIsInt($foreignKeyRestore);
+        self::assertIsInt($shadowDrop);
+        self::assertIsInt($finalize);
+        self::assertLessThan($shadowDrop, $foreignKeyRestore, 'Foreign-key connection state must be restored before deleting the physical legacy copy.');
+        self::assertLessThan($finalize, $shadowDrop, 'The shadow-table drop must be the last fallible database step before post-commit housekeeping.');
     }
 
     private static function read(string $relativePath): string
