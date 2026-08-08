@@ -6,6 +6,7 @@ namespace App\Navigating\Kernel;
 
 use App\Navigating\NavigatingBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
@@ -28,6 +29,10 @@ final class NavigationKernel extends Kernel
 
         if (class_exists(DoctrineBundle::class)) {
             yield new DoctrineBundle();
+        }
+
+        if (class_exists(DoctrineFixturesBundle::class)) {
+            yield new DoctrineFixturesBundle();
         }
 
         yield new NavigatingBundle();
