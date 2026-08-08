@@ -3,27 +3,31 @@
   "description": "Navigating process app",
   "type": "symfony-bundle",
   "license": "proprietary",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
     "php": "^8.4",
-    "doctrine/doctrine-bundle": "^3.0",
+    "cruding/crud": "dev-master",
+    "doctrine/doctrine-bundle": "^3.2",
     "doctrine/orm": "^3.3",
     "easycorp/easyadmin-bundle": "^5.0",
-    "objecting/object": "^1.0",
+    "interfacing/interface": "dev-master",
+    "objecting/object": "dev-master",
     "psr/log": "^3.0",
-    "symfony/config": "^8.0",
-    "symfony/console": "^8.0",
-    "symfony/dependency-injection": "^8.0",
-    "symfony/framework-bundle": "^8.0",
-    "symfony/http-foundation": "^8.0",
-    "symfony/http-kernel": "^8.0",
-    "symfony/routing": "^8.0",
-    "symfony/security-bundle": "^8.0",
-    "symfony/twig-bundle": "^8.0",
-    "symfony/yaml": "^8.0"
+    "symfony/config": "^8.1",
+    "symfony/console": "^8.1",
+    "symfony/dependency-injection": "^8.1",
+    "symfony/framework-bundle": "^8.1",
+    "symfony/http-foundation": "^8.1",
+    "symfony/http-kernel": "^8.1",
+    "symfony/routing": "^8.1",
+    "symfony/security-bundle": "^8.1",
+    "symfony/twig-bundle": "^8.1",
+    "symfony/yaml": "^8.1"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "3.94",
-    "phpunit/phpunit": "^11.0"
+    "friendsofphp/php-cs-fixer": "^3.95",
+    "phpunit/phpunit": "^12.0"
   },
   "autoload": {
     "psr-4": {
@@ -46,7 +50,7 @@
   "extra": {
     "symfony": {
       "allow-contrib": false,
-      "require": "8.0.*",
+      "require": "8.1.*",
       "bundles": {
         "App\\Navigating\\NavigatingBundle": [
           "all"
