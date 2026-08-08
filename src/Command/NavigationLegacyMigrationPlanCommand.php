@@ -125,8 +125,7 @@ final class NavigationLegacyMigrationPlanCommand extends Command
                 continue;
             }
 
-            $metadata = is_array($groupConfig['metadata'] ?? null) ? $groupConfig['metadata'] : [];
-            $synthetic = str_starts_with($groupKey, 'legacy_') || true === ($metadata['legacy_migrated'] ?? false) && !isset($metadata['canonical_group']);
+            $synthetic = str_starts_with($groupKey, 'legacy_');
             if ($synthetic) {
                 ++$syntheticCount;
             }
