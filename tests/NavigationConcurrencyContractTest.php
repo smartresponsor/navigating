@@ -27,7 +27,7 @@ final class NavigationConcurrencyContractTest extends TestCase
         self::assertStringContainsString("bin2hex(random_bytes(4))", $legacyPlan);
     }
 
-    public function testDoctrineEntitiesUseOptimisticLocking(): void
+    public function testDoctrineEntitiesUseOrmOwnedOptimisticVersionColumns(): void
     {
         $menu = self::read('src/Entity/NavigationMenu.php');
         $item = self::read('src/Entity/NavigationItem.php');
@@ -38,21 +38,27 @@ final class NavigationConcurrencyContractTest extends TestCase
         self::assertStringContainsString('private int $version = 1;', $item);
         self::assertStringContainsString('public function getVersion(): int', $menu);
         self::assertStringContainsString('public function getVersion(): int', $item);
-        self::assertStringContainsString('public function setVersion(int $version): self', $menu);
-        self::assertStringContainsString('public function setVersion(int $version): self', $item);
+        self::assertStringNotContainsString('function setVersion(', $menu);
+        self::assertStringNotContainsString('function setVersion(', $item);
     }
 
-    public function testEasyAdminCarriesExpectedVersionAcrossLongRunningEditForms(): void
+    public function testEasyAdminCarriesExpectedVersionAsUnmappedLongRunningFormToken(): void
     {
         $menuController = self::read('src/Controllers/Admin/NavigationMenuCrudController.php');
         $itemController = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
 
         foreach ([$menuController, $itemController] as $controller) {
-            self::assertStringContainsString("HiddenField::new('version')->onlyWhenUpdating()", $controller);
+            self::assertStringContainsString("private const EXPECTED_VERSION_FIELD = '_navigation_expected_version';", $controller);
+            self::assertStringContainsString('createEditFormBuilder(', $controller);
+            self::assertStringContainsString('HiddenType::class', $controller);
+            self::assertStringContainsString("'mapped' => false", $controller);
+            self::assertStringContainsString("'data' => (string) \$instance->getVersion()", $controller);
+            self::assertStringContainsString('request->attributes->set(self::EXPECTED_VERSION_FIELD', $controller);
             self::assertStringContainsString('LockMode::OPTIMISTIC', $controller);
-            self::assertStringContainsString('->getVersion()', $controller);
+            self::assertStringContainsString('$entityManager->lock($entityInstance, LockMode::OPTIMISTIC, $expectedVersion)', $controller);
             self::assertStringContainsString('catch (OptimisticLockException)', $controller);
             self::assertStringContainsString("addFlash('warning'", $controller);
+            self::assertStringNotContainsString("HiddenField::new('version')", $controller);
         }
     }
 
