@@ -140,6 +140,31 @@ An explicit pre-rebuild backup path may be supplied:
 php bin/console navigation:database:rebuild --force --backup-path=shared/backup/navigation-pre-rebuild.json
 ```
 
+## Make targets
+
+The repository also exposes the same operational surface through `make`:
+
+```text
+make navigation-install
+make navigation-backup
+make navigation-restore BACKUP=shared/backup/navigation.json
+make navigation-manifest-write
+make navigation-manifest-verify
+make navigation-manifest-restore
+make navigation-schema-safe
+make navigation-rebuild
+make navigation-rebuild BACKUP=shared/backup/navigation-pre-rebuild.json
+make navigation-qa
+```
+
+`BACKUP` is required for `navigation-restore` and optional for `navigation-backup` and `navigation-rebuild`.
+
+## SQLite recovery CI
+
+`.github/workflows/sqlite-recovery.yml` defines a clean SQLite recovery smoke. It installs the package, validates the Symfony container, creates the schema, bootstraps navigation, writes and verifies an ephemeral install manifest, creates an explicit backup, performs a Navigating-only table rebuild, restores an explicit backup, verifies the restored state and runs the QA suite.
+
+The workflow intentionally uses the standalone SQLite URL from `config/standalone/doctrine.yaml`, so CI exercises the same database configuration as a standalone installation.
+
 ## Complete database loss
 
 For a completely removed SQLite database, the recovery order is:
