@@ -70,7 +70,21 @@ navigation_item
 
 Navigation item keys are unique within a menu rather than globally because keys such as `vendor`, `catalog`, or `attachment` can legitimately occur in multiple menus.
 
-No Doctrine migrations are introduced for the current development workflow. Schema creation remains metadata-driven through `doctrine:schema:update --force` in standalone/dev mode.
+No Doctrine migrations are introduced for the current development workflow. Navigating schema ownership is component-scoped:
+
+```text
+php bin/console navigation:database:update
+```
+
+This applies additive-only changes using `NavigationMenu` and `NavigationItem` metadata in Doctrine safe/save mode. Navigating does not use global `doctrine:schema:update --force` as its host-application maintenance command.
+
+Destructive Navigating schema evolution uses:
+
+```text
+php bin/console navigation:database:rebuild --force
+```
+
+which snapshots the navigation configuration, recreates only Navigating tables, and restores the snapshot.
 
 ## Objecting
 
@@ -103,6 +117,12 @@ Navigation entities are therefore available to the host application's Cruding in
 
 ## Bootstrap
 
+Create/update the Navigating schema with:
+
+```text
+php bin/console navigation:database:update
+```
+
 Current configuration inventory is imported once with:
 
 ```text
@@ -116,6 +136,30 @@ php bin/console navigation:database:import-config --force
 ```
 
 If runtime contains no enabled Doctrine menus, Navigating fails explicitly with bootstrap guidance instead of silently falling back to YAML menu content.
+
+## Fixtures and recovery
+
+Canonical fixtures are isolated in the `navigating` fixture group. Use only the host-safe command:
+
+```text
+composer navigation:fixtures
+```
+
+which loads with `--group=navigating --append` and therefore does not purge unrelated host data.
+
+Navigating also supports:
+
+```text
+navigation:backup:create
+navigation:backup:restore <path> --force
+navigation:manifest:write
+navigation:manifest:verify
+navigation:manifest:restore --force
+```
+
+and keeps rolling `auto-latest.json` / `auto-previous.json` recovery snapshots under `var/backup/navigating/` after successful navigation writes.
+
+See `docs/navigation-recovery.md` for the full recovery canon.
 
 ## Cache
 
@@ -146,10 +190,15 @@ Run after dependency/schema changes:
 composer update
 composer validate
 php bin/console lint:container
+php bin/console navigation:database:update
 php bin/console doctrine:schema:validate
-php bin/console doctrine:schema:update --force
 php bin/console navigation:database:import-config
+php bin/console navigation:manifest:write
+php bin/console navigation:manifest:verify
+composer navigation:schema:safe
+php bin/console navigation:database:rebuild --force
+composer navigation:fixtures
 composer qa
 ```
 
-The SQLite schema is regenerated from entity metadata rather than a migration file.
+The SQLite schema is generated from Navigating entity metadata rather than a migration file.
