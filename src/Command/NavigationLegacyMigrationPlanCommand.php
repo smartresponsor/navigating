@@ -84,12 +84,73 @@ final class NavigationLegacyMigrationPlanCommand extends Command
             return Command::FAILURE;
         }
 
-        $output->writeln(sprintf('<info>Legacy migration plan validated for %d navigation items.</info>', $plan['rows']));
-        $output->writeln(sprintf('<info>Future W31 menus: %d.</info>', count($plan['shell_groups'])));
+        $this->renderReport($output, $plan['shell_groups'], $plan['archived_items'], $plan['raw_rows']);
         $output->writeln('<info>Database was not modified.</info>');
         $output->writeln('<comment>Plan: '.$path.'</comment>');
+        $output->writeln('<comment>Plan includes the raw legacy rows, converted W31 payload and SHA-256 checksum.</comment>');
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * @param array<string, mixed> $groups
+     * @param list<mixed> $archivedItems
+     * @param list<array<string, mixed>> $rawRows
+     */
+    private function renderReport(OutputInterface $output, array $groups, array $archivedItems, array $rawRows): void
+    {
+        $disabledCount = 0;
+        $roleRestrictedCount = 0;
+        foreach ($rawRows as $row) {
+            if (!(bool) ($row['enabled'] ?? true)) {
+                ++$disabledCount;
+            }
+            if (is_string($row['required_role'] ?? null) && '' !== trim((string) $row['required_role'])) {
+                ++$roleRestrictedCount;
+            }
+        }
+
+        $syntheticCount = 0;
+        $output->writeln(sprintf('<info>Legacy migration plan validated for %d navigation items.</info>', count($rawRows)));
+        $output->writeln(sprintf(
+            '<info>State summary: %d disabled, %d archived, %d role-restricted.</info>',
+            $disabledCount,
+            count($archivedItems),
+            $roleRestrictedCount,
+        ));
+        $output->writeln(sprintf('<info>Future W31 menus: %d.</info>', count($groups)));
+
+        foreach ($groups as $groupKey => $groupConfig) {
+            if (!is_string($groupKey) || !is_array($groupConfig)) {
+                continue;
+            }
+
+            $metadata = is_array($groupConfig['metadata'] ?? null) ? $groupConfig['metadata'] : [];
+            $synthetic = str_starts_with($groupKey, 'legacy_') || true === ($metadata['legacy_migrated'] ?? false) && !isset($metadata['canonical_group']);
+            if ($synthetic) {
+                ++$syntheticCount;
+            }
+
+            $location = is_string($groupConfig['location'] ?? null) ? $groupConfig['location'] : '(unknown)';
+            $items = is_array($groupConfig['items'] ?? null) ? $groupConfig['items'] : [];
+            $marker = $synthetic ? ' synthetic-legacy' : '';
+            $output->writeln(sprintf(
+                '  - <comment>%s</comment> @ %s: %d items%s',
+                $groupKey,
+                $location,
+                count($items),
+                $marker,
+            ));
+        }
+
+        if ($syntheticCount > 0) {
+            $output->writeln(sprintf(
+                '<comment>%d future menu(s) are synthetic legacy groups created to preserve items not present in the canonical inventory.</comment>',
+                $syntheticCount,
+            ));
+        } else {
+            $output->writeln('<info>All legacy items mapped into canonical W31 menu groups.</info>');
+        }
     }
 
     /** @param array<string, mixed> $payload */
