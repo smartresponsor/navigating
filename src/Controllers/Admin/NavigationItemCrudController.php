@@ -148,12 +148,13 @@ final class NavigationItemCrudController extends AbstractCrudController
     public function duplicateItem(AdminContext $context, EntityManagerInterface $entityManager): RedirectResponse
     {
         $item = $this->resolveNavigationItem($context);
+        $timestamp = date('YmdHis');
         $copy = (new NavigationItem())
             ->setMenu($item->getMenu())
             ->setParent($item->getParent())
-            ->setNavigationKey($item->getNavigationKey().'.copy.'.date('YmdHis'))
-            ->setLabel($item->getLabel().' copy')
-            ->setSlug(null === $item->getSlug() ? null : $item->getSlug().'-copy-'.date('YmdHis'))
+            ->setNavigationKey($this->appendWithinLimit($item->getNavigationKey(), '.copy.'.$timestamp, 160))
+            ->setLabel($this->appendWithinLimit($item->getLabel(), ' copy', 140))
+            ->setSlug(null === $item->getSlug() ? null : $this->appendWithinLimit($item->getSlug(), '-copy-'.$timestamp, 180))
             ->setType($item->getType())
             ->setRouteName($item->getRouteName())
             ->setPath($item->getPath())
@@ -185,5 +186,36 @@ final class NavigationItemCrudController extends AbstractCrudController
         }
 
         return $instance;
+    }
+
+    private function appendWithinLimit(string $base, string $suffix, int $maxLength): string
+    {
+        $allowed = max(0, $maxLength - $this->characterLength($suffix));
+
+        return $this->substring($base, $allowed).$suffix;
+    }
+
+    private function substring(string $value, int $length): string
+    {
+        if (function_exists('mb_substr')) {
+            return mb_substr($value, 0, $length, 'UTF-8');
+        }
+
+        if (1 === preg_match_all('/./us', $value, $matches)) {
+            return implode('', array_slice($matches[0], 0, $length));
+        }
+
+        return substr($value, 0, $length);
+    }
+
+    private function characterLength(string $value): int
+    {
+        if (function_exists('mb_strlen')) {
+            return mb_strlen($value, 'UTF-8');
+        }
+
+        $matched = preg_match_all('/./us', $value, $matches);
+
+        return false === $matched ? strlen($value) : $matched;
     }
 }
