@@ -121,9 +121,12 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
             $this->restoreArchivedItems($payload['archived_items']);
             $this->assertImportedCount((int) $payload['row_count']);
             $this->assertForeignKeyIntegrity();
-            $connection->executeStatement('DROP TABLE '.self::SHADOW_TABLE);
+
+            // Keep the physical legacy copy until every fallible database check and
+            // connection-state restoration has completed. Dropping the shadow table
+            // is the irreversible commit point of the legacy upgrade.
             $this->restoreForeignKeyPragma($foreignKeysEnabled);
-            $this->finalizer->finalizeCommittedChange();
+            $connection->executeStatement('DROP TABLE '.self::SHADOW_TABLE);
         } catch (\Throwable $exception) {
             $recovered = $this->restoreLegacySchema($metadata, $legacySchemaObjects);
             $this->restoreForeignKeyPragma($foreignKeysEnabled);
@@ -134,6 +137,11 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
 
             return Command::FAILURE;
         }
+
+        // Post-commit housekeeping is intentionally outside the rollback block.
+        // The finalizer contains its own error isolation and must never turn a
+        // completed schema upgrade into an attempted legacy rollback.
+        $this->finalizer->finalizeCommittedChange();
 
         $output->writeln(sprintf('<info>Legacy navigation upgraded successfully: %d items across %d menus.</info>', (int) $payload['row_count'], count($payload['shell_groups'])));
         $output->writeln('<comment>Validated migration plan retained at '.$path.'</comment>');
