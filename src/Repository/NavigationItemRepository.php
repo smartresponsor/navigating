@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Navigating\Repository;
 
 use App\Navigating\Entity\NavigationItem;
+use App\Navigating\Entity\NavigationMenu;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,7 +20,7 @@ final class NavigationItemRepository extends ServiceEntityRepository
     public function findOneBySlug(string $slug): ?NavigationItem
     {
         /** @var NavigationItem|null $item */
-        $item = $this->findOneBy(['slug' => $slug]);
+        $item = $this->findOneBy(['slug' => trim($slug)]);
 
         return $item;
     }
@@ -37,14 +38,34 @@ final class NavigationItemRepository extends ServiceEntityRepository
     }
 
     /** @return list<NavigationItem> */
+    public function findEnabledByMenu(NavigationMenu $menu): array
+    {
+        return $this->createQueryBuilder('item')
+            ->andWhere('item.menu = :menu')
+            ->andWhere('item.enabled = :enabled')
+            ->andWhere('item.archivedAt IS NULL')
+            ->setParameter('menu', $menu)
+            ->setParameter('enabled', true)
+            ->orderBy('item.position', 'ASC')
+            ->addOrderBy('item.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /** @return list<NavigationItem> */
     public function findEnabledByLocation(string $location): array
     {
         return $this->createQueryBuilder('item')
+            ->innerJoin('item.menu', 'menu')
+            ->andWhere('menu.enabled = :enabled')
+            ->andWhere('menu.location = :location')
             ->andWhere('item.enabled = :enabled')
-            ->andWhere('item.location = :location')
+            ->andWhere('item.archivedAt IS NULL')
             ->setParameter('enabled', true)
-            ->setParameter('location', $location)
-            ->orderBy('item.position', 'ASC')
+            ->setParameter('location', trim($location))
+            ->orderBy('menu.priority', 'ASC')
+            ->addOrderBy('item.position', 'ASC')
             ->addOrderBy('item.id', 'ASC')
             ->getQuery()
             ->getResult()
