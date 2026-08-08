@@ -21,6 +21,11 @@ services:
     tags:
       - { name: doctrine.event_subscriber }
 
+  App\Navigating\EventSubscriber\NavigationAutoBackupSubscriber:
+    autoconfigure: false
+    tags:
+      - { name: doctrine.event_subscriber }
+
   App\Navigating\ServiceInterface\Navigation\Normalize\NavigationConfigNormalizeServiceInterface:
     alias: App\Navigating\Service\Navigation\Normalize\NavigationConfigNormalizeService
 
