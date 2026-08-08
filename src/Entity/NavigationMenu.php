@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\UniqueConstraint(name: 'uniq_navigation_menu_key', columns: ['menu_key'])]
 #[ORM\UniqueConstraint(name: 'uniq_navigation_menu_slug', columns: ['slug'])]
 #[ORM\Index(name: 'idx_navigation_menu_location_enabled_priority', columns: ['location', 'enabled', 'priority'])]
+#[ORM\HasLifecycleCallbacks]
 final class NavigationMenu implements ObjectAuditedInterface
 {
     use ObjectAuditEmbeddableTrait;
@@ -242,6 +243,12 @@ final class NavigationMenu implements ObjectAuditedInterface
         }
 
         return $this;
+    }
+
+    #[ORM\PreUpdate]
+    public function touch(): void
+    {
+        $this->touchModified();
     }
 
     public function __toString(): string
