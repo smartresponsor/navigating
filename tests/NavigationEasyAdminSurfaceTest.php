@@ -11,9 +11,12 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
     public function testNativeEasyAdminExceptionFilesExist(): void
     {
         self::assertFileExists(__DIR__.'/../src/Controllers/Admin/DashboardController.php');
+        self::assertFileExists(__DIR__.'/../src/Controllers/Admin/NavigationMenuCrudController.php');
         self::assertFileExists(__DIR__.'/../src/Controllers/Admin/NavigationItemCrudController.php');
         self::assertFileExists(__DIR__.'/../src/Controllers/Admin/AGENTS.md');
+        self::assertFileExists(__DIR__.'/../src/Entity/NavigationMenu.php');
         self::assertFileExists(__DIR__.'/../src/Entity/NavigationItem.php');
+        self::assertFileExists(__DIR__.'/../src/Repository/NavigationMenuRepository.php');
         self::assertFileExists(__DIR__.'/../src/Repository/NavigationItemRepository.php');
         self::assertFileExists(__DIR__.'/../config/routes/easyadmin.yaml');
         self::assertFileExists(__DIR__.'/../config/standalone/doctrine.yaml');
@@ -29,7 +32,9 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
         self::assertStringContainsString("routePath: '/'", $dashboard);
         self::assertStringContainsString("routeName: 'ea'", $dashboard);
         self::assertStringContainsString("#[IsGranted('ROLE_ADMIN')]", $dashboard);
-        self::assertStringContainsString("redirectToRoute('ea_navigation_item_index')", $dashboard);
+        self::assertStringContainsString("redirectToRoute('ea_navigation_menu_index')", $dashboard);
+        self::assertStringContainsString("linkToCrud('Menus'", $dashboard);
+        self::assertStringContainsString("linkToCrud('Items'", $dashboard);
     }
 
     public function testRoutePrefixIsEnvironmentBacked(): void
@@ -43,16 +48,20 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
         self::assertStringContainsString('ROLE_ADMIN', $security);
     }
 
-    public function testNavigationItemUsesNativeEasyAdminCrud(): void
+    public function testNavigationEntitiesUseNativeEasyAdminCrud(): void
     {
-        $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+        $menuController = self::read('src/Controllers/Admin/NavigationMenuCrudController.php');
+        $itemController = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
 
-        self::assertStringContainsString('extends AbstractCrudController', $controller);
-        self::assertStringContainsString('return NavigationItem::class;', $controller);
-        self::assertStringContainsString("#[IsGranted('ROLE_ADMIN')]", $controller);
-        self::assertStringContainsString('configureActions', $controller);
-        self::assertStringContainsString('linkToCrudAction', $controller);
-        self::assertStringContainsString('@EasyAdmin/page/content.html.twig', $controller);
+        self::assertStringContainsString('extends AbstractCrudController', $menuController);
+        self::assertStringContainsString('return NavigationMenu::class;', $menuController);
+        self::assertStringContainsString("#[IsGranted('ROLE_ADMIN')]", $menuController);
+
+        self::assertStringContainsString('extends AbstractCrudController', $itemController);
+        self::assertStringContainsString('return NavigationItem::class;', $itemController);
+        self::assertStringContainsString("#[IsGranted('ROLE_ADMIN')]", $itemController);
+        self::assertStringContainsString("AssociationField::new('menu')", $itemController);
+        self::assertStringContainsString("AssociationField::new('parent')", $itemController);
     }
 
     public function testEasyAdminExceptionHasNearestAutomationRules(): void
