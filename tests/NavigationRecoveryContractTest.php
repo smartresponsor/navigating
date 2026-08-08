@@ -72,6 +72,21 @@ final class NavigationRecoveryContractTest extends TestCase
         self::assertStringContainsString('doctrine.event_subscriber', $services);
     }
 
+    public function testFixtureLoadingCannotPurgeUnrelatedHostTables(): void
+    {
+        $fixture = self::read('src/DataFixtures/NavigationFixture.php');
+        $composer = json_decode(self::read('composer.json'), true, 512, JSON_THROW_ON_ERROR);
+        $script = $composer['scripts']['navigation:fixtures'] ?? null;
+
+        self::assertStringContainsString('FixtureGroupInterface', $fixture);
+        self::assertStringContainsString("return ['navigating'];", $fixture);
+        self::assertSame(
+            '@php bin/console doctrine:fixtures:load --group=navigating --append --no-interaction',
+            $script,
+        );
+        self::assertStringContainsString('replaceFromConfig', $fixture);
+    }
+
     public function testComposerExposesRecoveryCommands(): void
     {
         $composer = json_decode(self::read('composer.json'), true, 512, JSON_THROW_ON_ERROR);
