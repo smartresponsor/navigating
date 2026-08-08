@@ -16,8 +16,8 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString("#[ORM\\Table(name: 'navigation_menu')]", $menu);
         self::assertStringContainsString("#[ORM\\Table(name: 'navigation_item')]", $item);
         self::assertStringContainsString("columns: ['menu_id', 'navigation_key']", $item);
-        self::assertStringContainsString("type: Types::JSON", $menu);
-        self::assertStringContainsString("type: Types::JSON", $item);
+        self::assertStringContainsString('type: Types::JSON', $menu);
+        self::assertStringContainsString('type: Types::JSON', $item);
         self::assertStringNotContainsString('jsonb', strtolower($menu.$item));
         self::assertStringNotContainsString('uuid_generate', strtolower($menu.$item));
     }
@@ -30,9 +30,9 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString('visibleForRoles', $menu);
         self::assertStringContainsString('visibleForScopes', $menu);
         self::assertStringContainsString('visibleForEnvironments', $menu);
-        self::assertStringContainsString("'visible_for_roles' => $menu->getVisibleForRoles()", $provider);
-        self::assertStringContainsString("'visible_for_scopes' => $menu->getVisibleForScopes()", $provider);
-        self::assertStringContainsString("'visible_for_environments' => $menu->getVisibleForEnvironments()", $provider);
+        self::assertStringContainsString("'visible_for_roles' => \$menu->getVisibleForRoles()", $provider);
+        self::assertStringContainsString("'visible_for_scopes' => \$menu->getVisibleForScopes()", $provider);
+        self::assertStringContainsString("'visible_for_environments' => \$menu->getVisibleForEnvironments()", $provider);
     }
 
     public function testBootstrapCommandIsExplicitAndNonDestructiveByDefault(): void
