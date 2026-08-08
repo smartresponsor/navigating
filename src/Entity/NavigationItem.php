@@ -37,7 +37,7 @@ class NavigationItem implements ObjectAuditedInterface
     private ?NavigationMenu $menu = null;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
-    #[ORM\JoinColumn(name: 'parent_id', nullable: true, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'parent_id', nullable: true, onDelete: 'SET NULL')]
     private ?self $parent = null;
 
     /** @var Collection<int, self> */
@@ -141,6 +141,12 @@ class NavigationItem implements ObjectAuditedInterface
 
         if (null !== $parent && null !== $this->menu && $parent->getMenu() !== $this->menu) {
             throw new \DomainException('Navigation item parent must belong to the same menu.');
+        }
+
+        for ($ancestor = $parent; null !== $ancestor; $ancestor = $ancestor->getParent()) {
+            if ($ancestor === $this) {
+                throw new \DomainException('Navigation item hierarchy cannot contain cycles.');
+            }
         }
 
         $this->parent = $parent;
