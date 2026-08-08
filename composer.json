@@ -43,12 +43,13 @@
   },
   "scripts": {
     "qa:navigating-easyadmin": "@php vendor/bin/phpunit tests/NavigationEasyAdminSurfaceTest.php tests/NavigationEasyAdminSymfonyTypeTest.php tests/NavigationEasyAdminBoundaryTest.php",
-    "qa:navigating-database": "@php vendor/bin/phpunit tests/NavigationDatabaseBackedModelTest.php tests/NavigationRecoveryContractTest.php tests/NavigationTreeInvariantTest.php tests/NavigationTargetInvariantTest.php tests/NavigationEntityInvariantTest.php",
+    "qa:navigating-database": "@php vendor/bin/phpunit tests/NavigationDatabaseBackedModelTest.php tests/NavigationRecoveryContractTest.php tests/NavigationTreeInvariantTest.php tests/NavigationTargetInvariantTest.php tests/NavigationEntityInvariantTest.php tests/NavigationLegacyMigrationContractTest.php",
     "qa:navigating-runtime": "@php vendor/bin/phpunit tests/NavigationRuntimeActivationTest.php tests/NavigationRuntimeActivationConfigTest.php",
     "navigation:fixtures": "@php bin/console doctrine:fixtures:load --group=navigating --append --no-interaction",
     "navigation:backup": "@php bin/console navigation:backup:create",
     "navigation:manifest:write": "@php bin/console navigation:manifest:write",
     "navigation:manifest:restore": "@php bin/console navigation:manifest:restore --force",
+    "navigation:legacy:plan": "@php bin/console navigation:database:legacy-plan",
     "navigation:schema:update": "@php bin/console navigation:database:update",
     "navigation:rebuild": "@php bin/console navigation:database:rebuild --force",
     "navigation:schema:safe": [
