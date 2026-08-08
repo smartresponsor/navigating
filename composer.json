@@ -27,6 +27,7 @@
     "symfony/yaml": "^8.1"
   },
   "require-dev": {
+    "doctrine/doctrine-fixtures-bundle": "^4.3",
     "friendsofphp/php-cs-fixer": "^3.95",
     "phpunit/phpunit": "^12.0"
   },
@@ -44,6 +45,8 @@
     "qa:navigating-easyadmin": "@php vendor/bin/phpunit tests/NavigationEasyAdminSurfaceTest.php tests/NavigationEasyAdminSymfonyTypeTest.php tests/NavigationEasyAdminBoundaryTest.php",
     "qa:navigating-database": "@php vendor/bin/phpunit tests/NavigationDatabaseBackedModelTest.php",
     "qa:navigating-runtime": "@php vendor/bin/phpunit tests/NavigationRuntimeActivationTest.php tests/NavigationRuntimeActivationConfigTest.php",
+    "navigation:fixtures": "@php bin/console doctrine:fixtures:load --no-interaction",
+    "navigation:backup": "@php bin/console navigation:backup:create",
     "qa": [
       "@qa:navigating-easyadmin",
       "@qa:navigating-database",
