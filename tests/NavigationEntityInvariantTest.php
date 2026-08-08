@@ -102,6 +102,21 @@ final class NavigationEntityInvariantTest extends TestCase
         self::addToAssertionCount(1);
     }
 
+    public function testUtf8LabelsUseCharacterLengthInsteadOfByteLength(): void
+    {
+        $menu = (new NavigationMenu())
+            ->setMenuKey('main')
+            ->setSlug('main')
+            ->setLabel(str_repeat('Меню', 35))
+            ->setLocation('shell.left.middle')
+            ->setType('navigation');
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $this->subscriber()->prePersist(new PrePersistEventArgs($menu, $entityManager));
+
+        self::addToAssertionCount(1);
+    }
+
     private function subscriber(): NavigationEntityInvariantSubscriber
     {
         return new NavigationEntityInvariantSubscriber([
