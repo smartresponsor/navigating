@@ -40,6 +40,7 @@ final readonly class NavigationDatabaseConfigProvideService implements Navigatio
 
             $groups[$menu->getMenuKey()] = [
                 'label' => $menu->getLabel(),
+                'slug' => $menu->getSlug(),
                 'location' => $menu->getLocation(),
                 'type' => $menu->getType(),
                 'priority' => $menu->getPriority(),
@@ -60,6 +61,7 @@ final readonly class NavigationDatabaseConfigProvideService implements Navigatio
     private function itemConfig(NavigationItem $item): array
     {
         $metadata = $item->getMetadata();
+        unset($metadata['parent_key']);
 
         if (null !== $item->getParent()) {
             $metadata['parent_key'] = $item->getParent()?->getNavigationKey();
@@ -68,6 +70,8 @@ final readonly class NavigationDatabaseConfigProvideService implements Navigatio
         $config = [
             'type' => $item->getType(),
             'label' => $item->getLabel(),
+            'slug' => $item->getSlug(),
+            'operation' => $item->getOperation(),
             'priority' => $item->getPosition(),
             'enabled' => $item->isEnabled(),
             'visible' => true,
