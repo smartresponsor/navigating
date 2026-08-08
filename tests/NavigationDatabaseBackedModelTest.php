@@ -63,7 +63,7 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString('Events::postUpdate', $subscriber);
         self::assertStringContainsString('Events::postRemove', $subscriber);
         self::assertStringContainsString('doctrine.event_subscriber', $services);
-        self::assertStringContainsString("$cache: '@cache.app'", $services);
+        self::assertStringContainsString("\$cache: '@cache.app'", $services);
     }
 
     private static function read(string $relativePath): string
