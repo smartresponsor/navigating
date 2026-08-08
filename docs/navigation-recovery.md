@@ -10,13 +10,21 @@ Navigating maintains three independent recovery paths.
 
 `App\Navigating\DataFixtures\NavigationFixture` restores the canonical install state.
 
-The fixture prefers `resources/navigation/navigation.install.json` when that manifest exists. Until the first promoted manifest is written, it falls back to the repository merged navigation configuration. Both paths use the same transactional import service as the CLI bootstrap command.
-
-Use:
+The fixture belongs only to the Doctrine fixture group `navigating`. The canonical command is deliberately host-safe:
 
 ```text
-php bin/console doctrine:fixtures:load --no-interaction
+php bin/console doctrine:fixtures:load --group=navigating --append --no-interaction
 ```
+
+or:
+
+```text
+composer navigation:fixtures
+```
+
+`--append` is mandatory for the product command because DoctrineFixturesBundle's default purge behavior can delete unrelated host-application data. The fixture itself transactionally replaces only Navigating menu rows through `NavigationConfigImportService`.
+
+The fixture prefers `resources/navigation/navigation.install.json` when that manifest exists. Until the first promoted manifest is written, it falls back to the repository merged navigation configuration. Both paths use the same transactional import service as the CLI bootstrap command.
 
 ### 2. Install manifest
 
@@ -140,31 +148,6 @@ An explicit pre-rebuild backup path may be supplied:
 php bin/console navigation:database:rebuild --force --backup-path=shared/backup/navigation-pre-rebuild.json
 ```
 
-## Make targets
-
-The repository also exposes the same operational surface through `make`:
-
-```text
-make navigation-install
-make navigation-backup
-make navigation-restore BACKUP=shared/backup/navigation.json
-make navigation-manifest-write
-make navigation-manifest-verify
-make navigation-manifest-restore
-make navigation-schema-safe
-make navigation-rebuild
-make navigation-rebuild BACKUP=shared/backup/navigation-pre-rebuild.json
-make navigation-qa
-```
-
-`BACKUP` is required for `navigation-restore` and optional for `navigation-backup` and `navigation-rebuild`.
-
-## SQLite recovery CI
-
-`.github/workflows/sqlite-recovery.yml` defines a clean SQLite recovery smoke. It installs the package, validates the Symfony container, creates the schema, bootstraps navigation, writes and verifies an ephemeral install manifest, creates an explicit backup, performs a Navigating-only table rebuild, restores an explicit backup, verifies the restored state and runs the QA suite.
-
-The workflow intentionally uses the standalone SQLite URL from `config/standalone/doctrine.yaml`, so CI exercises the same database configuration as a standalone installation.
-
 ## Complete database loss
 
 For a completely removed SQLite database, the recovery order is:
@@ -181,10 +164,10 @@ create database/schema
 navigation:manifest:restore --force
 ```
 
-or:
+or via the safe Navigating fixture group:
 
 ```text
-doctrine:fixtures:load --no-interaction
+composer navigation:fixtures
 ```
 
 The host database backup facility is therefore optional for Navigating configuration recovery. Application-level snapshots remain portable and database-engine independent.
@@ -192,5 +175,7 @@ The host database backup facility is therefore optional for Navigating configura
 ## Operational canon
 
 Before any intentional schema operation that may rebuild or drop Navigating tables, create an application-level Navigating backup first. For normal entity-driven updates use `composer navigation:schema:safe`. For a deliberate Navigating-only table reset use `navigation:database:rebuild --force` instead of dropping the whole host database.
+
+Never use an unscoped `doctrine:fixtures:load` as a Navigating recovery command inside the host application. Always use the `navigating` group with `--append`, or use manifest/backup restore commands.
 
 When administrative changes become part of the product's canonical default state, promote them with `navigation:manifest:write`, validate with `navigation:manifest:verify`, and commit the resulting manifest. Runtime backups remain operational artifacts under `var/` or another deployment-owned persistent path and are not repository fixtures.
