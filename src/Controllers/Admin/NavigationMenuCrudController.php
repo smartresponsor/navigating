@@ -14,18 +14,28 @@ use Doctrine\ORM\OptimisticLockException;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\HiddenField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
+use EasyCorp\Bundle\EasyAdminBundle\Util\KeyValueStore;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
 final class NavigationMenuCrudController extends AbstractCrudController
 {
+    private const EXPECTED_VERSION_FIELD = '_navigation_expected_version';
+
+    public function __construct(private readonly AdminContextProvider $adminContextProvider)
+    {
+    }
+
     public static function getEntityFqcn(): string
     {
         return NavigationMenu::class;
@@ -45,7 +55,6 @@ final class NavigationMenuCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->hideOnForm();
-        yield HiddenField::new('version')->onlyWhenUpdating();
         yield TextField::new('menuKey')->setHelp('Stable application key, for example left_business or attachment_context.');
         yield TextField::new('slug');
         yield TextField::new('label');
@@ -75,8 +84,32 @@ final class NavigationMenuCrudController extends AbstractCrudController
         yield DateTimeField::new('objectModifiedAt')->hideOnForm();
     }
 
+    public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        $builder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
+        $instance = $entityDto->getInstance();
+
+        if ($instance instanceof NavigationMenu) {
+            $builder->add(self::EXPECTED_VERSION_FIELD, HiddenType::class, [
+                'mapped' => false,
+                'data' => (string) $instance->getVersion(),
+            ]);
+        }
+
+        return $builder;
+    }
+
     public function edit(AdminContext $context)
     {
+        $request = $context->getRequest();
+        if ($request->isMethod('POST')) {
+            $submitted = $request->request->all($context->getEntity()->getName());
+            $expectedVersion = $submitted[self::EXPECTED_VERSION_FIELD] ?? null;
+            if (is_scalar($expectedVersion) && ctype_digit((string) $expectedVersion)) {
+                $request->attributes->set(self::EXPECTED_VERSION_FIELD, (int) $expectedVersion);
+            }
+        }
+
         try {
             return parent::edit($context);
         } catch (OptimisticLockException) {
@@ -92,7 +125,13 @@ final class NavigationMenuCrudController extends AbstractCrudController
             throw new \InvalidArgumentException('NavigationMenuCrudController can update only NavigationMenu entities.');
         }
 
-        $entityManager->lock($entityInstance, LockMode::OPTIMISTIC, $entityInstance->getVersion());
+        $context = $this->adminContextProvider->getContext();
+        $expectedVersion = $context?->getRequest()->attributes->get(self::EXPECTED_VERSION_FIELD);
+        if (!is_int($expectedVersion) || $expectedVersion < 1) {
+            throw new \RuntimeException('Navigation menu edit is missing its optimistic-lock version token. Reload the form and try again.');
+        }
+
+        $entityManager->lock($entityInstance, LockMode::OPTIMISTIC, $expectedVersion);
         parent::updateEntity($entityManager, $entityInstance);
     }
 }
