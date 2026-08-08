@@ -89,6 +89,17 @@ final class NavigationMenu implements ObjectAuditedInterface
         return $this->version;
     }
 
+    public function setVersion(int $version): self
+    {
+        if ($version < 1) {
+            throw new \DomainException('Navigation menu version must be positive.');
+        }
+
+        $this->version = $version;
+
+        return $this;
+    }
+
     public function getMenuKey(): string
     {
         return $this->menuKey;
