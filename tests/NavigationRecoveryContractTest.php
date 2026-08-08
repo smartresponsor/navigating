@@ -106,6 +106,7 @@ final class NavigationRecoveryContractTest extends TestCase
         $snapshot = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotService.php');
 
         self::assertStringContainsString('cache->invalidate()', $finalizer);
+        self::assertStringContainsString('getTransactionNestingLevel() > 0', $finalizer);
         self::assertStringContainsString('autoBackup->writeLatest()', $finalizer);
         self::assertStringContainsString('replaceFromConfig(array $config, bool $requireEmpty = false, bool $finalize = true)', $import);
         self::assertStringContainsString('finalizeCommittedChange()', $import);
