@@ -34,7 +34,7 @@ final class NavigationBackupCreateCommand extends Command
         $path = $input->getArgument('path');
         $path = is_string($path) && '' !== trim($path)
             ? $this->absolutePath(trim($path))
-            : $this->projectDir.'/var/backup/navigating/navigation-'.date('Ymd-His').'.json';
+            : $this->projectDir.'/var/backup/navigating/navigation-'.date('Ymd-His').'-'.bin2hex(random_bytes(4)).'.json';
 
         try {
             $this->snapshotFileService->write($path, $this->snapshotService->create());
