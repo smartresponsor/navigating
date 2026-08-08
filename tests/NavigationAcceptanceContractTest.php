@@ -17,6 +17,15 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertSame('^8.1', $require['symfony/form'] ?? null);
     }
 
+    public function testStandaloneDoctrineMapsNavigatingAndObjectingEmbeddables(): void
+    {
+        $doctrine = self::read('config/standalone/doctrine.yaml');
+
+        self::assertStringContainsString("prefix: 'App\\Navigating\\Entity'", $doctrine);
+        self::assertStringContainsString("vendor/objecting/object/src/Embeddable", $doctrine);
+        self::assertStringContainsString("prefix: 'App\\Objecting\\Embeddable'", $doctrine);
+    }
+
     public function testAcceptancePreflightIsNonDestructive(): void
     {
         $scripts = $this->composer()['scripts'] ?? [];
@@ -48,12 +57,17 @@ final class NavigationAcceptanceContractTest extends TestCase
     /** @return array<string, mixed> */
     private function composer(): array
     {
-        $contents = file_get_contents(dirname(__DIR__).'/composer.json');
-        self::assertIsString($contents);
-
-        $decoded = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+        $decoded = json_decode(self::read('composer.json'), true, 512, JSON_THROW_ON_ERROR);
         self::assertIsArray($decoded);
 
         return $decoded;
+    }
+
+    private static function read(string $relativePath): string
+    {
+        $contents = file_get_contents(dirname(__DIR__).'/'.$relativePath);
+        self::assertIsString($contents);
+
+        return $contents;
     }
 }
