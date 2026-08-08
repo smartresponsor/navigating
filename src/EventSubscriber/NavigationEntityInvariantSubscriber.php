@@ -135,9 +135,22 @@ final class NavigationEntityInvariantSubscriber implements EventSubscriber
             $this->requireNonEmpty($value, $field.' cannot be empty.');
         }
 
-        $length = function_exists('mb_strlen') ? mb_strlen($value) : strlen($value);
-        if ($length > $maxLength) {
+        if ($this->characterLength($value) > $maxLength) {
             throw new \DomainException(sprintf('%s cannot exceed %d characters.', $field, $maxLength));
         }
+    }
+
+    private function characterLength(string $value): int
+    {
+        if (function_exists('mb_strlen')) {
+            return mb_strlen($value, 'UTF-8');
+        }
+
+        $matched = preg_match_all('/./us', $value, $matches);
+        if (false === $matched) {
+            throw new \DomainException('Navigation text must be valid UTF-8.');
+        }
+
+        return $matched;
     }
 }
