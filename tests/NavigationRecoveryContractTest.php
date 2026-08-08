@@ -16,6 +16,7 @@ final class NavigationRecoveryContractTest extends TestCase
             'src/Service/Navigation/Persistence/NavigationPersistenceFinalizeService.php',
             'src/Service/Navigation/Snapshot/NavigationSnapshotExportService.php',
             'src/Service/Navigation/Snapshot/NavigationSnapshotService.php',
+            'src/Service/Navigation/Snapshot/NavigationSnapshotFileService.php',
             'src/Service/Navigation/Snapshot/NavigationAutoBackupService.php',
             'src/EventSubscriber/NavigationAutoBackupSubscriber.php',
             'src/Command/NavigationBackupCreateCommand.php',
@@ -47,6 +48,30 @@ final class NavigationRecoveryContractTest extends TestCase
         self::assertStringContainsString('NavigationSnapshotExportService $exportService', $snapshot);
         self::assertStringContainsString('NavigationSnapshotExportService $snapshotExportService', $autoBackup);
         self::assertStringNotContainsString('NavigationSnapshotService $snapshotService', $autoBackup);
+    }
+
+    public function testRecoveryArtifactsUseCrashSafeFilePromotion(): void
+    {
+        $writer = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotFileService.php');
+        $backup = self::read('src/Command/NavigationBackupCreateCommand.php');
+        $manifest = self::read('src/Command/NavigationManifestWriteCommand.php');
+        $legacyPlan = self::read('src/Command/NavigationLegacyMigrationPlanCommand.php');
+        $autoBackup = self::read('src/Service/Navigation/Snapshot/NavigationAutoBackupService.php');
+
+        self::assertStringContainsString("fopen(\$temporary, 'xb')", $writer);
+        self::assertStringContainsString('fflush($handle)', $writer);
+        self::assertStringContainsString("function_exists('fsync')", $writer);
+        self::assertStringContainsString('rename($path, $rollback)', $writer);
+        self::assertStringContainsString('rename($temporary, $path)', $writer);
+        self::assertStringContainsString('@rename($rollback, $path)', $writer);
+        self::assertStringContainsString('NavigationSnapshotFileService', $backup);
+        self::assertStringContainsString('snapshotFileService->write', $backup);
+        self::assertStringContainsString('NavigationSnapshotFileService', $manifest);
+        self::assertStringContainsString('snapshotFileService->write', $manifest);
+        self::assertStringContainsString('NavigationSnapshotFileService', $legacyPlan);
+        self::assertStringContainsString('snapshotFileService->write', $legacyPlan);
+        self::assertStringContainsString('NavigationSnapshotFileService', $autoBackup);
+        self::assertStringContainsString('snapshotFileService->write', $autoBackup);
     }
 
     public function testSchemaUpdateIsComponentScopedForDoctrineOrm36(): void
