@@ -84,7 +84,7 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString("name: 'navigation:manifest:restore'", $manifestRestore);
     }
 
-    public function testRuntimeUsesDoctrineAsTheOnlyMenuInventorySource(): void
+    public function testRuntimeUsesDoctrineAsTheOnlyCompleteMenuInventorySource(): void
     {
         $shellProvider = self::read('src/Service/Navigation/Provide/NavigationShellProvideService.php');
         $databaseProvider = self::read('src/Service/Navigation/Provide/NavigationDatabaseConfigProvideService.php');
@@ -96,6 +96,10 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString("\$config['shell_groups'] = \$databaseGroups", $shellProvider);
         self::assertStringContainsString('Navigation database contains no enabled menus', $shellProvider);
         self::assertStringNotContainsString('[] === $databaseConfig ? $this->navigationConfig : $databaseConfig', $shellProvider);
+        self::assertStringContainsString("'slug' => \$menu->getSlug()", $databaseProvider);
+        self::assertStringContainsString("'slug' => \$item->getSlug()", $databaseProvider);
+        self::assertStringContainsString("'operation' => \$item->getOperation()", $databaseProvider);
+        self::assertStringContainsString("unset(\$metadata['parent_key'])", $databaseProvider);
         self::assertStringContainsString('$this->cache->remember', $databaseProvider);
         self::assertStringContainsString('CacheItemPoolInterface', $cacheService);
         self::assertStringContainsString('Events::postPersist', $subscriber);
