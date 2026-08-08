@@ -13,6 +13,7 @@
     "easycorp/easyadmin-bundle": "^5.0",
     "interfacing/interface": "dev-master",
     "objecting/object": "dev-master",
+    "psr/cache": "^3.0",
     "psr/log": "^3.0",
     "symfony/config": "^8.1",
     "symfony/console": "^8.1",
