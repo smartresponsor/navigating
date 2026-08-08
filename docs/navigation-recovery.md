@@ -97,24 +97,40 @@ var/backup/navigating/auto-previous.json
 
 Automatic backup is a best-effort safety layer. A filesystem failure is logged and does not roll back the business write. For planned schema work, the explicit manual/pre-operation backup remains authoritative.
 
-## Safe schema update
+## Host-safe schema update
 
-Do not run a destructive schema update as the first operation when Navigating contains administrator-managed configuration.
+Navigating must not use the host application's global Doctrine schema update as its component maintenance mechanism.
 
-The repository provides:
+For normal entity evolution use:
+
+```text
+php bin/console navigation:database:update
+```
+
+or:
+
+```text
+composer navigation:schema:update
+```
+
+This command passes only `NavigationMenu` and `NavigationItem` metadata to Doctrine `SchemaTool` and uses safe/save mode. It applies additive schema changes only and does not generate destructive changes for unrelated host tables.
+
+For a planned update with an explicit recovery point use:
 
 ```text
 composer navigation:schema:safe
 ```
 
-This performs:
+which performs:
 
 ```text
 navigation:backup:create
-doctrine:schema:update --force
+navigation:database:update
 ```
 
-The backup is created before Doctrine touches the schema.
+Do not use `doctrine:schema:update --force` as the Navigating component update command in the host application.
+
+If an entity change requires destructive DDL inside Navigating itself, use the component rebuild path below so the menu configuration is snapshotted before tables are recreated.
 
 ## Component-scoped full rebuild
 
@@ -150,17 +166,15 @@ php bin/console navigation:database:rebuild --force --backup-path=shared/backup/
 
 ## Complete database loss
 
-For a completely removed SQLite database, the recovery order is:
+For a completely removed SQLite database, create the Navigating schema with:
 
 ```text
-create database/schema
-restore runtime backup, when preserving the latest administrative state
+navigation:database:update
 ```
 
-or, for a clean canonical installation:
+Then restore a runtime backup when preserving the latest administrative state, or use the install manifest for a canonical installation:
 
 ```text
-create database/schema
 navigation:manifest:restore --force
 ```
 
@@ -174,8 +188,10 @@ The host database backup facility is therefore optional for Navigating configura
 
 ## Operational canon
 
-Before any intentional schema operation that may rebuild or drop Navigating tables, create an application-level Navigating backup first. For normal entity-driven updates use `composer navigation:schema:safe`. For a deliberate Navigating-only table reset use `navigation:database:rebuild --force` instead of dropping the whole host database.
+Before any intentional schema operation that may rebuild or drop Navigating tables, create an application-level Navigating backup first. For normal entity-driven updates use `composer navigation:schema:safe`. For a deliberate Navigating-only table reset use `navigation:database:rebuild --force` instead of dropping or globally updating the whole host database.
 
 Never use an unscoped `doctrine:fixtures:load` as a Navigating recovery command inside the host application. Always use the `navigating` group with `--append`, or use manifest/backup restore commands.
+
+Never use global `doctrine:schema:update --force` as Navigating's own maintenance command inside the host application. Navigating schema ownership is limited to its own Doctrine metadata.
 
 When administrative changes become part of the product's canonical default state, promote them with `navigation:manifest:write`, validate with `navigation:manifest:verify`, and commit the resulting manifest. Runtime backups remain operational artifacts under `var/` or another deployment-owned persistent path and are not repository fixtures.
