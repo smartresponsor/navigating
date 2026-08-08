@@ -32,11 +32,11 @@ final class NavigationRecoveryContractTest extends TestCase
 
         self::assertStringContainsString("public const FORMAT = 'smartresponsor.navigation'", $snapshot);
         self::assertStringContainsString('public const VERSION = 1', $snapshot);
-        self::assertStringContainsString("$payload['sha256']", $snapshot);
+        self::assertStringContainsString("\$payload['sha256']", $snapshot);
         self::assertStringContainsString('hash_equals', $snapshot);
         self::assertStringContainsString("'archived_items'", $snapshot);
-        self::assertStringContainsString("'slug' => $item->getSlug()", $snapshot);
-        self::assertStringContainsString("'slug' => $menu->getSlug()", $snapshot);
+        self::assertStringContainsString("'slug' => \$item->getSlug()", $snapshot);
+        self::assertStringContainsString("'slug' => \$menu->getSlug()", $snapshot);
     }
 
     public function testSafeRebuildIsComponentScoped(): void
