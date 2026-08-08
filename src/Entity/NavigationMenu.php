@@ -41,6 +41,18 @@ final class NavigationMenu implements ObjectAuditedInterface
     #[ORM\Column(length: 60)]
     private string $type = 'navigation';
 
+    /** @var list<string> */
+    #[ORM\Column(name: 'visible_for_roles', type: Types::JSON)]
+    private array $visibleForRoles = [];
+
+    /** @var list<string> */
+    #[ORM\Column(name: 'visible_for_scopes', type: Types::JSON)]
+    private array $visibleForScopes = [];
+
+    /** @var list<string> */
+    #[ORM\Column(name: 'visible_for_environments', type: Types::JSON)]
+    private array $visibleForEnvironments = [];
+
     #[ORM\Column(type: Types::INTEGER)]
     private int $priority = 100;
 
@@ -127,6 +139,48 @@ final class NavigationMenu implements ObjectAuditedInterface
         return $this;
     }
 
+    /** @return list<string> */
+    public function getVisibleForRoles(): array
+    {
+        return $this->visibleForRoles;
+    }
+
+    /** @param list<string> $roles */
+    public function setVisibleForRoles(array $roles): self
+    {
+        $this->visibleForRoles = $this->normalizeTokens($roles, true);
+
+        return $this;
+    }
+
+    /** @return list<string> */
+    public function getVisibleForScopes(): array
+    {
+        return $this->visibleForScopes;
+    }
+
+    /** @param list<string> $scopes */
+    public function setVisibleForScopes(array $scopes): self
+    {
+        $this->visibleForScopes = $this->normalizeTokens($scopes, false);
+
+        return $this;
+    }
+
+    /** @return list<string> */
+    public function getVisibleForEnvironments(): array
+    {
+        return $this->visibleForEnvironments;
+    }
+
+    /** @param list<string> $environments */
+    public function setVisibleForEnvironments(array $environments): self
+    {
+        $this->visibleForEnvironments = $this->normalizeTokens($environments, false);
+
+        return $this;
+    }
+
     public function getPriority(): int
     {
         return $this->priority;
@@ -193,5 +247,27 @@ final class NavigationMenu implements ObjectAuditedInterface
     public function __toString(): string
     {
         return '' !== $this->label ? $this->label : $this->menuKey;
+    }
+
+    /**
+     * @param list<string> $tokens
+     *
+     * @return list<string>
+     */
+    private function normalizeTokens(array $tokens, bool $upper): array
+    {
+        $normalized = [];
+
+        foreach ($tokens as $token) {
+            $token = trim($token);
+            if ('' === $token) {
+                continue;
+            }
+
+            $token = $upper ? strtoupper($token) : strtolower($token);
+            $normalized[$token] = $token;
+        }
+
+        return array_values($normalized);
     }
 }
