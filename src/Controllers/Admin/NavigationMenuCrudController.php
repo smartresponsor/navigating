@@ -33,6 +33,7 @@ final class NavigationMenuCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Navigation menus')
             ->setPageTitle(Crud::PAGE_INDEX, 'Navigation menus')
             ->setDefaultSort(['priority' => 'ASC', 'id' => 'ASC'])
+            ->setSearchFields(['menuKey', 'slug', 'label', 'location', 'type'])
         ;
     }
 
