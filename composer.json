@@ -43,7 +43,7 @@
   },
   "scripts": {
     "qa:navigating-easyadmin": "@php vendor/bin/phpunit tests/NavigationEasyAdminSurfaceTest.php tests/NavigationEasyAdminSymfonyTypeTest.php tests/NavigationEasyAdminBoundaryTest.php",
-    "qa:navigating-database": "@php vendor/bin/phpunit tests/NavigationDatabaseBackedModelTest.php tests/NavigationRecoveryContractTest.php tests/NavigationTreeInvariantTest.php tests/NavigationTargetInvariantTest.php tests/NavigationEntityInvariantTest.php tests/NavigationLegacyMigrationContractTest.php tests/NavigationLegacyMigrationSemanticTest.php",
+    "qa:navigating-database": "@php vendor/bin/phpunit tests/NavigationDatabaseBackedModelTest.php tests/NavigationRecoveryContractTest.php tests/NavigationTreeInvariantTest.php tests/NavigationTargetInvariantTest.php tests/NavigationEntityInvariantTest.php tests/NavigationLegacyMigrationContractTest.php tests/NavigationLegacyMigrationSemanticTest.php tests/NavigationLegacySqliteLifecycleTest.php",
     "qa:navigating-runtime": "@php vendor/bin/phpunit tests/NavigationRuntimeActivationTest.php tests/NavigationRuntimeActivationConfigTest.php",
     "navigation:fixtures": "@php bin/console doctrine:fixtures:load --group=navigating --append --no-interaction",
     "navigation:backup": "@php bin/console navigation:backup:create",
