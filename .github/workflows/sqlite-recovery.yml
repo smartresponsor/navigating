@@ -16,7 +16,6 @@ jobs:
     env:
       APP_ENV: test
       APP_DEBUG: '0'
-      DATABASE_URL: 'sqlite:///%kernel.project_dir%/var/navigation-ci.sqlite'
 
     steps:
       - name: Checkout
@@ -41,7 +40,7 @@ jobs:
 
       - name: Create clean SQLite schema
         run: |
-          rm -f var/navigation-ci.sqlite
+          rm -f var/navigation.sqlite
           mkdir -p var/backup/navigating
           php bin/console doctrine:schema:update --force
           php bin/console doctrine:schema:validate
