@@ -125,6 +125,16 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
         self::assertStringContainsString("DateTimeField::new('objectModifiedAt')->hideOnForm()", $controller);
     }
 
+    public function testDuplicateActionKeepsDerivedValuesInsidePersistenceLimits(): void
+    {
+        $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+
+        self::assertStringContainsString("appendWithinLimit(\$item->getNavigationKey(), '.copy.'.\$timestamp, 160)", $controller);
+        self::assertStringContainsString("appendWithinLimit(\$item->getLabel(), ' copy', 140)", $controller);
+        self::assertStringContainsString("appendWithinLimit(\$item->getSlug(), '-copy-'.\$timestamp, 180)", $controller);
+        self::assertStringContainsString('private function appendWithinLimit', $controller);
+    }
+
     public function testEasyAdminExceptionHasNearestAutomationRules(): void
     {
         $rules = self::read('src/Controllers/Admin/AGENTS.md');
