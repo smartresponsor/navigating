@@ -76,9 +76,17 @@ No Doctrine migrations are introduced for the current development workflow. Navi
 php bin/console navigation:database:update
 ```
 
-This applies additive-only changes using `NavigationMenu` and `NavigationItem` metadata in Doctrine safe/save mode. Navigating does not use global `doctrine:schema:update --force` as its host-application maintenance command.
+The command temporarily whitelists only `navigation_menu` and `navigation_item` in Doctrine schema introspection, synchronizes only `NavigationMenu` and `NavigationItem` metadata through the Doctrine ORM 3.x `SchemaTool` API, and restores the host application's previous schema-assets filter afterward. Navigating does not use global `doctrine:schema:update --force` as its host-application maintenance command.
 
-Destructive Navigating schema evolution uses:
+Because schema synchronization can still alter Navigating's own tables, planned updates should use:
+
+```text
+composer navigation:schema:safe
+```
+
+which creates a portable Navigating backup before the component-scoped schema update.
+
+Deliberate destructive Navigating schema evolution uses:
 
 ```text
 php bin/console navigation:database:rebuild --force
@@ -157,7 +165,7 @@ navigation:manifest:verify
 navigation:manifest:restore --force
 ```
 
-and keeps rolling `auto-latest.json` / `auto-previous.json` recovery snapshots under `var/backup/navigating/` after successful navigation writes.
+and keeps rolling `auto-latest.json` / `auto-previous.json` recovery snapshots under `var/backup/navigating/` after successful navigation writes outside explicit Doctrine transactions. Transactional import/restore state is never promoted as an automatic backup before commit.
 
 See `docs/navigation-recovery.md` for the full recovery canon.
 
