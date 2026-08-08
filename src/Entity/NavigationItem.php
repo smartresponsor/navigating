@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: NavigationItemRepository::class)]
 #[ORM\Table(name: 'navigation_item')]
 #[ORM\UniqueConstraint(name: 'uniq_navigation_item_menu_key', columns: ['menu_id', 'navigation_key'])]
-#[ORM\UniqueConstraint(name: 'uniq_navigation_item_slug', columns: ['slug'])]
+#[ORM\UniqueConstraint(name: 'uniq_navigation_item_menu_slug', columns: ['menu_id', 'slug'])]
 #[ORM\Index(name: 'idx_navigation_item_menu_position', columns: ['menu_id', 'position'])]
 #[ORM\Index(name: 'idx_navigation_item_parent_position', columns: ['parent_id', 'position'])]
 #[ORM\Index(name: 'idx_navigation_item_route_name', columns: ['route_name'])]
