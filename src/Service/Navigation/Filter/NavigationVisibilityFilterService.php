@@ -7,6 +7,7 @@ namespace App\Navigating\Service\Navigation\Filter;
 use App\Navigating\ServiceInterface\Navigation\Provide\NavigationRequestRoleProvideServiceInterface;
 use App\Navigating\ServiceInterface\Navigation\Provide\NavigationRuntimeActivationProvideServiceInterface;
 use App\Navigating\Value\Navigation\NavigationShellGroup;
+use App\Navigating\Value\Navigation\NavigationShellItem;
 use Symfony\Component\HttpFoundation\Request;
 
 final readonly class NavigationVisibilityFilterService implements \App\Navigating\ServiceInterface\Navigation\Filter\NavigationVisibilityFilterServiceInterface
@@ -37,9 +38,12 @@ final readonly class NavigationVisibilityFilterService implements \App\Navigatin
                 continue;
             }
 
-            $visibleItems = [];
+            $itemsByKey = [];
+            $locallyVisibleItems = [];
 
             foreach ($group->items as $item) {
+                $itemsByKey[$item->key] = $item;
+
                 if (!$item->enabled || !$item->visible) {
                     continue;
                 }
@@ -60,7 +64,14 @@ final readonly class NavigationVisibilityFilterService implements \App\Navigatin
                     continue;
                 }
 
-                $visibleItems[] = $item;
+                $locallyVisibleItems[$item->key] = $item;
+            }
+
+            $visibleItems = [];
+            foreach ($locallyVisibleItems as $item) {
+                if ($this->hasVisibleAncestorChain($item, $itemsByKey, $locallyVisibleItems)) {
+                    $visibleItems[] = $item;
+                }
             }
 
             $visibleGroups[] = new NavigationShellGroup(
@@ -79,6 +90,35 @@ final readonly class NavigationVisibilityFilterService implements \App\Navigatin
         }
 
         return $visibleGroups;
+    }
+
+    /**
+     * @param array<string, NavigationShellItem> $itemsByKey
+     * @param array<string, NavigationShellItem> $locallyVisibleItems
+     */
+    private function hasVisibleAncestorChain(NavigationShellItem $item, array $itemsByKey, array $locallyVisibleItems): bool
+    {
+        $visited = [$item->key => true];
+        $cursor = $item;
+
+        while (true) {
+            $parentKey = $cursor->metadata['parent_key'] ?? null;
+            if (null === $parentKey || '' === $parentKey) {
+                return true;
+            }
+
+            if (!is_string($parentKey) || isset($visited[$parentKey])) {
+                return false;
+            }
+
+            $parent = $itemsByKey[$parentKey] ?? null;
+            if (!$parent instanceof NavigationShellItem || !isset($locallyVisibleItems[$parentKey])) {
+                return false;
+            }
+
+            $visited[$parentKey] = true;
+            $cursor = $parent;
+        }
     }
 
     /**
