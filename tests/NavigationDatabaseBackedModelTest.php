@@ -16,6 +16,9 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString("#[ORM\\Table(name: 'navigation_menu')]", $menu);
         self::assertStringContainsString("#[ORM\\Table(name: 'navigation_item')]", $item);
         self::assertStringContainsString("columns: ['menu_id', 'navigation_key']", $item);
+        self::assertStringContainsString("columns: ['menu_id', 'slug']", $item);
+        self::assertStringNotContainsString("columns: ['slug']", $item);
+        self::assertStringContainsString('nullable: true', $item);
         self::assertStringContainsString('type: Types::JSON', $menu);
         self::assertStringContainsString('type: Types::JSON', $item);
         self::assertStringNotContainsString('jsonb', strtolower($menu.$item));
