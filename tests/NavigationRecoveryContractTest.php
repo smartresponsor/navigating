@@ -21,6 +21,7 @@ final class NavigationRecoveryContractTest extends TestCase
             'src/Command/NavigationManifestWriteCommand.php',
             'src/Command/NavigationManifestVerifyCommand.php',
             'src/Command/NavigationManifestRestoreCommand.php',
+            'src/Command/NavigationDatabaseUpdateCommand.php',
             'src/Command/NavigationDatabaseRebuildCommand.php',
             'docs/navigation-recovery.md',
         ] as $path) {
@@ -39,6 +40,24 @@ final class NavigationRecoveryContractTest extends TestCase
         self::assertStringContainsString("'archived_items'", $snapshot);
         self::assertStringContainsString("'slug' => \$item->getSlug()", $snapshot);
         self::assertStringContainsString("'slug' => \$menu->getSlug()", $snapshot);
+    }
+
+    public function testAdditiveSchemaUpdateIsComponentScopedAndNonDestructive(): void
+    {
+        $command = self::read('src/Command/NavigationDatabaseUpdateCommand.php');
+        $composer = self::read('composer.json');
+        $makefile = self::read('Makefile');
+        $workflow = self::read('.github/workflows/sqlite-recovery.yml');
+
+        self::assertStringContainsString("name: 'navigation:database:update'", $command);
+        self::assertStringContainsString('NavigationMenu::class', $command);
+        self::assertStringContainsString('NavigationItem::class', $command);
+        self::assertStringContainsString('getUpdateSchemaSql($metadata, true)', $command);
+        self::assertStringContainsString('updateSchema($metadata, true)', $command);
+        self::assertStringNotContainsString('dropSchema(', $command);
+        self::assertStringNotContainsString('doctrine:schema:update --force', $composer);
+        self::assertStringNotContainsString('doctrine:schema:update --force', $makefile);
+        self::assertStringNotContainsString('doctrine:schema:update --force', $workflow);
     }
 
     public function testSafeRebuildIsComponentScoped(): void
@@ -96,6 +115,7 @@ final class NavigationRecoveryContractTest extends TestCase
         self::assertArrayHasKey('navigation:backup', $scripts);
         self::assertArrayHasKey('navigation:manifest:write', $scripts);
         self::assertArrayHasKey('navigation:manifest:restore', $scripts);
+        self::assertArrayHasKey('navigation:schema:update', $scripts);
         self::assertArrayHasKey('navigation:rebuild', $scripts);
         self::assertArrayHasKey('navigation:schema:safe', $scripts);
     }
