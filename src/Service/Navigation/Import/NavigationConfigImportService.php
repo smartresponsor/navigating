@@ -50,7 +50,7 @@ final readonly class NavigationConfigImportService
     /** @param array<string, mixed> $groupConfig */
     private function importGroup(string $menuKey, array $groupConfig): void
     {
-        $menuSlug = $this->slugify($menuKey);
+        $menuSlug = $this->stringValue($groupConfig['slug'] ?? null, $this->slugify($menuKey));
         $menu = (new NavigationMenu())
             ->setMenuKey($menuKey)
             ->setSlug($menuSlug)
@@ -82,7 +82,7 @@ final readonly class NavigationConfigImportService
             $metadata = is_array($itemConfig['metadata'] ?? null) ? $itemConfig['metadata'] : [];
             $item = (new NavigationItem())
                 ->setNavigationKey($itemKey)
-                ->setSlug($menuSlug.'-'.$this->slugify($itemKey))
+                ->setSlug($this->nullableString($itemConfig['slug'] ?? null) ?? $menuSlug.'-'.$this->slugify($itemKey))
                 ->setLabel($this->stringValue($itemConfig['label'] ?? null, $itemKey))
                 ->setType($this->stringValue($itemConfig['type'] ?? null, 'link'))
                 ->setOperation($this->stringValue($metadata['operation'] ?? $itemConfig['operation'] ?? null, 'index'))
