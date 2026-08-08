@@ -37,6 +37,10 @@ final readonly class NavigationDatabaseConfigProvideService implements Navigatio
                 'priority' => $menu->getPriority(),
                 'enabled' => $menu->isEnabled(),
                 'visible' => true,
+                'visible_for_roles' => $menu->getVisibleForRoles(),
+                'visible_for_scopes' => $menu->getVisibleForScopes(),
+                'visible_for_environments' => $menu->getVisibleForEnvironments(),
+                'metadata' => $menu->getMetadata(),
                 'items' => $items,
             ];
         }
