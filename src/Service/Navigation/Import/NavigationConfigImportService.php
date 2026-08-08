@@ -7,6 +7,7 @@ namespace App\Navigating\Service\Navigation\Import;
 use App\Navigating\Entity\NavigationItem;
 use App\Navigating\Entity\NavigationMenu;
 use App\Navigating\Repository\NavigationMenuRepository;
+use App\Navigating\Service\Navigation\Persistence\NavigationPersistenceFinalizeService;
 use Doctrine\ORM\EntityManagerInterface;
 
 final readonly class NavigationConfigImportService
@@ -14,11 +15,12 @@ final readonly class NavigationConfigImportService
     public function __construct(
         private EntityManagerInterface $entityManager,
         private NavigationMenuRepository $menuRepository,
+        private NavigationPersistenceFinalizeService $finalizer,
     ) {
     }
 
     /** @param array<string, mixed> $config */
-    public function replaceFromConfig(array $config, bool $requireEmpty = false): int
+    public function replaceFromConfig(array $config, bool $requireEmpty = false, bool $finalize = true): int
     {
         $groups = $config['shell_groups'] ?? null;
         if (!is_array($groups) || [] === $groups) {
@@ -43,6 +45,10 @@ final readonly class NavigationConfigImportService
 
             $this->entityManager->flush();
         });
+
+        if ($finalize) {
+            $this->finalizer->finalizeCommittedChange();
+        }
 
         return count($groups);
     }
