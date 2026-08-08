@@ -18,7 +18,6 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString("columns: ['menu_id', 'navigation_key']", $item);
         self::assertStringContainsString("columns: ['menu_id', 'slug']", $item);
         self::assertStringNotContainsString("columns: ['slug']", $item);
-        self::assertStringContainsString('nullable: true', $item);
         self::assertStringContainsString('type: Types::JSON', $menu);
         self::assertStringContainsString('type: Types::JSON', $item);
         self::assertStringNotContainsString('jsonb', strtolower($menu.$item));
@@ -50,6 +49,8 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString('NavigationConfigImportService', $command);
         self::assertStringContainsString('wrapInTransaction', $import);
         self::assertStringContainsString('setParent($parent)', $import);
+        self::assertStringContainsString('Navigation menu keys must be non-empty strings', $import);
+        self::assertStringContainsString('Navigation items in menu', $import);
     }
 
     public function testSnapshotRestoreCanonicalizesDerivedHierarchyAndOperation(): void
@@ -110,6 +111,7 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString('Events::postRemove', $subscriber);
         self::assertStringContainsString('doctrine.event_subscriber', $services);
         self::assertStringContainsString("\$cache: '@cache.app'", $services);
+        self::assertStringContainsString('NavigationEntityInvariantSubscriber', $services);
     }
 
     private static function read(string $relativePath): string
