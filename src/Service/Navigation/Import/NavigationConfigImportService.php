@@ -129,26 +129,56 @@ final readonly class NavigationConfigImportService
         $target = is_array($itemConfig['target'] ?? null) ? $itemConfig['target'] : [];
         $targetType = $this->nullableString($target['type'] ?? null);
 
-        if ('route' === $targetType) {
-            $item->setRouteName($this->nullableString($target['route'] ?? null));
-            $item->setRouteParameters(is_array($target['params'] ?? null) ? $target['params'] : []);
-            $item->setPath(null);
-            return;
-        }
-        if ('path' === $targetType) {
-            $item->setRouteName(null)->setRouteParameters([])->setPath($this->nullableString($target['path'] ?? null));
-            return;
+        if (null !== $targetType) {
+            if ('route' === $targetType) {
+                $route = $this->nullableString($target['route'] ?? null);
+                if (null === $route) {
+                    throw new \InvalidArgumentException('Navigation route target requires a non-empty route name.');
+                }
+
+                $item->setRouteName($route);
+                $item->setRouteParameters(is_array($target['params'] ?? null) ? $target['params'] : []);
+                $item->setPath(null);
+
+                return;
+            }
+
+            if ('path' === $targetType) {
+                $path = $this->nullableString($target['path'] ?? null);
+                if (null === $path) {
+                    throw new \InvalidArgumentException('Navigation path target requires a non-empty path.');
+                }
+
+                $item->setRouteName(null)->setRouteParameters([])->setPath($path);
+
+                return;
+            }
+
+            throw new \InvalidArgumentException(sprintf('Unsupported navigation target type "%s".', $targetType));
         }
 
         $route = $this->nullableString($itemConfig['route'] ?? null);
+        $path = $this->nullableString($itemConfig['path'] ?? null);
+
+        if (null !== $route && null !== $path) {
+            throw new \InvalidArgumentException('Navigation item configuration cannot define both route and path targets.');
+        }
+
         if (null !== $route) {
             $item->setRouteName($route)
                 ->setRouteParameters(is_array($itemConfig['params'] ?? null) ? $itemConfig['params'] : [])
                 ->setPath(null);
+
             return;
         }
 
-        $item->setRouteName(null)->setRouteParameters([])->setPath($this->nullableString($itemConfig['path'] ?? null));
+        if (null !== $path) {
+            $item->setRouteName(null)->setRouteParameters([])->setPath($path);
+
+            return;
+        }
+
+        $item->setRouteName(null)->setRouteParameters([])->setPath(null);
     }
 
     private function slugify(string $value): string
