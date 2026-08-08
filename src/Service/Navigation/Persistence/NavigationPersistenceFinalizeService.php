@@ -6,6 +6,7 @@ namespace App\Navigating\Service\Navigation\Persistence;
 
 use App\Navigating\Service\Navigation\Cache\NavigationConfigCacheService;
 use App\Navigating\Service\Navigation\Snapshot\NavigationAutoBackupService;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
 final readonly class NavigationPersistenceFinalizeService
@@ -13,6 +14,7 @@ final readonly class NavigationPersistenceFinalizeService
     public function __construct(
         private NavigationConfigCacheService $cache,
         private NavigationAutoBackupService $autoBackup,
+        private EntityManagerInterface $entityManager,
         private LoggerInterface $logger,
     ) {
     }
@@ -22,9 +24,13 @@ final readonly class NavigationPersistenceFinalizeService
         try {
             $this->cache->invalidate();
         } catch (\Throwable $exception) {
-            $this->logger->error('Navigation cache invalidation failed after committed persistence change.', [
+            $this->logger->error('Navigation cache invalidation failed after persistence change.', [
                 'exception' => $exception,
             ]);
+        }
+
+        if ($this->entityManager->getConnection()->getTransactionNestingLevel() > 0) {
+            return;
         }
 
         try {
