@@ -51,10 +51,11 @@ final class NavigationDatabaseBackedModelTest extends TestCase
 
     public function testSnapshotRestoreCanonicalizesDerivedHierarchyAndOperation(): void
     {
-        $snapshot = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotService.php');
+        $export = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotExportService.php');
         $import = self::read('src/Service/Navigation/Import/NavigationConfigImportService.php');
 
-        self::assertStringContainsString("\$metadata['parent_key'] = \$item->getParent()?->getNavigationKey()", $snapshot);
+        self::assertStringContainsString("unset(\$metadata['parent_key'])", $export);
+        self::assertStringContainsString("\$metadata['parent_key'] = \$item->getParent()?->getNavigationKey()", $export);
         self::assertStringContainsString("\$parentKey = \$metadata['parent_key'] ?? \$itemConfig['parent_key'] ?? null", $import);
         self::assertStringContainsString("unset(\$metadata['parent_key'])", $import);
         self::assertStringContainsString("\$itemConfig['operation'] ?? \$metadata['operation'] ?? null", $import);
@@ -64,7 +65,7 @@ final class NavigationDatabaseBackedModelTest extends TestCase
     public function testFixturesManifestAndPortableBackupRecoveryExist(): void
     {
         $fixture = self::read('src/DataFixtures/NavigationFixture.php');
-        $snapshot = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotService.php');
+        $export = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotExportService.php');
         $backup = self::read('src/Command/NavigationBackupCreateCommand.php');
         $restore = self::read('src/Command/NavigationBackupRestoreCommand.php');
         $manifestWrite = self::read('src/Command/NavigationManifestWriteCommand.php');
@@ -73,10 +74,10 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString('extends Fixture', $fixture);
         self::assertStringContainsString('navigation.install.json', $fixture);
         self::assertStringContainsString('replaceFromConfig', $fixture);
-        self::assertStringContainsString("public const FORMAT = 'smartresponsor.navigation'", $snapshot);
-        self::assertStringContainsString("public const VERSION = 1", $snapshot);
-        self::assertStringContainsString('sha256', $snapshot);
-        self::assertStringContainsString('hash_equals', $snapshot);
+        self::assertStringContainsString("public const FORMAT = 'smartresponsor.navigation'", $export);
+        self::assertStringContainsString('public const VERSION = 1', $export);
+        self::assertStringContainsString('sha256', $export);
+        self::assertStringContainsString('hash_equals', $export);
         self::assertStringContainsString("name: 'navigation:backup:create'", $backup);
         self::assertStringContainsString("name: 'navigation:backup:restore'", $restore);
         self::assertStringContainsString("name: 'navigation:manifest:write'", $manifestWrite);
