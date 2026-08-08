@@ -9,6 +9,7 @@ use App\Navigating\Model\Navigation\View\NavigationShellView;
 use App\Navigating\ServiceInterface\Navigation\Build\NavigationTreeBuildServiceInterface;
 use App\Navigating\ServiceInterface\Navigation\Filter\NavigationVisibilityFilterServiceInterface;
 use App\Navigating\ServiceInterface\Navigation\Normalize\NavigationConfigNormalizeServiceInterface;
+use App\Navigating\ServiceInterface\Navigation\Provide\NavigationDatabaseConfigProvideServiceInterface;
 use App\Navigating\ServiceInterface\Navigation\Provide\NavigationShellProvideServiceInterface;
 use App\Navigating\ServiceInterface\Navigation\Validate\NavigationConfigValidateServiceInterface;
 use App\Navigating\Value\Navigation\NavigationShellLocationRegistry;
@@ -16,28 +17,28 @@ use Symfony\Component\HttpFoundation\Request;
 
 final readonly class NavigationShellProvideService implements NavigationShellProvideServiceInterface
 {
-    /**
-     * @param array<string, mixed> $navigationConfig
-     */
+    /** @param array<string, mixed> $navigationConfig */
     public function __construct(
         private NavigationConfigNormalizeServiceInterface $configNormalizeService,
         private NavigationConfigValidateServiceInterface $configValidateService,
         private NavigationVisibilityFilterServiceInterface $visibilityFilterService,
         private NavigationTreeBuildServiceInterface $treeBuildService,
+        private NavigationDatabaseConfigProvideServiceInterface $databaseConfigProvider,
         private array $navigationConfig = [],
     ) {
     }
 
     public function provideShell(Request $request): NavigationShellView
     {
-        $this->assertValidConfig();
+        $config = $this->runtimeConfig();
+        $this->assertValidConfig($config);
 
         $groups = $this->visibilityFilterService->filterShellGroups(
-            $this->configNormalizeService->normalizeShellGroups($this->navigationConfig),
+            $this->configNormalizeService->normalizeShellGroups($config),
             $request,
         );
 
-        $views = $this->emptyCanonicalGroups();
+        $views = $this->emptyCanonicalGroups($config);
 
         foreach ($groups as $group) {
             $location = trim($group->location);
@@ -49,9 +50,6 @@ final readonly class NavigationShellProvideService implements NavigationShellPro
         return new NavigationShellView($views);
     }
 
-    /**
-     * @return array{active_group: string|null, active_item: string|null, active_root: string|null, active_section: string|null}
-     */
     public function provideActiveState(Request $request): array
     {
         foreach ($this->provideShell($request)->groups as $group) {
@@ -77,14 +75,12 @@ final readonly class NavigationShellProvideService implements NavigationShellPro
         ];
     }
 
-    /**
-     * @return array<string, NavigationGroupView>
-     */
-    private function emptyCanonicalGroups(): array
+    /** @return array<string, NavigationGroupView> */
+    private function emptyCanonicalGroups(array $config): array
     {
         $groups = [];
 
-        foreach (NavigationShellLocationRegistry::all($this->navigationConfig) as $location) {
+        foreach (NavigationShellLocationRegistry::all($config) as $location) {
             $groups[$location] = new NavigationGroupView(location: $location, label: $location);
         }
 
@@ -108,9 +104,18 @@ final readonly class NavigationShellProvideService implements NavigationShellPro
         );
     }
 
-    private function assertValidConfig(): void
+    /** @return array<string, mixed> */
+    private function runtimeConfig(): array
     {
-        $result = $this->configValidateService->validate($this->navigationConfig);
+        $databaseConfig = $this->databaseConfigProvider->provideConfig();
+
+        return [] === $databaseConfig ? $this->navigationConfig : $databaseConfig;
+    }
+
+    /** @param array<string, mixed> $config */
+    private function assertValidConfig(array $config): void
+    {
+        $result = $this->configValidateService->validate($config);
 
         if ($result->isValid()) {
             return;
