@@ -15,6 +15,7 @@ final class NavigationEasyAdminSymfonyTypeTest extends TestCase
 
         self::assertStringContainsString('NavigationItemLocationType::class', $menuController);
         self::assertStringContainsString('JsonArrayTextareaType::class', $menuController);
+        self::assertStringContainsString('JsonListTextareaType::class', $menuController);
         self::assertStringContainsString('JsonArrayTextareaType::class', $itemController);
         self::assertStringContainsString('JsonListTextareaType::class', $itemController);
         self::assertStringContainsString('NavigationItemOperationType::class', $itemController);
