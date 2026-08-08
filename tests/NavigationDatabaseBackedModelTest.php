@@ -49,6 +49,18 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString('setParent($parent)', $import);
     }
 
+    public function testSnapshotRestoreCanonicalizesDerivedHierarchyAndOperation(): void
+    {
+        $snapshot = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotService.php');
+        $import = self::read('src/Service/Navigation/Import/NavigationConfigImportService.php');
+
+        self::assertStringContainsString("\$metadata['parent_key'] = \$item->getParent()?->getNavigationKey()", $snapshot);
+        self::assertStringContainsString("\$parentKey = \$metadata['parent_key'] ?? \$itemConfig['parent_key'] ?? null", $import);
+        self::assertStringContainsString("unset(\$metadata['parent_key'])", $import);
+        self::assertStringContainsString("\$itemConfig['operation'] ?? \$metadata['operation'] ?? null", $import);
+        self::assertStringNotContainsString("\$metadata['operation'] ?? \$itemConfig['operation'] ?? null", $import);
+    }
+
     public function testFixturesManifestAndPortableBackupRecoveryExist(): void
     {
         $fixture = self::read('src/DataFixtures/NavigationFixture.php');
