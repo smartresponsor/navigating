@@ -33,6 +33,9 @@ services:
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationRuntimeActivationProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService
 
+  App\Navigating\ServiceInterface\Navigation\Provide\NavigationDatabaseConfigProvideServiceInterface:
+    alias: App\Navigating\Service\Navigation\Provide\NavigationDatabaseConfigProvideService
+
   App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService:
     arguments:
       $runtimeScope: '%env(default:navigation.runtime_scope_default:APP_RUNTIME_SCOPE)%'
