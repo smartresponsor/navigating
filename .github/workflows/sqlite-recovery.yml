@@ -42,7 +42,7 @@ jobs:
         run: |
           rm -f var/navigation.sqlite
           mkdir -p var/backup/navigating
-          php bin/console doctrine:schema:update --force
+          php bin/console navigation:database:update
           php bin/console doctrine:schema:validate
 
       - name: Bootstrap navigation database
