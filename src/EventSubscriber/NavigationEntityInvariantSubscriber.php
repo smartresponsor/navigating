@@ -37,11 +37,11 @@ final class NavigationEntityInvariantSubscriber implements EventSubscriber
     private function validate(object $entity): void
     {
         if ($entity instanceof NavigationMenu) {
-            $this->requireKey($entity->getMenuKey(), 'Navigation menu key');
-            $this->requireSlug($entity->getSlug(), 'Navigation menu slug');
-            $this->requireNonEmpty($entity->getLabel(), 'Navigation menu label cannot be empty.');
+            $this->requireKey($entity->getMenuKey(), 'Navigation menu key', 160);
+            $this->requireSlug($entity->getSlug(), 'Navigation menu slug', 180);
+            $this->requireStringLength($entity->getLabel(), 'Navigation menu label', 140, true);
             $this->requireLocation($entity->getLocation());
-            $this->requireType($entity->getType(), 'Navigation menu type');
+            $this->requireType($entity->getType(), 'Navigation menu type', 60);
 
             return;
         }
@@ -54,13 +54,17 @@ final class NavigationEntityInvariantSubscriber implements EventSubscriber
             throw new \DomainException('Navigation item must belong to a navigation menu.');
         }
 
-        $this->requireKey($entity->getNavigationKey(), 'Navigation item key');
+        $this->requireKey($entity->getNavigationKey(), 'Navigation item key', 160);
         if (null !== $entity->getSlug()) {
-            $this->requireSlug($entity->getSlug(), 'Navigation item slug');
+            $this->requireSlug($entity->getSlug(), 'Navigation item slug', 180);
         }
-        $this->requireNonEmpty($entity->getLabel(), 'Navigation item label cannot be empty.');
-        $this->requireType($entity->getType(), 'Navigation item type');
+        $this->requireStringLength($entity->getLabel(), 'Navigation item label', 140, true);
+        $this->requireType($entity->getType(), 'Navigation item type', 40);
         $this->requireOperation($entity->getOperation());
+        $this->requireNullableStringLength($entity->getRouteName(), 'Navigation item route name', 180);
+        $this->requireNullableStringLength($entity->getPath(), 'Navigation item path', 512);
+        $this->requireNullableStringLength($entity->getIcon(), 'Navigation item icon', 80);
+        $this->requireNullableStringLength($entity->getBadge(), 'Navigation item badge', 80);
     }
 
     private function requireNonEmpty(string $value, string $message): void
@@ -70,27 +74,27 @@ final class NavigationEntityInvariantSubscriber implements EventSubscriber
         }
     }
 
-    private function requireKey(string $value, string $field): void
+    private function requireKey(string $value, string $field, int $maxLength): void
     {
-        $this->requireNonEmpty($value, $field.' cannot be empty.');
+        $this->requireStringLength($value, $field, $maxLength, true);
 
         if (1 !== preg_match('/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/', $value)) {
             throw new \DomainException($field.' must be a lowercase navigation token using letters, digits, dots, underscores or hyphens.');
         }
     }
 
-    private function requireSlug(string $value, string $field): void
+    private function requireSlug(string $value, string $field, int $maxLength): void
     {
-        $this->requireNonEmpty($value, $field.' cannot be empty.');
+        $this->requireStringLength($value, $field, $maxLength, true);
 
         if (1 !== preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $value)) {
             throw new \DomainException($field.' must use lowercase kebab-case.');
         }
     }
 
-    private function requireType(string $value, string $field): void
+    private function requireType(string $value, string $field, int $maxLength): void
     {
-        $this->requireNonEmpty($value, $field.' cannot be empty.');
+        $this->requireStringLength($value, $field, $maxLength, true);
 
         if (1 !== preg_match('/^[a-z][a-z0-9._-]*$/', $value)) {
             throw new \DomainException($field.' must be a lowercase navigation type token.');
@@ -99,7 +103,7 @@ final class NavigationEntityInvariantSubscriber implements EventSubscriber
 
     private function requireOperation(string $operation): void
     {
-        $this->requireNonEmpty($operation, 'Navigation item operation cannot be empty.');
+        $this->requireStringLength($operation, 'Navigation item operation', 60, true);
 
         if (1 !== preg_match('/^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$/', $operation)) {
             throw new \DomainException('Navigation item operation must use lowercase snake_case.');
@@ -108,11 +112,31 @@ final class NavigationEntityInvariantSubscriber implements EventSubscriber
 
     private function requireLocation(string $location): void
     {
-        $this->requireNonEmpty($location, 'Navigation menu location cannot be empty.');
+        $this->requireStringLength($location, 'Navigation menu location', 120, true);
 
         $locations = $this->navigationConfig['shell_locations'] ?? [];
         if (!is_array($locations) || !array_key_exists($location, $locations)) {
             throw new \DomainException(sprintf('Navigation menu location "%s" is not registered in shell_locations.', $location));
+        }
+    }
+
+    private function requireNullableStringLength(?string $value, string $field, int $maxLength): void
+    {
+        if (null === $value) {
+            return;
+        }
+
+        $this->requireStringLength($value, $field, $maxLength, false);
+    }
+
+    private function requireStringLength(string $value, string $field, int $maxLength, bool $required): void
+    {
+        if ($required) {
+            $this->requireNonEmpty($value, $field.' cannot be empty.');
+        }
+
+        if (mb_strlen($value) > $maxLength) {
+            throw new \DomainException(sprintf('%s cannot exceed %d characters.', $field, $maxLength));
         }
     }
 }
