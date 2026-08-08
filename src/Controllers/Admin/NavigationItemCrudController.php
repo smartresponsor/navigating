@@ -39,6 +39,19 @@ final class NavigationItemCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Navigation items')
             ->setPageTitle(Crud::PAGE_INDEX, 'Navigation items')
             ->setDefaultSort(['position' => 'ASC', 'id' => 'ASC'])
+            ->setSearchFields([
+                'navigationKey',
+                'slug',
+                'label',
+                'type',
+                'operation',
+                'routeName',
+                'path',
+                'menu.menuKey',
+                'menu.label',
+                'parent.navigationKey',
+                'parent.label',
+            ])
         ;
     }
 
@@ -62,8 +75,17 @@ final class NavigationItemCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->hideOnForm();
-        yield AssociationField::new('menu')->setRequired(true)->autocomplete();
-        yield AssociationField::new('parent')->setRequired(false)->autocomplete()->hideOnIndex();
+        yield AssociationField::new('menu')
+            ->setRequired(true)
+            ->autocomplete()
+            ->setHelp('The item belongs to exactly one navigation menu.')
+        ;
+        yield AssociationField::new('parent')
+            ->setRequired(false)
+            ->autocomplete()
+            ->setHelp('Parent must belong to the same menu. The entity invariant rejects cross-menu hierarchy.')
+            ->hideOnIndex()
+        ;
         yield TextField::new('navigationKey')->setHelp('Stable business key, for example catalog.index.');
         yield TextField::new('label');
         yield TextField::new('slug')->setRequired(false);
@@ -97,7 +119,7 @@ final class NavigationItemCrudController extends AbstractCrudController
         yield BooleanField::new('enabled');
         yield TextareaField::new('metadata')
             ->setFormType(JsonArrayTextareaType::class)
-            ->setHelp('JSON object for UI/runtime metadata.')
+            ->setHelp('JSON object for UI/runtime metadata. Hierarchy is represented by the parent association, not metadata.parent_key.')
             ->hideOnIndex()
         ;
         yield DateTimeField::new('archivedAt')->hideOnForm();
