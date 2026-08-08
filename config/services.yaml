@@ -12,6 +12,14 @@ services:
   App\Navigating\:
     resource: '../src/'
 
+  App\Navigating\Service\Navigation\Cache\NavigationConfigCacheService:
+    arguments:
+      $cache: '@cache.app'
+
+  App\Navigating\EventSubscriber\NavigationConfigCacheInvalidationSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
   App\Navigating\ServiceInterface\Navigation\Normalize\NavigationConfigNormalizeServiceInterface:
     alias: App\Navigating\Service\Navigation\Normalize\NavigationConfigNormalizeService
 
