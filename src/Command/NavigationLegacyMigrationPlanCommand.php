@@ -65,7 +65,7 @@ final class NavigationLegacyMigrationPlanCommand extends Command
         ];
         $payload['sha256'] = $this->checksum($payload);
 
-        $path = rtrim($this->backupDirectory, '/\\').DIRECTORY_SEPARATOR.'legacy-upgrade-plan-'.(new \DateTimeImmutable())->format('Ymd-His').'.json';
+        $path = rtrim($this->backupDirectory, '/\\').DIRECTORY_SEPARATOR.'legacy-upgrade-plan-'.(new \DateTimeImmutable())->format('Ymd-His').'-'.bin2hex(random_bytes(4)).'.json';
         try {
             $this->snapshotFileService->write($path, $payload);
         } catch (\Throwable $exception) {
