@@ -108,8 +108,18 @@ final readonly class NavigationShellProvideService implements NavigationShellPro
     private function runtimeConfig(): array
     {
         $databaseConfig = $this->databaseConfigProvider->provideConfig();
+        $databaseGroups = $databaseConfig['shell_groups'] ?? null;
 
-        return [] === $databaseConfig ? $this->navigationConfig : $databaseConfig;
+        if (!is_array($databaseGroups) || [] === $databaseGroups) {
+            throw new \RuntimeException(
+                'Navigation database contains no enabled menus. Bootstrap it with "php bin/console navigation:database:import-config" or create a menu in EasyAdmin.',
+            );
+        }
+
+        $config = $this->navigationConfig;
+        $config['shell_groups'] = $databaseGroups;
+
+        return $config;
     }
 
     /** @param array<string, mixed> $config */
