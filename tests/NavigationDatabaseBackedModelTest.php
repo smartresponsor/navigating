@@ -33,6 +33,7 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString("'visible_for_roles' => \$menu->getVisibleForRoles()", $provider);
         self::assertStringContainsString("'visible_for_scopes' => \$menu->getVisibleForScopes()", $provider);
         self::assertStringContainsString("'visible_for_environments' => \$menu->getVisibleForEnvironments()", $provider);
+        self::assertStringContainsString('#[ORM\\PreUpdate]', $menu);
     }
 
     public function testBootstrapCommandIsExplicitAndNonDestructiveByDefault(): void
@@ -46,12 +47,23 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString('setParent($parent)', $command);
     }
 
-    public function testRuntimePrefersDoctrineStorage(): void
+    public function testRuntimePrefersDoctrineStorageAndCachesProjection(): void
     {
-        $provider = self::read('src/Service/Navigation/Provide/NavigationShellProvideService.php');
+        $shellProvider = self::read('src/Service/Navigation/Provide/NavigationShellProvideService.php');
+        $databaseProvider = self::read('src/Service/Navigation/Provide/NavigationDatabaseConfigProvideService.php');
+        $cache = self::read('src/Service/Navigation/Cache/NavigationConfigCacheService.php');
+        $subscriber = self::read('src/EventSubscriber/NavigationConfigCacheInvalidationSubscriber.php');
+        $services = self::read('config/services.yaml');
 
-        self::assertStringContainsString('databaseConfigProvider->provideConfig()', $provider);
-        self::assertStringContainsString('[] === $databaseConfig ? $this->navigationConfig : $databaseConfig', $provider);
+        self::assertStringContainsString('databaseConfigProvider->provideConfig()', $shellProvider);
+        self::assertStringContainsString('[] === $databaseConfig ? $this->navigationConfig : $databaseConfig', $shellProvider);
+        self::assertStringContainsString('$this->cache->remember', $databaseProvider);
+        self::assertStringContainsString('CacheItemPoolInterface', $cache);
+        self::assertStringContainsString('Events::postPersist', $subscriber);
+        self::assertStringContainsString('Events::postUpdate', $subscriber);
+        self::assertStringContainsString('Events::postRemove', $subscriber);
+        self::assertStringContainsString('doctrine.event_subscriber', $services);
+        self::assertStringContainsString("$cache: '@cache.app'", $services);
     }
 
     private static function read(string $relativePath): string
