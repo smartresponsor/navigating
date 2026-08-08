@@ -17,6 +17,9 @@ final class NavigationLegacyMigrationContractTest extends TestCase
         self::assertStringContainsString("name: 'navigation:database:legacy-plan'", $plan);
         self::assertStringContainsString('Database was not modified.', $plan);
         self::assertStringContainsString("format' => 'smartresponsor.navigation.legacy-upgrade-plan'", $plan);
+        self::assertStringContainsString('State summary:', $plan);
+        self::assertStringContainsString('synthetic legacy groups', $plan);
+        self::assertStringContainsString('raw legacy rows, converted W31 payload and SHA-256 checksum', $plan);
         self::assertStringContainsString("name: 'navigation:database:legacy-upgrade'", $upgrade);
         self::assertStringContainsString("addOption('force'", $upgrade);
         self::assertStringContainsString('Refusing legacy schema upgrade without --force.', $upgrade);
