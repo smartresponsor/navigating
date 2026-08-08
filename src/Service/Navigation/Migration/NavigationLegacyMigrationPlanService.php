@@ -80,13 +80,40 @@ final readonly class NavigationLegacyMigrationPlanService
             if ('' === $key) {
                 throw new \RuntimeException('Legacy navigation contains a row with an empty navigation_key.');
             }
+            if (isset($rowByKey[$key])) {
+                throw new \RuntimeException(sprintf('Legacy navigation contains duplicate navigation_key "%s".', $key));
+            }
             $rowByKey[$key] = $row;
         }
 
         $groupForKey = [];
+        $legacyLocationForGroup = [];
         foreach ($rowByKey as $key => $row) {
-            $location = trim((string) ($row['location'] ?? 'shell.context.middle'));
-            $groupForKey[$key] = $keyToGroup[$key] ?? 'legacy_'.$this->tokenize($location);
+            $location = $this->legacyLocation($row);
+            $groupKey = $keyToGroup[$key] ?? 'legacy_'.$this->tokenize($location);
+            $groupForKey[$key] = $groupKey;
+
+            if (isset($legacyLocationForGroup[$groupKey]) && $legacyLocationForGroup[$groupKey] !== $location) {
+                throw new \RuntimeException(sprintf(
+                    'Legacy items mapped to future menu "%s" come from different locations (%s vs %s). Refusing lossy migration.',
+                    $groupKey,
+                    $legacyLocationForGroup[$groupKey],
+                    $location,
+                ));
+            }
+            $legacyLocationForGroup[$groupKey] = $location;
+
+            $canonical = is_array($canonicalGroups[$groupKey] ?? null) ? $canonicalGroups[$groupKey] : [];
+            $canonicalLocation = $this->nullableString($canonical['location'] ?? null);
+            if (null !== $canonicalLocation && $canonicalLocation !== $location) {
+                throw new \RuntimeException(sprintf(
+                    'Legacy item "%s" is stored at "%s", but canonical menu "%s" targets "%s". Refusing location-changing migration.',
+                    $key,
+                    $location,
+                    $groupKey,
+                    $canonicalLocation,
+                ));
+            }
         }
 
         foreach ($rowByKey as $key => $row) {
@@ -106,26 +133,29 @@ final readonly class NavigationLegacyMigrationPlanService
         $archived = [];
         foreach ($rowByKey as $key => $row) {
             $groupKey = $groupForKey[$key];
-            $location = trim((string) ($row['location'] ?? 'shell.context.middle'));
+            $location = $legacyLocationForGroup[$groupKey];
             $canonical = is_array($canonicalGroups[$groupKey] ?? null) ? $canonicalGroups[$groupKey] : [];
 
             if (!isset($groups[$groupKey])) {
                 $groups[$groupKey] = [
                     'label' => $canonical['label'] ?? $this->labelize($location),
                     'slug' => $canonical['slug'] ?? str_replace('_', '-', $groupKey),
-                    'location' => $canonical['location'] ?? $location,
+                    'location' => $location,
                     'type' => $canonical['type'] ?? 'navigation',
                     'priority' => (int) ($canonical['priority'] ?? 100),
-                    'enabled' => (bool) ($canonical['enabled'] ?? true),
-                    'visible_for_roles' => is_array($canonical['visible_for_roles'] ?? null) ? $canonical['visible_for_roles'] : [],
-                    'visible_for_scopes' => is_array($canonical['visible_for_scopes'] ?? null) ? $canonical['visible_for_scopes'] : [],
-                    'visible_for_environments' => is_array($canonical['visible_for_environments'] ?? null) ? $canonical['visible_for_environments'] : [],
-                    'metadata' => is_array($canonical['metadata'] ?? null) ? $canonical['metadata'] : [],
+                    'enabled' => true,
+                    'visible_for_roles' => [],
+                    'visible_for_scopes' => [],
+                    'visible_for_environments' => [],
+                    'metadata' => array_merge(
+                        is_array($canonical['metadata'] ?? null) ? $canonical['metadata'] : [],
+                        ['legacy_migrated' => true, 'legacy_location' => $location],
+                    ),
                     'items' => [],
                 ];
             }
 
-            $metadata = $this->decodeJsonObject($row['metadata'] ?? null);
+            $metadata = $this->decodeJsonObjectStrict($row['metadata'] ?? null, sprintf('metadata for legacy navigation item "%s"', $key));
             $parentKey = $this->nullableString($row['parent_key'] ?? null);
             if (null !== $parentKey) {
                 $metadata['parent_key'] = $parentKey;
@@ -133,11 +163,16 @@ final readonly class NavigationLegacyMigrationPlanService
 
             $requiredRole = $this->nullableString($row['required_role'] ?? null);
             $routeName = $this->nullableString($row['route_name'] ?? null);
+            $operation = trim((string) ($row['operation'] ?? 'index')) ?: 'index';
+            if (is_string($metadata['operation'] ?? null) && trim($metadata['operation']) !== '' && trim($metadata['operation']) !== $operation) {
+                $metadata['legacy_metadata_operation'] = $metadata['operation'];
+            }
+
             $item = [
-                'type' => is_string($metadata['type'] ?? null) ? $metadata['type'] : 'link',
+                'type' => is_string($metadata['type'] ?? null) && '' !== trim($metadata['type']) ? trim($metadata['type']) : 'link',
                 'label' => (string) ($row['label'] ?? $key),
                 'slug' => $this->nullableString($row['slug'] ?? null),
-                'operation' => trim((string) ($row['operation'] ?? 'index')) ?: 'index',
+                'operation' => $operation,
                 'icon' => $this->nullableString($row['icon'] ?? null),
                 'priority' => (int) ($row['position'] ?? 0),
                 'enabled' => (bool) ($row['enabled'] ?? true),
@@ -150,8 +185,10 @@ final readonly class NavigationLegacyMigrationPlanService
                 $item['target'] = [
                     'type' => 'route',
                     'route' => $routeName,
-                    'params' => $this->decodeJsonObject($row['route_parameters'] ?? null),
+                    'params' => $this->decodeJsonObjectStrict($row['route_parameters'] ?? null, sprintf('route_parameters for legacy navigation item "%s"', $key)),
                 ];
+            } elseif ([] !== $this->decodeJsonObjectStrict($row['route_parameters'] ?? null, sprintf('route_parameters for legacy navigation item "%s"', $key))) {
+                throw new \RuntimeException(sprintf('Legacy navigation item "%s" has route parameters but no route name.', $key));
             }
 
             $groups[$groupKey]['items'][$key] = $item;
@@ -164,7 +201,7 @@ final readonly class NavigationLegacyMigrationPlanService
     }
 
     /** @return array<string, mixed> */
-    private function decodeJsonObject(mixed $value): array
+    private function decodeJsonObjectStrict(mixed $value, string $field): array
     {
         if (is_array($value)) {
             return $value;
@@ -172,12 +209,34 @@ final readonly class NavigationLegacyMigrationPlanService
         if (!is_string($value) || '' === trim($value)) {
             return [];
         }
+
         try {
             $decoded = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
-            return is_array($decoded) ? $decoded : [];
-        } catch (\JsonException) {
-            return [];
+        } catch (\JsonException $exception) {
+            throw new \RuntimeException(sprintf('Invalid JSON in %s: %s', $field, $exception->getMessage()), 0, $exception);
         }
+
+        if (!is_array($decoded) || array_is_list($decoded)) {
+            throw new \RuntimeException(sprintf('%s must decode to a JSON object.', ucfirst($field)));
+        }
+
+        return $decoded;
+    }
+
+    /** @param array<string, mixed> $row */
+    private function legacyLocation(array $row): string
+    {
+        $location = trim((string) ($row['location'] ?? ''));
+        if ('' === $location) {
+            throw new \RuntimeException('Legacy navigation contains a row with an empty location.');
+        }
+
+        $locations = $this->navigationConfig['shell_locations'] ?? [];
+        if (!is_array($locations) || !array_key_exists($location, $locations)) {
+            throw new \RuntimeException(sprintf('Legacy navigation location "%s" is not registered in shell_locations.', $location));
+        }
+
+        return $location;
     }
 
     private function nullableString(mixed $value): ?string
