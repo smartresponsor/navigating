@@ -5,22 +5,25 @@
   "license": "proprietary",
   "require": {
     "php": "^8.4",
-    "psr/log": "^3.0",
+    "doctrine/doctrine-bundle": "^3.0",
+    "doctrine/orm": "^3.3",
     "easycorp/easyadmin-bundle": "^5.0",
+    "objecting/object": "^1.0",
+    "psr/log": "^3.0",
     "symfony/config": "^8.0",
+    "symfony/console": "^8.0",
     "symfony/dependency-injection": "^8.0",
+    "symfony/framework-bundle": "^8.0",
     "symfony/http-foundation": "^8.0",
     "symfony/http-kernel": "^8.0",
     "symfony/routing": "^8.0",
     "symfony/security-bundle": "^8.0",
-    "symfony/yaml": "^8.0",
-    "symfony/console": "^8.0",
-    "symfony/framework-bundle": "^8.0",
-    "symfony/twig-bundle": "^8.0"
+    "symfony/twig-bundle": "^8.0",
+    "symfony/yaml": "^8.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^11.0",
-    "friendsofphp/php-cs-fixer": "3.94"
+    "friendsofphp/php-cs-fixer": "3.94",
+    "phpunit/phpunit": "^11.0"
   },
   "autoload": {
     "psr-4": {
