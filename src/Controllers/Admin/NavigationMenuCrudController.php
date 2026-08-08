@@ -6,6 +6,7 @@ namespace App\Navigating\Controllers\Admin;
 
 use App\Navigating\Entity\NavigationMenu;
 use App\Navigating\Form\Type\Admin\JsonArrayTextareaType;
+use App\Navigating\Form\Type\Admin\JsonListTextareaType;
 use App\Navigating\Form\Type\Admin\NavigationItemLocationType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -43,6 +44,19 @@ final class NavigationMenuCrudController extends AbstractCrudController
         yield TextField::new('label');
         yield TextField::new('location')->setFormType(NavigationItemLocationType::class);
         yield TextField::new('type');
+        yield TextareaField::new('visibleForRoles')
+            ->setFormType(JsonListTextareaType::class)
+            ->setHelp('JSON string list, for example ["ROLE_ADMIN", "ROLE_SUPER_ADMIN"].')
+            ->hideOnIndex()
+        ;
+        yield TextareaField::new('visibleForScopes')
+            ->setFormType(JsonListTextareaType::class)
+            ->hideOnIndex()
+        ;
+        yield TextareaField::new('visibleForEnvironments')
+            ->setFormType(JsonListTextareaType::class)
+            ->hideOnIndex()
+        ;
         yield IntegerField::new('priority');
         yield BooleanField::new('enabled');
         yield TextareaField::new('metadata')
