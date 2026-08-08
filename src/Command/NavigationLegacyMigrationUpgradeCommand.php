@@ -10,6 +10,7 @@ use App\Navigating\Repository\NavigationMenuRepository;
 use App\Navigating\Service\Navigation\Import\NavigationConfigImportService;
 use App\Navigating\Service\Navigation\Migration\NavigationLegacyMigrationPlanService;
 use App\Navigating\Service\Navigation\Persistence\NavigationPersistenceFinalizeService;
+use Doctrine\DBAL\Platforms\SQLitePlatform;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -65,9 +66,24 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
         }
 
         $connection = $this->entityManager->getConnection();
+        if (!$connection->getDatabasePlatform() instanceof SQLitePlatform) {
+            $output->writeln('<error>The guarded W30 -> W31 legacy upgrade currently supports SQLite only.</error>');
+
+            return Command::FAILURE;
+        }
+
         $schemaManager = $connection->createSchemaManager();
         if ($schemaManager->tablesExist([self::SHADOW_TABLE])) {
             $output->writeln('<error>Recovery shadow table already exists; refusing to overwrite it.</error>');
+
+            return Command::FAILURE;
+        }
+
+        try {
+            $this->assertNoExternalSqliteDependencies();
+            $legacySchemaObjects = $this->captureLegacySchemaObjects();
+        } catch (\Throwable $exception) {
+            $output->writeln('<error>Legacy SQLite dependency preflight failed: '.$exception->getMessage().'</error>');
 
             return Command::FAILURE;
         }
@@ -77,15 +93,23 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
             $this->entityManager->getClassMetadata(NavigationItem::class),
         ];
 
+        $foreignKeysEnabled = '1' === (string) $connection->fetchOne('PRAGMA foreign_keys');
+
         try {
+            if ($foreignKeysEnabled) {
+                $connection->executeStatement('PRAGMA foreign_keys = OFF');
+            }
+
             $connection->beginTransaction();
             $connection->executeStatement('ALTER TABLE navigation_item RENAME TO '.self::SHADOW_TABLE);
+            $this->dropLegacySchemaObjects($legacySchemaObjects);
             (new SchemaTool($this->entityManager))->createSchema($metadata);
             $connection->commit();
         } catch (\Throwable $exception) {
             if ($connection->isTransactionActive()) {
                 $connection->rollBack();
             }
+            $this->restoreForeignKeyPragma($foreignKeysEnabled);
             $output->writeln('<error>W31 schema creation failed; legacy table transaction was rolled back where supported: '.$exception->getMessage().'</error>');
 
             return Command::FAILURE;
@@ -96,11 +120,17 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
             $this->importService->replaceFromConfig(['shell_groups' => $payload['shell_groups']], true, false);
             $this->restoreArchivedItems($payload['archived_items']);
             $this->assertImportedCount((int) $payload['row_count']);
+            $this->assertForeignKeyIntegrity();
             $connection->executeStatement('DROP TABLE '.self::SHADOW_TABLE);
+            $this->restoreForeignKeyPragma($foreignKeysEnabled);
             $this->finalizer->finalizeCommittedChange();
         } catch (\Throwable $exception) {
-            $this->restoreLegacySchema($metadata);
-            $output->writeln('<error>Legacy upgrade failed. Recovery was attempted and the migration plan remains untouched: '.$exception->getMessage().'</error>');
+            $recovered = $this->restoreLegacySchema($metadata, $legacySchemaObjects);
+            $this->restoreForeignKeyPragma($foreignKeysEnabled);
+            $suffix = $recovered
+                ? 'Legacy schema was restored automatically.'
+                : 'Automatic restoration could not be completed; the migration plan and any remaining shadow table were preserved for manual recovery.';
+            $output->writeln('<error>Legacy upgrade failed. '.$suffix.' '.$exception->getMessage().'</error>');
 
             return Command::FAILURE;
         }
@@ -156,6 +186,65 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
         }
     }
 
+    private function assertNoExternalSqliteDependencies(): void
+    {
+        $connection = $this->entityManager->getConnection();
+
+        $views = $connection->executeQuery(
+            "SELECT name FROM sqlite_schema WHERE type = 'view' AND sql IS NOT NULL AND lower(sql) LIKE '%navigation_item%'",
+        )->fetchFirstColumn();
+        if ([] !== $views) {
+            throw new \RuntimeException('Views reference legacy navigation_item: '.implode(', ', array_map('strval', $views)).'.');
+        }
+
+        $tables = $connection->executeQuery(
+            "SELECT name FROM sqlite_schema WHERE type = 'table' AND name NOT LIKE 'sqlite_%' AND name <> 'navigation_item'",
+        )->fetchFirstColumn();
+        $foreignKeyDependents = [];
+        foreach ($tables as $table) {
+            $table = (string) $table;
+            foreach ($connection->executeQuery('PRAGMA foreign_key_list('.$this->quoteSqliteIdentifier($table).')')->fetchAllAssociative() as $foreignKey) {
+                if ('navigation_item' === ($foreignKey['table'] ?? null)) {
+                    $foreignKeyDependents[] = $table;
+                    break;
+                }
+            }
+        }
+        if ([] !== $foreignKeyDependents) {
+            throw new \RuntimeException('Foreign keys outside Navigating reference legacy navigation_item: '.implode(', ', $foreignKeyDependents).'.');
+        }
+    }
+
+    /** @return list<array{name:string,type:string,sql:string}> */
+    private function captureLegacySchemaObjects(): array
+    {
+        $rows = $this->entityManager->getConnection()->executeQuery(
+            "SELECT name, type, sql FROM sqlite_schema WHERE tbl_name = 'navigation_item' AND type IN ('index', 'trigger') AND sql IS NOT NULL ORDER BY type, name",
+        )->fetchAllAssociative();
+
+        $objects = [];
+        foreach ($rows as $row) {
+            $name = $row['name'] ?? null;
+            $type = $row['type'] ?? null;
+            $sql = $row['sql'] ?? null;
+            if (is_string($name) && is_string($type) && is_string($sql)) {
+                $objects[] = ['name' => $name, 'type' => $type, 'sql' => $sql];
+            }
+        }
+
+        return $objects;
+    }
+
+    /** @param list<array{name:string,type:string,sql:string}> $objects */
+    private function dropLegacySchemaObjects(array $objects): void
+    {
+        $connection = $this->entityManager->getConnection();
+        foreach ($objects as $object) {
+            $keyword = 'trigger' === $object['type'] ? 'TRIGGER' : 'INDEX';
+            $connection->executeStatement('DROP '.$keyword.' IF EXISTS '.$this->quoteSqliteIdentifier($object['name']));
+        }
+    }
+
     /** @param list<mixed> $archived */
     private function restoreArchivedItems(array $archived): void
     {
@@ -184,19 +273,46 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
         }
     }
 
-    /** @param list<object> $metadata */
-    private function restoreLegacySchema(array $metadata): void
+    private function assertForeignKeyIntegrity(): void
+    {
+        $violations = $this->entityManager->getConnection()->executeQuery('PRAGMA foreign_key_check')->fetchAllAssociative();
+        if ([] !== $violations) {
+            throw new \RuntimeException('SQLite foreign_key_check reported violations after W31 import.');
+        }
+    }
+
+    /** @param list<object> $metadata @param list<array{name:string,type:string,sql:string}> $legacySchemaObjects */
+    private function restoreLegacySchema(array $metadata, array $legacySchemaObjects): bool
     {
         $connection = $this->entityManager->getConnection();
         try {
             $this->entityManager->clear();
             (new SchemaTool($this->entityManager))->dropSchema($metadata);
-            if ($connection->createSchemaManager()->tablesExist([self::SHADOW_TABLE])) {
-                $connection->executeStatement('ALTER TABLE '.self::SHADOW_TABLE.' RENAME TO navigation_item');
+            if (!$connection->createSchemaManager()->tablesExist([self::SHADOW_TABLE])) {
+                return false;
             }
+            $connection->executeStatement('ALTER TABLE '.self::SHADOW_TABLE.' RENAME TO navigation_item');
+            foreach ($legacySchemaObjects as $object) {
+                $connection->executeStatement($object['sql']);
+            }
+
+            return true;
         } catch (\Throwable) {
-            // Preserve the shadow table and JSON plan for manual recovery if automatic rollback cannot complete.
+            return false;
         }
+    }
+
+    private function restoreForeignKeyPragma(bool $enabled): void
+    {
+        if ($this->entityManager->getConnection()->isTransactionActive()) {
+            return;
+        }
+        $this->entityManager->getConnection()->executeStatement('PRAGMA foreign_keys = '.($enabled ? 'ON' : 'OFF'));
+    }
+
+    private function quoteSqliteIdentifier(string $identifier): string
+    {
+        return '"'.str_replace('"', '""', $identifier).'"';
     }
 
     /** @param array<string, mixed> $payload */
