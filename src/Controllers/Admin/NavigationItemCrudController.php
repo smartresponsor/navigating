@@ -6,6 +6,7 @@ namespace App\Navigating\Controllers\Admin;
 
 use App\Navigating\Entity\NavigationItem;
 use App\Navigating\Form\Type\Admin\JsonArrayTextareaType;
+use App\Navigating\Form\Type\Admin\JsonListTextareaType;
 use App\Navigating\Form\Type\Admin\NavigationItemOperationType;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -78,17 +79,17 @@ final class NavigationItemCrudController extends AbstractCrudController
         yield TextField::new('icon')->setRequired(false)->hideOnIndex();
         yield TextField::new('badge')->setRequired(false)->hideOnIndex();
         yield TextareaField::new('visibleForRoles')
-            ->setFormType(JsonArrayTextareaType::class)
+            ->setFormType(JsonListTextareaType::class)
             ->setHelp('JSON array of required roles.')
             ->hideOnIndex()
         ;
         yield TextareaField::new('visibleForScopes')
-            ->setFormType(JsonArrayTextareaType::class)
+            ->setFormType(JsonListTextareaType::class)
             ->setHelp('JSON array of navigation scopes.')
             ->hideOnIndex()
         ;
         yield TextareaField::new('visibleForEnvironments')
-            ->setFormType(JsonArrayTextareaType::class)
+            ->setFormType(JsonListTextareaType::class)
             ->setHelp('JSON array of environments.')
             ->hideOnIndex()
         ;
