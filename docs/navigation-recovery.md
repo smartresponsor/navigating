@@ -95,6 +95,8 @@ var/backup/navigating/auto-previous.json
 
 `auto-latest.json` is written atomically through a temporary file. Before promotion, the prior latest snapshot is copied to `auto-previous.json`. An empty navigation state is never promoted over the last non-empty automatic backup.
 
+Automatic backup runs only after a navigation flush that is not inside an explicit Doctrine transaction. This prevents a snapshot from being promoted from uncommitted import/restore state. Transactional import/restore paths already have their explicit recovery sources.
+
 Automatic backup is a best-effort safety layer. A filesystem failure is logged and does not roll back the business write. For planned schema work, the explicit manual/pre-operation backup remains authoritative.
 
 ## Host-safe schema update
@@ -113,7 +115,9 @@ or:
 composer navigation:schema:update
 ```
 
-This command passes only `NavigationMenu` and `NavigationItem` metadata to Doctrine `SchemaTool` and uses safe/save mode. It applies additive schema changes only and does not generate destructive changes for unrelated host tables.
+The command temporarily restricts Doctrine's schema-assets filter to `navigation_menu` and `navigation_item`, passes only `NavigationMenu` and `NavigationItem` metadata to ORM `SchemaTool`, synchronizes those tables, and restores the host application's original schema-assets filter in `finally`.
+
+This is component-scoped, not globally additive-only: Doctrine may still emit DDL needed to synchronize Navigating's own tables. It cannot treat unrelated host tables as schema targets because they are hidden from the comparison. For that reason planned updates should still use an explicit navigation backup.
 
 For a planned update with an explicit recovery point use:
 
@@ -130,7 +134,7 @@ navigation:database:update
 
 Do not use `doctrine:schema:update --force` as the Navigating component update command in the host application.
 
-If an entity change requires destructive DDL inside Navigating itself, use the component rebuild path below so the menu configuration is snapshotted before tables are recreated.
+If an entity change requires a deliberate destructive reset inside Navigating itself, use the component rebuild path below so the menu configuration is snapshotted before tables are recreated.
 
 ## Component-scoped full rebuild
 
@@ -188,10 +192,10 @@ The host database backup facility is therefore optional for Navigating configura
 
 ## Operational canon
 
-Before any intentional schema operation that may rebuild or drop Navigating tables, create an application-level Navigating backup first. For normal entity-driven updates use `composer navigation:schema:safe`. For a deliberate Navigating-only table reset use `navigation:database:rebuild --force` instead of dropping or globally updating the whole host database.
+Before any intentional schema operation that may rebuild or alter Navigating tables, create an application-level Navigating backup first. For normal entity-driven updates use `composer navigation:schema:safe`. For a deliberate Navigating-only table reset use `navigation:database:rebuild --force` instead of dropping or globally updating the whole host database.
 
 Never use an unscoped `doctrine:fixtures:load` as a Navigating recovery command inside the host application. Always use the `navigating` group with `--append`, or use manifest/backup restore commands.
 
-Never use global `doctrine:schema:update --force` as Navigating's own maintenance command inside the host application. Navigating schema ownership is limited to its own Doctrine metadata.
+Never use global `doctrine:schema:update --force` as Navigating's own maintenance command inside the host application. Navigating schema ownership is limited to its own Doctrine metadata and schema-assets whitelist.
 
 When administrative changes become part of the product's canonical default state, promote them with `navigation:manifest:write`, validate with `navigation:manifest:verify`, and commit the resulting manifest. Runtime backups remain operational artifacts under `var/` or another deployment-owned persistent path and are not repository fixtures.
