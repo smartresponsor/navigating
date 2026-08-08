@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Navigating\Command;
 
+use App\Navigating\Service\Navigation\Snapshot\NavigationSnapshotFileService;
 use App\Navigating\Service\Navigation\Snapshot\NavigationSnapshotService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -17,6 +18,7 @@ final class NavigationBackupCreateCommand extends Command
 {
     public function __construct(
         private readonly NavigationSnapshotService $snapshotService,
+        private readonly NavigationSnapshotFileService $snapshotFileService,
         #[Autowire('%kernel.project_dir%')] private readonly string $projectDir,
     ) {
         parent::__construct();
@@ -34,17 +36,8 @@ final class NavigationBackupCreateCommand extends Command
             ? $this->absolutePath(trim($path))
             : $this->projectDir.'/var/backup/navigating/navigation-'.date('Ymd-His').'.json';
 
-        $directory = dirname($path);
-        if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {
-            $output->writeln('<error>Unable to create backup directory.</error>');
-            return Command::FAILURE;
-        }
-
         try {
-            $json = json_encode($this->snapshotService->create(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
-            if (false === file_put_contents($path, $json.PHP_EOL, LOCK_EX)) {
-                throw new \RuntimeException('Unable to write navigation backup.');
-            }
+            $this->snapshotFileService->write($path, $this->snapshotService->create());
         } catch (\Throwable $exception) {
             $output->writeln('<error>'.$exception->getMessage().'</error>');
             return Command::FAILURE;
