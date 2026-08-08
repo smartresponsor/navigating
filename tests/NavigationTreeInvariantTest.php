@@ -83,8 +83,19 @@ final class NavigationTreeInvariantTest extends TestCase
         self::assertIsString($provider);
 
         self::assertStringContainsString('isEffectivelyEnabled($item)', $provider);
-        self::assertStringContainsString('for', str_replace('while', 'for', $provider));
+        self::assertStringContainsString('while (null !== $cursor)', $provider);
         self::assertStringContainsString("!\$cursor->isEnabled() || \$cursor->isArchived()", $provider);
         self::assertStringContainsString("throw new \\LogicException('Navigation item hierarchy contains a cycle.')", $provider);
+    }
+
+    public function testRuntimeVisibilityRequiresVisibleAncestorChain(): void
+    {
+        $filter = file_get_contents(dirname(__DIR__).'/src/Service/Navigation/Filter/NavigationVisibilityFilterService.php');
+        self::assertIsString($filter);
+
+        self::assertStringContainsString('hasVisibleAncestorChain($item, $itemsByKey, $locallyVisibleItems)', $filter);
+        self::assertStringContainsString("\$parentKey = \$cursor->metadata['parent_key'] ?? null", $filter);
+        self::assertStringContainsString('!isset($locallyVisibleItems[$parentKey])', $filter);
+        self::assertStringContainsString('isset($visited[$parentKey])', $filter);
     }
 }
