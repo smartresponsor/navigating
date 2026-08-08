@@ -38,6 +38,22 @@ final class NavigationConcurrencyContractTest extends TestCase
         self::assertStringContainsString('private int $version = 1;', $item);
         self::assertStringContainsString('public function getVersion(): int', $menu);
         self::assertStringContainsString('public function getVersion(): int', $item);
+        self::assertStringContainsString('public function setVersion(int $version): self', $menu);
+        self::assertStringContainsString('public function setVersion(int $version): self', $item);
+    }
+
+    public function testEasyAdminCarriesExpectedVersionAcrossLongRunningEditForms(): void
+    {
+        $menuController = self::read('src/Controllers/Admin/NavigationMenuCrudController.php');
+        $itemController = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+
+        foreach ([$menuController, $itemController] as $controller) {
+            self::assertStringContainsString("HiddenField::new('version')->onlyWhenUpdating()", $controller);
+            self::assertStringContainsString('LockMode::OPTIMISTIC', $controller);
+            self::assertStringContainsString('->getVersion()', $controller);
+            self::assertStringContainsString('catch (OptimisticLockException)', $controller);
+            self::assertStringContainsString("addFlash('warning'", $controller);
+        }
     }
 
     private static function read(string $relativePath): string
