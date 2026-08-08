@@ -101,13 +101,15 @@ Snapshots are portable JSON, include the full functional menu/item configuration
 
 Generated row IDs and historical Objecting audit timestamps are intentionally outside the portable recovery contract.
 
+Automatic rolling backups are written only when a navigation flush occurs outside an explicit Doctrine transaction, preventing uncommitted import/restore state from becoming the latest automatic recovery snapshot.
+
 See `docs/navigation-recovery.md` for complete recovery procedures.
 
 ## Host-safe schema lifecycle
 
 Navigating never uses global `doctrine:schema:update --force` as its component maintenance command inside the host application.
 
-For normal additive entity evolution use:
+For normal entity evolution use:
 
 ```text
 php bin/console navigation:database:update
@@ -119,9 +121,11 @@ or:
 composer navigation:schema:update
 ```
 
-The command passes only `NavigationMenu` and `NavigationItem` metadata to Doctrine `SchemaTool` and uses safe/save mode, so unrelated host tables are not destructive targets.
+The command temporarily whitelists only `navigation_menu` and `navigation_item` through Doctrine's schema-assets filter, passes only `NavigationMenu` and `NavigationItem` metadata to ORM `SchemaTool`, performs the schema synchronization, then restores the host application's previous schema-assets filter in `finally`.
 
-For a planned additive update with an explicit recovery point use:
+The command uses the Doctrine ORM 3.x `SchemaTool::getUpdateSchemaSql(array $classes)` / `updateSchema(array $classes)` API. It does not rely on the removed legacy `saveMode` argument.
+
+This is component-scoped rather than globally additive-only. Doctrine can emit DDL needed to synchronize Navigating's own tables, so planned updates should use an explicit recovery point:
 
 ```text
 composer navigation:schema:safe
@@ -129,7 +133,7 @@ composer navigation:schema:safe
 
 This runs `navigation:backup:create` followed by `navigation:database:update`.
 
-If Navigating entity evolution requires destructive DDL inside the component, use:
+If Navigating entity evolution requires a deliberate destructive reset inside the component, use:
 
 ```text
 php bin/console navigation:database:rebuild --force
@@ -175,6 +179,6 @@ composer navigation:fixtures
 composer qa
 ```
 
-For an existing W31 database with administrator-managed navigation, create a backup before any destructive component rebuild. Use `--force` on import/restore only when an intentional replacement is desired.
+For an existing W31 database with administrator-managed navigation, create a backup before component schema synchronization or destructive rebuild. Use `--force` on import/restore only when an intentional replacement is desired.
 
 The SQLite schema remains generated from entity metadata rather than from a migration file.
