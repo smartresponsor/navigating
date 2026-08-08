@@ -72,7 +72,9 @@ Restore with:
 php bin/console navigation:backup:restore shared/backup/navigation-before-update.json --force
 ```
 
-Snapshots contain all menus and items, including disabled state, visibility, custom slugs, targets, metadata, parent relationships and archived state. Each snapshot has a format version and SHA-256 integrity value. Restore verifies the checksum before changing Doctrine state.
+Snapshots contain the complete functional navigation configuration: all menus and items, disabled state, visibility, custom slugs, targets, metadata, parent relationships and archived state. Each snapshot has a format version and SHA-256 integrity value. Restore verifies the checksum before changing Doctrine state.
+
+Portable snapshots intentionally do not promise preservation of generated database row IDs or historical Objecting audit timestamps. Those are persistence history, not navigation configuration. Relationships are restored from stable menu/item business keys so the resulting menu behavior is equivalent after a clean install or rebuild.
 
 ## Safe schema update
 
@@ -93,6 +95,38 @@ doctrine:schema:update --force
 
 The backup is created before Doctrine touches the schema.
 
+## Component-scoped full rebuild
+
+When Navigating's own tables must be destroyed and recreated, use:
+
+```text
+php bin/console navigation:database:rebuild --force
+```
+
+or:
+
+```text
+composer navigation:rebuild
+```
+
+The command performs the following sequence inside the application:
+
+```text
+create portable Navigating snapshot
+write snapshot under var/backup/navigating/
+drop only NavigationMenu and NavigationItem Doctrine metadata tables
+recreate only those Navigating tables
+restore the snapshot
+```
+
+It uses Doctrine `SchemaTool` with the metadata for `NavigationMenu` and `NavigationItem`. It does not execute `doctrine:schema:drop`, does not use `--full-database`, and therefore does not own or destroy unrelated host application tables.
+
+An explicit pre-rebuild backup path may be supplied:
+
+```text
+php bin/console navigation:database:rebuild --force --backup-path=shared/backup/navigation-pre-rebuild.json
+```
+
 ## Complete database loss
 
 For a completely removed SQLite database, the recovery order is:
@@ -106,13 +140,19 @@ or, for a clean canonical installation:
 
 ```text
 create database/schema
-navigation:manifest:restore
+navigation:manifest:restore --force
 ```
 
 or:
 
 ```text
-doctrine:fixtures:load
+doctrine:fixtures:load --no-interaction
 ```
 
 The host database backup facility is therefore optional for Navigating configuration recovery. Application-level snapshots remain portable and database-engine independent.
+
+## Operational canon
+
+Before any intentional schema operation that may rebuild or drop Navigating tables, create an application-level Navigating backup first. For normal entity-driven updates use `composer navigation:schema:safe`. For a deliberate Navigating-only table reset use `navigation:database:rebuild --force` instead of dropping the whole host database.
+
+When administrative changes become part of the product's canonical default state, promote them with `navigation:manifest:write`, validate with `navigation:manifest:verify`, and commit the resulting manifest. Runtime backups remain operational artifacts under `var/` or another deployment-owned persistent path and are not repository fixtures.
