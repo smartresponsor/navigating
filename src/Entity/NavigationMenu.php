@@ -27,6 +27,10 @@ final class NavigationMenu implements ObjectAuditedInterface
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
+    #[ORM\Version]
+    #[ORM\Column(type: Types::INTEGER)]
+    private int $version = 1;
+
     #[ORM\Column(name: 'menu_key', length: 160)]
     private string $menuKey = '';
 
@@ -78,6 +82,11 @@ final class NavigationMenu implements ObjectAuditedInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getVersion(): int
+    {
+        return $this->version;
     }
 
     public function getMenuKey(): string
