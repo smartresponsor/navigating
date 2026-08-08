@@ -17,6 +17,7 @@ services:
       $cache: '@cache.app'
 
   App\Navigating\EventSubscriber\NavigationConfigCacheInvalidationSubscriber:
+    autoconfigure: false
     tags:
       - { name: doctrine.event_subscriber }
 
