@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Navigating\Service\Navigation\Snapshot;
 
-use App\Navigating\Entity\NavigationItem;
 use App\Navigating\Repository\NavigationMenuRepository;
 use App\Navigating\Service\Navigation\Import\NavigationConfigImportService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -94,22 +93,25 @@ final readonly class NavigationSnapshotService
     public function restore(array $snapshot): int
     {
         $this->assertValid($snapshot);
-        $count = $this->importService->replaceFromConfig(['shell_groups' => $snapshot['shell_groups']]);
 
-        $archived = is_array($snapshot['archived_items'] ?? null) ? $snapshot['archived_items'] : [];
-        if ([] !== $archived) {
-            $lookup = array_fill_keys(array_filter($archived, 'is_string'), true);
-            foreach ($this->menuRepository->findAll() as $menu) {
-                foreach ($menu->getItems() as $item) {
-                    if (isset($lookup[$menu->getMenuKey().':'.$item->getNavigationKey()])) {
-                        $item->archive();
+        return $this->entityManager->wrapInTransaction(function () use ($snapshot): int {
+            $count = $this->importService->replaceFromConfig(['shell_groups' => $snapshot['shell_groups']]);
+            $archived = is_array($snapshot['archived_items'] ?? null) ? $snapshot['archived_items'] : [];
+
+            if ([] !== $archived) {
+                $lookup = array_fill_keys(array_filter($archived, 'is_string'), true);
+                foreach ($this->menuRepository->findAll() as $menu) {
+                    foreach ($menu->getItems() as $item) {
+                        if (isset($lookup[$menu->getMenuKey().':'.$item->getNavigationKey()])) {
+                            $item->archive();
+                        }
                     }
                 }
+                $this->entityManager->flush();
             }
-            $this->entityManager->flush();
-        }
 
-        return $count;
+            return $count;
+        });
     }
 
     /** @param array<string, mixed> $snapshot */
