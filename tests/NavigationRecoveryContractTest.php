@@ -81,7 +81,7 @@ final class NavigationRecoveryContractTest extends TestCase
         self::assertStringNotContainsString('--full-database', $command);
     }
 
-    public function testAutomaticBackupKeepsTwoRollingSnapshots(): void
+    public function testAutomaticBackupKeepsTwoRollingCommittedSnapshots(): void
     {
         $service = self::read('src/Service/Navigation/Snapshot/NavigationAutoBackupService.php');
         $subscriber = self::read('src/EventSubscriber/NavigationAutoBackupSubscriber.php');
@@ -91,6 +91,7 @@ final class NavigationRecoveryContractTest extends TestCase
         self::assertStringContainsString('auto-previous.json', $service);
         self::assertStringContainsString("[] === \$groups", $service);
         self::assertStringContainsString('Events::postFlush', $subscriber);
+        self::assertStringContainsString('getTransactionNestingLevel() > 0', $subscriber);
         self::assertStringContainsString('autoBackup->writeLatest()', $subscriber);
         self::assertStringContainsString('Automatic Navigating backup failed after Doctrine flush.', $subscriber);
         self::assertStringContainsString('NavigationAutoBackupSubscriber', $services);
