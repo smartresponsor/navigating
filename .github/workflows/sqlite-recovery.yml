@@ -1,0 +1,78 @@
+name: SQLite recovery
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      APP_ENV: test
+      APP_DEBUG: '0'
+      DATABASE_URL: 'sqlite:///%kernel.project_dir%/var/navigation-ci.sqlite'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite
+          coverage: none
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Validate package
+        run: composer validate --strict
+
+      - name: Validate container
+        run: php bin/console lint:container
+
+      - name: Create clean SQLite schema
+        run: |
+          rm -f var/navigation-ci.sqlite
+          mkdir -p var/backup/navigating
+          php bin/console doctrine:schema:update --force
+          php bin/console doctrine:schema:validate
+
+      - name: Bootstrap navigation database
+        run: php bin/console navigation:database:import-config
+
+      - name: Promote and verify ephemeral install manifest
+        run: |
+          php bin/console navigation:manifest:write
+          php bin/console navigation:manifest:verify
+
+      - name: Create explicit portable backup
+        run: php bin/console navigation:backup:create var/backup/navigating/ci-before-rebuild.json
+
+      - name: Rebuild Navigating tables and restore snapshot
+        run: php bin/console navigation:database:rebuild --force --backup-path=var/backup/navigating/ci-rebuild.json
+
+      - name: Verify state after rebuild
+        run: |
+          php bin/console doctrine:schema:validate
+          php bin/console navigation:manifest:verify
+          test -s var/backup/navigating/ci-before-rebuild.json
+          test -s var/backup/navigating/ci-rebuild.json
+          test -s var/backup/navigating/auto-latest.json
+
+      - name: Restore explicit backup
+        run: php bin/console navigation:backup:restore var/backup/navigating/ci-before-rebuild.json --force
+
+      - name: Verify restored state
+        run: php bin/console navigation:manifest:verify
+
+      - name: Run QA
+        run: composer qa
