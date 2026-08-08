@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Navigating\Command;
 
 use App\Navigating\Service\Navigation\Migration\NavigationLegacyMigrationPlanService;
+use App\Navigating\Service\Navigation\Snapshot\NavigationSnapshotFileService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,6 +20,7 @@ final class NavigationLegacyMigrationPlanCommand extends Command
 {
     public function __construct(
         private readonly NavigationLegacyMigrationPlanService $planService,
+        private readonly NavigationSnapshotFileService $snapshotFileService,
         #[Autowire('%kernel.project_dir%/var/backup/navigating')]
         private readonly string $backupDirectory,
     ) {
@@ -51,12 +53,6 @@ final class NavigationLegacyMigrationPlanCommand extends Command
             return Command::FAILURE;
         }
 
-        if (!is_dir($this->backupDirectory) && !mkdir($this->backupDirectory, 0775, true) && !is_dir($this->backupDirectory)) {
-            $output->writeln('<error>Cannot create Navigating backup directory.</error>');
-
-            return Command::FAILURE;
-        }
-
         $payload = [
             'format' => 'smartresponsor.navigation.legacy-upgrade-plan',
             'version' => 1,
@@ -71,15 +67,9 @@ final class NavigationLegacyMigrationPlanCommand extends Command
 
         $path = rtrim($this->backupDirectory, '/\\').DIRECTORY_SEPARATOR.'legacy-upgrade-plan-'.(new \DateTimeImmutable())->format('Ymd-His').'.json';
         try {
-            $json = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)."\n";
-        } catch (\JsonException $exception) {
-            $output->writeln('<error>Cannot serialize legacy migration plan: '.$exception->getMessage().'</error>');
-
-            return Command::FAILURE;
-        }
-
-        if (false === file_put_contents($path, $json, LOCK_EX)) {
-            $output->writeln('<error>Cannot write legacy migration plan: '.$path.'</error>');
+            $this->snapshotFileService->write($path, $payload);
+        } catch (\Throwable $exception) {
+            $output->writeln('<error>Cannot write legacy migration plan: '.$exception->getMessage().'</error>');
 
             return Command::FAILURE;
         }
