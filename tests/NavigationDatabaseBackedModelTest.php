@@ -20,6 +20,10 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringNotContainsString("columns: ['slug']", $item);
         self::assertStringContainsString('type: Types::JSON', $menu);
         self::assertStringContainsString('type: Types::JSON', $item);
+        self::assertStringContainsString('#[ORM\\Version]', $menu);
+        self::assertStringContainsString('#[ORM\\Version]', $item);
+        self::assertStringContainsString('private int $version = 1;', $menu);
+        self::assertStringContainsString('private int $version = 1;', $item);
         self::assertStringNotContainsString('jsonb', strtolower($menu.$item));
         self::assertStringNotContainsString('uuid_generate', strtolower($menu.$item));
     }
