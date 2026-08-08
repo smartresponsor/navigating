@@ -1,11 +1,11 @@
-.PHONY: navigation-install navigation-backup navigation-restore navigation-manifest-write navigation-manifest-verify navigation-manifest-restore navigation-schema-safe navigation-rebuild navigation-qa
+.PHONY: navigation-install navigation-backup navigation-restore navigation-manifest-write navigation-manifest-verify navigation-manifest-restore navigation-schema-update navigation-schema-safe navigation-rebuild navigation-qa
 
 PHP ?= php
 COMPOSER ?= composer
 BACKUP ?=
 
 navigation-install:
-	$(PHP) bin/console doctrine:schema:update --force
+	$(PHP) bin/console navigation:database:update
 	$(PHP) bin/console navigation:database:import-config
 
 navigation-backup:
@@ -23,6 +23,9 @@ navigation-manifest-verify:
 
 navigation-manifest-restore:
 	$(PHP) bin/console navigation:manifest:restore --force
+
+navigation-schema-update:
+	$(PHP) bin/console navigation:database:update
 
 navigation-schema-safe:
 	$(COMPOSER) navigation:schema:safe
