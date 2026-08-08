@@ -49,10 +49,11 @@
     "navigation:backup": "@php bin/console navigation:backup:create",
     "navigation:manifest:write": "@php bin/console navigation:manifest:write",
     "navigation:manifest:restore": "@php bin/console navigation:manifest:restore --force",
+    "navigation:schema:update": "@php bin/console navigation:database:update",
     "navigation:rebuild": "@php bin/console navigation:database:rebuild --force",
     "navigation:schema:safe": [
       "@navigation:backup",
-      "@php bin/console doctrine:schema:update --force"
+      "@navigation:schema:update"
     ],
     "qa": [
       "@qa:navigating-easyadmin",
