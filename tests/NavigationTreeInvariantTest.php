@@ -57,4 +57,34 @@ final class NavigationTreeInvariantTest extends TestCase
         self::assertStringContainsString("JoinColumn(name: 'parent_id', nullable: true, onDelete: 'SET NULL')", $entity);
         self::assertStringContainsString("JoinColumn(name: 'menu_id', nullable: false, onDelete: 'CASCADE')", $entity);
     }
+
+    public function testArchiveStateDoesNotDestroyEnabledPreference(): void
+    {
+        $disabled = (new NavigationItem())->setEnabled(false);
+        $disabled->archive();
+
+        self::assertTrue($disabled->isArchived());
+        self::assertFalse($disabled->isEnabled());
+
+        $disabled->restore();
+
+        self::assertFalse($disabled->isArchived());
+        self::assertFalse($disabled->isEnabled());
+
+        $enabled = (new NavigationItem())->setEnabled(true);
+        $enabled->archive()->restore();
+
+        self::assertTrue($enabled->isEnabled());
+    }
+
+    public function testRuntimeProjectionRequiresAllAncestorsToBeEnabledAndUnarchived(): void
+    {
+        $provider = file_get_contents(dirname(__DIR__).'/src/Service/Navigation/Provide/NavigationDatabaseConfigProvideService.php');
+        self::assertIsString($provider);
+
+        self::assertStringContainsString('isEffectivelyEnabled($item)', $provider);
+        self::assertStringContainsString('for', str_replace('while', 'for', $provider));
+        self::assertStringContainsString("!\$cursor->isEnabled() || \$cursor->isArchived()", $provider);
+        self::assertStringContainsString("throw new \\LogicException('Navigation item hierarchy contains a cycle.')", $provider);
+    }
 }
