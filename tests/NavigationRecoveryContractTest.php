@@ -13,6 +13,7 @@ final class NavigationRecoveryContractTest extends TestCase
         foreach ([
             'src/DataFixtures/NavigationFixture.php',
             'src/Service/Navigation/Import/NavigationConfigImportService.php',
+            'src/Service/Navigation/Persistence/NavigationPersistenceFinalizeService.php',
             'src/Service/Navigation/Snapshot/NavigationSnapshotService.php',
             'src/Service/Navigation/Snapshot/NavigationAutoBackupService.php',
             'src/EventSubscriber/NavigationAutoBackupSubscriber.php',
@@ -96,6 +97,21 @@ final class NavigationRecoveryContractTest extends TestCase
         self::assertStringContainsString('Automatic Navigating backup failed after Doctrine flush.', $subscriber);
         self::assertStringContainsString('NavigationAutoBackupSubscriber', $services);
         self::assertStringContainsString('doctrine.event_subscriber', $services);
+    }
+
+    public function testBulkPersistenceFinalizesOnlyAfterCommit(): void
+    {
+        $finalizer = self::read('src/Service/Navigation/Persistence/NavigationPersistenceFinalizeService.php');
+        $import = self::read('src/Service/Navigation/Import/NavigationConfigImportService.php');
+        $snapshot = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotService.php');
+
+        self::assertStringContainsString('cache->invalidate()', $finalizer);
+        self::assertStringContainsString('autoBackup->writeLatest()', $finalizer);
+        self::assertStringContainsString('replaceFromConfig(array $config, bool $requireEmpty = false, bool $finalize = true)', $import);
+        self::assertStringContainsString('finalizeCommittedChange()', $import);
+        self::assertStringContainsString("replaceFromConfig(['shell_groups' => \$snapshot['shell_groups']], false, false)", $snapshot);
+        self::assertStringContainsString('$this->finalizer->finalizeCommittedChange();', $snapshot);
+        self::assertStringContainsString('wrapInTransaction', $snapshot);
     }
 
     public function testFixtureLoadingCannotPurgeUnrelatedHostTables(): void
