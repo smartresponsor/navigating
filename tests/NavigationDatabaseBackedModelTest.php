@@ -51,21 +51,21 @@ final class NavigationDatabaseBackedModelTest extends TestCase
     {
         $shellProvider = self::read('src/Service/Navigation/Provide/NavigationShellProvideService.php');
         $databaseProvider = self::read('src/Service/Navigation/Provide/NavigationDatabaseConfigProvideService.php');
-        $cache = self::read('src/Service/Navigation/Cache/NavigationConfigCacheService.php');
+        $cacheService = self::read('src/Service/Navigation/Cache/NavigationConfigCacheService.php');
         $subscriber = self::read('src/EventSubscriber/NavigationConfigCacheInvalidationSubscriber.php');
         $services = self::read('config/services.yaml');
 
         self::assertStringContainsString('databaseConfigProvider->provideConfig()', $shellProvider);
-        self::assertStringContainsString("$config['shell_groups'] = $databaseGroups", $shellProvider);
+        self::assertStringContainsString("\$config['shell_groups'] = \$databaseGroups", $shellProvider);
         self::assertStringContainsString('Navigation database contains no enabled menus', $shellProvider);
         self::assertStringNotContainsString('[] === $databaseConfig ? $this->navigationConfig : $databaseConfig', $shellProvider);
         self::assertStringContainsString('$this->cache->remember', $databaseProvider);
-        self::assertStringContainsString('CacheItemPoolInterface', $cache);
+        self::assertStringContainsString('CacheItemPoolInterface', $cacheService);
         self::assertStringContainsString('Events::postPersist', $subscriber);
         self::assertStringContainsString('Events::postUpdate', $subscriber);
         self::assertStringContainsString('Events::postRemove', $subscriber);
         self::assertStringContainsString('doctrine.event_subscriber', $services);
-        self::assertStringContainsString("$cache: '@cache.app'", $services);
+        self::assertStringContainsString("\$cache: '@cache.app'", $services);
     }
 
     private static function read(string $relativePath): string
