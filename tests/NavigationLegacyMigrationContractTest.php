@@ -25,6 +25,14 @@ final class NavigationLegacyMigrationContractTest extends TestCase
         self::assertStringContainsString('Legacy navigation data changed after the migration plan was created.', $upgrade);
         self::assertStringContainsString('navigation_item_legacy_w31', $upgrade);
         self::assertStringContainsString('restoreLegacySchema', $upgrade);
+        self::assertStringContainsString('instanceof SQLitePlatform', $upgrade);
+        self::assertStringContainsString('assertNoExternalSqliteDependencies', $upgrade);
+        self::assertStringContainsString('captureLegacySchemaObjects', $upgrade);
+        self::assertStringContainsString('dropLegacySchemaObjects', $upgrade);
+        self::assertStringContainsString("PRAGMA foreign_keys = OFF", $upgrade);
+        self::assertStringContainsString('PRAGMA foreign_key_check', $upgrade);
+        self::assertStringContainsString('restoreForeignKeyPragma', $upgrade);
+        self::assertStringContainsString("type IN ('index', 'trigger')", $upgrade);
         self::assertStringContainsString("isset(\$columns['parent_key'], \$columns['location'], \$columns['required_role'], \$columns['created_at'], \$columns['updated_at'])", $service);
         self::assertStringContainsString('crosses future menu boundaries', $service);
         self::assertStringContainsString('Refusing lossy migration.', $service);
