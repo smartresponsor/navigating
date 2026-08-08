@@ -76,6 +76,19 @@ Snapshots contain the complete functional navigation configuration: all menus an
 
 Portable snapshots intentionally do not promise preservation of generated database row IDs or historical Objecting audit timestamps. Those are persistence history, not navigation configuration. Relationships are restored from stable menu/item business keys so the resulting menu behavior is equivalent after a clean install or rebuild.
 
+## Automatic rolling backups
+
+Navigating also maintains an application-owned rolling recovery pair whenever a Doctrine flush changes a `NavigationMenu` or `NavigationItem`:
+
+```text
+var/backup/navigating/auto-latest.json
+var/backup/navigating/auto-previous.json
+```
+
+`auto-latest.json` is written atomically through a temporary file. Before promotion, the prior latest snapshot is copied to `auto-previous.json`. An empty navigation state is never promoted over the last non-empty automatic backup.
+
+Automatic backup is a best-effort safety layer. A filesystem failure is logged and does not roll back the business write. For planned schema work, the explicit manual/pre-operation backup remains authoritative.
+
 ## Safe schema update
 
 Do not run a destructive schema update as the first operation when Navigating contains administrator-managed configuration.
