@@ -216,7 +216,7 @@ final readonly class NavigationLegacyMigrationPlanService
             throw new \RuntimeException(sprintf('Invalid JSON in %s: %s', $field, $exception->getMessage()), 0, $exception);
         }
 
-        if (!is_array($decoded) || array_is_list($decoded)) {
+        if (!is_array($decoded) || ([] !== $decoded && array_is_list($decoded))) {
             throw new \RuntimeException(sprintf('%s must decode to a JSON object.', ucfirst($field)));
         }
 
