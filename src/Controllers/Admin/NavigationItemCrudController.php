@@ -8,7 +8,9 @@ use App\Navigating\Entity\NavigationItem;
 use App\Navigating\Form\Type\Admin\JsonArrayTextareaType;
 use App\Navigating\Form\Type\Admin\JsonListTextareaType;
 use App\Navigating\Form\Type\Admin\NavigationItemOperationType;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\OptimisticLockException;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -17,6 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\HiddenField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
@@ -75,6 +78,7 @@ final class NavigationItemCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->hideOnForm();
+        yield HiddenField::new('version')->onlyWhenUpdating();
         yield AssociationField::new('menu')
             ->setRequired(true)
             ->autocomplete()
@@ -125,6 +129,27 @@ final class NavigationItemCrudController extends AbstractCrudController
         yield DateTimeField::new('archivedAt')->hideOnForm();
         yield DateTimeField::new('objectCreatedAt')->hideOnForm();
         yield DateTimeField::new('objectModifiedAt')->hideOnForm();
+    }
+
+    public function edit(AdminContext $context)
+    {
+        try {
+            return parent::edit($context);
+        } catch (OptimisticLockException) {
+            $this->addFlash('warning', 'This navigation item was changed by another administrator. Reload it and apply your changes again.');
+
+            return $this->redirectToRoute('ea_navigation_item_index');
+        }
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
+    {
+        if (!$entityInstance instanceof NavigationItem) {
+            throw new \InvalidArgumentException('NavigationItemCrudController can update only NavigationItem entities.');
+        }
+
+        $entityManager->lock($entityInstance, LockMode::OPTIMISTIC, $entityInstance->getVersion());
+        parent::updateEntity($entityManager, $entityInstance);
     }
 
     public function archiveItem(AdminContext $context, EntityManagerInterface $entityManager): RedirectResponse
