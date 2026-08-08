@@ -9,14 +9,14 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final readonly class NavigationAutoBackupService
 {
     public function __construct(
-        private NavigationSnapshotService $snapshotService,
+        private NavigationSnapshotExportService $snapshotExportService,
         #[Autowire('%kernel.project_dir%')] private string $projectDir,
     ) {
     }
 
     public function writeLatest(): void
     {
-        $snapshot = $this->snapshotService->create();
+        $snapshot = $this->snapshotExportService->create();
         $groups = $snapshot['shell_groups'] ?? null;
         if (!is_array($groups) || [] === $groups) {
             return;
