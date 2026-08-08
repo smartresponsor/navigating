@@ -26,6 +26,8 @@ final readonly class NavigationSnapshotExportService
             $items = [];
             foreach ($menu->getItems() as $item) {
                 $metadata = $item->getMetadata();
+                unset($metadata['parent_key']);
+
                 if (null !== $item->getParent()) {
                     $metadata['parent_key'] = $item->getParent()?->getNavigationKey();
                 }
