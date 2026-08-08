@@ -54,7 +54,7 @@ If Doctrine contains no enabled menu, runtime navigation fails explicitly with a
 
 Parent relationships are projected as `metadata.parent_key` without changing the current shell item view-model contract.
 
-## Bootstrap import
+## Bootstrap import and fixtures
 
 The bootstrap command is:
 
@@ -70,7 +70,42 @@ The command is intentionally non-destructive by default. If navigation rows alre
 php bin/console navigation:database:import-config --force
 ```
 
-After bootstrap, menu changes are made through EasyAdmin, Cruding or another Doctrine-backed application operation. YAML menu inventory is not a runtime source.
+`NavigationFixture` uses the same transactional import implementation. It prefers the promoted repository install manifest when one exists and otherwise restores the canonical merged configuration.
+
+## Install manifest and backups
+
+Navigating owns application-level recovery independently of hosting-provider database tools.
+
+Promote the current administrator-managed state to the repository install state with:
+
+```text
+php bin/console navigation:manifest:write
+```
+
+The versioned manifest is written to `resources/navigation/navigation.install.json`. It can be verified with `navigation:manifest:verify` and restored with `navigation:manifest:restore --force`.
+
+Runtime backups are separate from the install manifest:
+
+```text
+php bin/console navigation:backup:create
+php bin/console navigation:backup:restore <path> --force
+```
+
+Snapshots are portable JSON, include the full menu/item configuration state, carry a format version and SHA-256 integrity value, and are restored transactionally through the same entity-first model.
+
+See `docs/navigation-recovery.md` for complete recovery procedures.
+
+## Safe schema update
+
+Administrator-managed navigation data must be backed up before an operation that can rebuild or remove tables.
+
+Use:
+
+```text
+composer navigation:schema:safe
+```
+
+This runs `navigation:backup:create` before `doctrine:schema:update --force`. A complete database loss can then be recovered from the last runtime backup, the promoted install manifest, or canonical fixtures.
 
 ## Cache
 
@@ -100,11 +135,13 @@ composer update
 composer validate
 php bin/console lint:container
 php bin/console doctrine:schema:validate
-php bin/console doctrine:schema:update --force
 php bin/console navigation:database:import-config
+php bin/console navigation:manifest:write
+php bin/console navigation:manifest:verify
+composer navigation:schema:safe
 composer qa
 ```
 
-For an existing W31 test database that already contains navigation rows, use the import command without `--force` first. Use `--force` only when an intentional navigation reset is desired.
+For an existing W31 database with administrator-managed navigation, create a backup before any forced schema update. Use `--force` on import/restore only when an intentional replacement is desired.
 
-The SQLite schema should be regenerated from entity metadata rather than from a migration file.
+The SQLite schema remains generated from entity metadata rather than from a migration file.
