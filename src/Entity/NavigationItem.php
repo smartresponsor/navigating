@@ -375,7 +375,6 @@ class NavigationItem implements ObjectAuditedInterface
     public function archive(): self
     {
         $this->archivedAt = new \DateTimeImmutable();
-        $this->enabled = false;
 
         return $this;
     }
@@ -383,7 +382,6 @@ class NavigationItem implements ObjectAuditedInterface
     public function restore(): self
     {
         $this->archivedAt = null;
-        $this->enabled = true;
 
         return $this;
     }
