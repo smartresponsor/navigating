@@ -6,6 +6,7 @@ namespace App\Navigating\Service\Navigation\Snapshot;
 
 use App\Navigating\Repository\NavigationMenuRepository;
 use App\Navigating\Service\Navigation\Import\NavigationConfigImportService;
+use App\Navigating\Service\Navigation\Persistence\NavigationPersistenceFinalizeService;
 use Doctrine\ORM\EntityManagerInterface;
 
 final readonly class NavigationSnapshotService
@@ -16,6 +17,7 @@ final readonly class NavigationSnapshotService
     public function __construct(
         private NavigationMenuRepository $menuRepository,
         private NavigationConfigImportService $importService,
+        private NavigationPersistenceFinalizeService $finalizer,
         private EntityManagerInterface $entityManager,
     ) {
     }
@@ -30,6 +32,7 @@ final readonly class NavigationSnapshotService
             $items = [];
             foreach ($menu->getItems() as $item) {
                 $metadata = $item->getMetadata();
+                unset($metadata['parent_key']);
                 if (null !== $item->getParent()) {
                     $metadata['parent_key'] = $item->getParent()?->getNavigationKey();
                 }
@@ -94,8 +97,8 @@ final readonly class NavigationSnapshotService
     {
         $this->assertValid($snapshot);
 
-        return $this->entityManager->wrapInTransaction(function () use ($snapshot): int {
-            $count = $this->importService->replaceFromConfig(['shell_groups' => $snapshot['shell_groups']]);
+        $count = $this->entityManager->wrapInTransaction(function () use ($snapshot): int {
+            $count = $this->importService->replaceFromConfig(['shell_groups' => $snapshot['shell_groups']], false, false);
             $archived = is_array($snapshot['archived_items'] ?? null) ? $snapshot['archived_items'] : [];
 
             if ([] !== $archived) {
@@ -112,6 +115,10 @@ final readonly class NavigationSnapshotService
 
             return $count;
         });
+
+        $this->finalizer->finalizeCommittedChange();
+
+        return $count;
     }
 
     /** @param array<string, mixed> $snapshot */
