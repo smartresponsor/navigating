@@ -6,10 +6,11 @@ This directory is an explicit exception to the platform-wide zero generic CRUD c
 
 ## Ownership
 
-Navigating owns its native EasyAdmin administration surface for `NavigationItem`:
+Navigating owns its native EasyAdmin administration surface for both `NavigationMenu` and `NavigationItem`:
 
 - `DashboardController.php` owns the EasyAdmin dashboard entry point;
-- `NavigationItemCrudController.php` owns native EasyAdmin CRUD page and action composition;
+- `NavigationMenuCrudController.php` owns native EasyAdmin CRUD page composition for menu/group records;
+- `NavigationItemCrudController.php` owns native EasyAdmin CRUD page and item-specific action composition;
 - `config/routes/easyadmin.yaml` imports `easyadmin.routes` with the environment-backed back-office prefix;
 - `src/Form/Type/Admin/*Type.php` owns the Symfony Form Type grammar used by EasyAdmin fields.
 
@@ -19,9 +20,12 @@ These files are not legacy generic CRUD delivery. They are framework integration
 
 - Keep namespace `App\Navigating\Controllers\Admin` for compatibility with the host and compiled Symfony containers.
 - Keep `DashboardController` based on `AbstractDashboardController` and `#[AdminDashboard]`.
-- Keep `NavigationItemCrudController` based on `AbstractCrudController` and bound to `NavigationItem::class`.
+- Keep both `NavigationMenuCrudController` and `NavigationItemCrudController` based on `AbstractCrudController` and bound to their Doctrine entities.
 - Keep the back-office prefix environment-backed; do not hardcode `/ea` in PHP.
 - Keep native EasyAdmin templates and Symfony Form Type boundaries.
+- Expose all administrator-managed functional persistence fields through the EasyAdmin surface; Objecting audit fields remain read-only.
+- Treat `NavigationItem.parent` as the hierarchy source of truth. Do not persist `metadata.parent_key` from the admin surface.
+- A parent item must belong to the same menu. Keep the entity invariant even if UI filtering is changed later.
 - Do not replace these controllers with Cruding generic routes or generic CRUD controllers.
 
 ## Files that must remain absent
