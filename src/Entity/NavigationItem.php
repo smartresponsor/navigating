@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: NavigationItemRepository::class)]
 #[ORM\Table(name: 'navigation_item')]
-#[ORM\UniqueConstraint(name: 'uniq_navigation_item_navigation_key', columns: ['navigation_key'])]
+#[ORM\UniqueConstraint(name: 'uniq_navigation_item_menu_key', columns: ['menu_id', 'navigation_key'])]
 #[ORM\UniqueConstraint(name: 'uniq_navigation_item_slug', columns: ['slug'])]
 #[ORM\Index(name: 'idx_navigation_item_menu_position', columns: ['menu_id', 'position'])]
 #[ORM\Index(name: 'idx_navigation_item_parent_position', columns: ['parent_id', 'position'])]
@@ -398,8 +398,10 @@ class NavigationItem implements ObjectAuditedInterface
         return '' !== $this->label ? $this->label : $this->navigationKey;
     }
 
-    /** @param list<string> $tokens
-     *  @return list<string>
+    /**
+     * @param list<string> $tokens
+     *
+     * @return list<string>
      */
     private function normalizeTokens(array $tokens, bool $upper): array
     {
