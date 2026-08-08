@@ -51,6 +51,8 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString('setParent($parent)', $import);
         self::assertStringContainsString('Navigation menu keys must be non-empty strings', $import);
         self::assertStringContainsString('Navigation items in menu', $import);
+        self::assertStringContainsString("->setSlug(\$this->nullableString(\$itemConfig['slug'] ?? null))", $import);
+        self::assertStringNotContainsString("\$menuSlug.'-'.\$this->slugify(\$itemKey)", $import);
     }
 
     public function testSnapshotRestoreCanonicalizesDerivedHierarchyAndOperation(): void
