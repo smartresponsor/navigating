@@ -64,12 +64,75 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
         self::assertStringContainsString("AssociationField::new('parent')", $itemController);
     }
 
+    public function testAllFunctionalMenuFieldsAreAdministrable(): void
+    {
+        $controller = self::read('src/Controllers/Admin/NavigationMenuCrudController.php');
+
+        foreach ([
+            'menuKey',
+            'slug',
+            'label',
+            'location',
+            'type',
+            'visibleForRoles',
+            'visibleForScopes',
+            'visibleForEnvironments',
+            'priority',
+            'enabled',
+            'metadata',
+        ] as $field) {
+            self::assertStringContainsString("new('{$field}')", $controller, $field);
+        }
+
+        self::assertStringContainsString("setSearchFields(['menuKey', 'slug', 'label', 'location', 'type'])", $controller);
+        self::assertStringContainsString("DateTimeField::new('objectCreatedAt')->hideOnForm()", $controller);
+        self::assertStringContainsString("DateTimeField::new('objectModifiedAt')->hideOnForm()", $controller);
+    }
+
+    public function testAllFunctionalItemFieldsAreAdministrable(): void
+    {
+        $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+
+        foreach ([
+            'menu',
+            'parent',
+            'navigationKey',
+            'label',
+            'slug',
+            'type',
+            'routeName',
+            'path',
+            'routeParameters',
+            'operation',
+            'icon',
+            'badge',
+            'visibleForRoles',
+            'visibleForScopes',
+            'visibleForEnvironments',
+            'position',
+            'enabled',
+            'metadata',
+            'archivedAt',
+        ] as $field) {
+            self::assertStringContainsString("new('{$field}')", $controller, $field);
+        }
+
+        self::assertStringContainsString("'menu.menuKey'", $controller);
+        self::assertStringContainsString("'parent.navigationKey'", $controller);
+        self::assertStringContainsString('Parent must belong to the same menu.', $controller);
+        self::assertStringContainsString('Hierarchy is represented by the parent association, not metadata.parent_key.', $controller);
+        self::assertStringContainsString("DateTimeField::new('objectCreatedAt')->hideOnForm()", $controller);
+        self::assertStringContainsString("DateTimeField::new('objectModifiedAt')->hideOnForm()", $controller);
+    }
+
     public function testEasyAdminExceptionHasNearestAutomationRules(): void
     {
-        self::assertStringContainsString(
-            'EASYADMIN_NATIVE_EXCEPTION',
-            self::read('src/Controllers/Admin/AGENTS.md'),
-        );
+        $rules = self::read('src/Controllers/Admin/AGENTS.md');
+
+        self::assertStringContainsString('EASYADMIN_NATIVE_EXCEPTION', $rules);
+        self::assertStringContainsString('NavigationMenuCrudController.php', $rules);
+        self::assertStringContainsString('NavigationItemCrudController.php', $rules);
+        self::assertStringContainsString('all administrator-managed functional persistence fields', $rules);
         self::assertStringContainsString(
             'Admin entry points live in `src/Controllers/Admin/`.',
             self::read('README.md'),
