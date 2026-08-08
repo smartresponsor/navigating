@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Navigating moves menu ownership from hard-coded runtime YAML toward Doctrine-managed navigation records while preserving the existing runtime view-model and Interfacing projection contracts.
+Navigating moves menu ownership from hard-coded runtime YAML to Doctrine-managed navigation records while preserving the existing runtime view-model and Interfacing projection contracts.
 
 ## Database model
 
@@ -46,19 +46,23 @@ Navigating does not add generic business CRUD routes or controllers. Cruding rem
 
 `NavigationDatabaseConfigProvideService` projects enabled Doctrine records into the canonical normalized runtime configuration shape.
 
-`NavigationShellProvideService` prefers the database projection when at least one enabled database menu exists. Existing YAML menu inventory remains a temporary bootstrap fallback until the current inventory has been imported into SQLite. Structural navigation configuration such as shell locations and runtime defaults remains configuration and is not menu content.
+Doctrine is the only runtime source for menu inventory. `NavigationShellProvideService` always replaces configuration `shell_groups` with the Doctrine projection. YAML `shell_groups` remain available only to the explicit bootstrap import command and are never used as a runtime fallback.
+
+Structural navigation configuration remains configuration. This includes shell-location definitions, runtime role/scope/environment defaults and other non-menu component settings.
+
+If Doctrine contains no enabled menu, runtime navigation fails explicitly with an instruction to bootstrap the database or create a menu. It never silently falls back to historical YAML menu content.
 
 Parent relationships are projected as `metadata.parent_key` without changing the current shell item view-model contract.
 
 ## Bootstrap import
 
-The one-time bootstrap command is:
+The bootstrap command is:
 
 ```text
 php bin/console navigation:database:import-config
 ```
 
-It imports the currently merged `shell_groups` inventory into `navigation_menu` and `navigation_item`, including menu visibility, item visibility, target metadata and parent relationships.
+It imports the currently merged configuration `shell_groups` inventory into `navigation_menu` and `navigation_item`, including menu visibility, item visibility, target metadata and parent relationships.
 
 The command is intentionally non-destructive by default. If navigation rows already exist, it refuses to overwrite them. An explicit reset/import requires:
 
@@ -66,7 +70,7 @@ The command is intentionally non-destructive by default. If navigation rows alre
 php bin/console navigation:database:import-config --force
 ```
 
-After the initial database import has been validated in the host application, the temporary runtime YAML fallback can be removed in the cleanup wave. Administrative changes after that point are made through EasyAdmin/Cruding and persisted in Doctrine.
+After bootstrap, menu changes are made through EasyAdmin, Cruding or another Doctrine-backed application operation. YAML menu inventory is not a runtime source.
 
 ## Cache
 
