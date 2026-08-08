@@ -14,6 +14,8 @@ final class NavigationRecoveryContractTest extends TestCase
             'src/DataFixtures/NavigationFixture.php',
             'src/Service/Navigation/Import/NavigationConfigImportService.php',
             'src/Service/Navigation/Snapshot/NavigationSnapshotService.php',
+            'src/Service/Navigation/Snapshot/NavigationAutoBackupService.php',
+            'src/EventSubscriber/NavigationAutoBackupSubscriber.php',
             'src/Command/NavigationBackupCreateCommand.php',
             'src/Command/NavigationBackupRestoreCommand.php',
             'src/Command/NavigationManifestWriteCommand.php',
@@ -52,6 +54,22 @@ final class NavigationRecoveryContractTest extends TestCase
         self::assertStringContainsString('snapshotService->restore($snapshot)', $command);
         self::assertStringNotContainsString('doctrine:schema:drop', $command);
         self::assertStringNotContainsString('--full-database', $command);
+    }
+
+    public function testAutomaticBackupKeepsTwoRollingSnapshots(): void
+    {
+        $service = self::read('src/Service/Navigation/Snapshot/NavigationAutoBackupService.php');
+        $subscriber = self::read('src/EventSubscriber/NavigationAutoBackupSubscriber.php');
+        $services = self::read('config/services.yaml');
+
+        self::assertStringContainsString('auto-latest.json', $service);
+        self::assertStringContainsString('auto-previous.json', $service);
+        self::assertStringContainsString("[] === \$groups", $service);
+        self::assertStringContainsString('Events::postFlush', $subscriber);
+        self::assertStringContainsString('autoBackup->writeLatest()', $subscriber);
+        self::assertStringContainsString('Automatic Navigating backup failed after Doctrine flush.', $subscriber);
+        self::assertStringContainsString('NavigationAutoBackupSubscriber', $services);
+        self::assertStringContainsString('doctrine.event_subscriber', $services);
     }
 
     public function testComposerExposesRecoveryCommands(): void
