@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Navigating\Controllers\Admin;
 
 use App\Navigating\Entity\NavigationItem;
+use App\Navigating\Entity\NavigationMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -18,7 +19,7 @@ final class DashboardController extends AbstractDashboardController
 {
     public function index(): Response
     {
-        return $this->redirectToRoute('ea_navigation_item_index');
+        return $this->redirectToRoute('ea_navigation_menu_index');
     }
 
     public function configureDashboard(): Dashboard
@@ -30,6 +31,7 @@ final class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToCrud('Navigation', 'fa fa-compass', NavigationItem::class);
+        yield MenuItem::linkToCrud('Menus', 'fa fa-bars', NavigationMenu::class);
+        yield MenuItem::linkToCrud('Items', 'fa fa-compass', NavigationItem::class);
     }
 }
