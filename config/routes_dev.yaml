@@ -9,3 +9,4 @@ navigation_standalone_preview:
 navigation_admin:
   resource: '../src/Controllers/Admin/'
   type: attribute
+  prefix: '/%app.back_token%'
