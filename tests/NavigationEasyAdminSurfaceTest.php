@@ -125,6 +125,19 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
         self::assertStringContainsString("DateTimeField::new('objectModifiedAt')->hideOnForm()", $controller);
     }
 
+    public function testParentAssociationIsMenuAwareInAdministration(): void
+    {
+        $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+
+        self::assertStringContainsString('use Doctrine\\ORM\\QueryBuilder;', $controller);
+        self::assertStringContainsString('->autocomplete(callback: static function (NavigationItem $candidate): string', $controller);
+        self::assertStringContainsString("sprintf('[%s] %s — %s'", $controller);
+        self::assertStringContainsString('null !== $currentItem?->getMenu()', $controller);
+        self::assertStringContainsString('->setQueryBuilder(static function (QueryBuilder $queryBuilder)', $controller);
+        self::assertStringContainsString('navigation_parent_menu', $controller);
+        self::assertStringContainsString('navigation_current_item_id', $controller);
+    }
+
     public function testDuplicateActionKeepsDerivedValuesInsidePersistenceLimits(): void
     {
         $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
