@@ -7,6 +7,4 @@ navigation_standalone_preview:
   controller: App\Navigating\Service\Http\Navigation\NavigationHttpService::preview
 
 navigation_admin:
-  resource: .
-  type: easyadmin.routes
-  prefix: '/%app.back_token%'
+  resource: routes/easyadmin.yaml
