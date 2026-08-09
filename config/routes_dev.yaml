@@ -5,3 +5,7 @@ navigation_standalone_index:
 navigation_standalone_preview:
   path: /navigation/preview
   controller: App\Navigating\Service\Http\Navigation\NavigationHttpService::preview
+
+navigation_admin:
+  resource: '../src/Controllers/Admin/'
+  type: attribute
