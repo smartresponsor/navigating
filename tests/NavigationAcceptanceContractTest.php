@@ -71,6 +71,18 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertStringContainsString("load('services_fixtures.yaml')", $extension);
     }
 
+    public function testCiHasProductionNoDevBootGate(): void
+    {
+        $workflow = self::read('.github/workflows/sqlite-recovery.yml');
+
+        self::assertStringContainsString('production-no-dev:', $workflow);
+        self::assertStringContainsString('APP_ENV: prod', $workflow);
+        self::assertStringContainsString('composer install --no-dev', $workflow);
+        self::assertStringContainsString('php bin/console lint:container', $workflow);
+        self::assertStringContainsString('php bin/console navigation:database:update', $workflow);
+        self::assertStringContainsString('php bin/console doctrine:schema:validate', $workflow);
+    }
+
     public function testAcceptancePreflightIsNonDestructive(): void
     {
         $scripts = $this->composer()['scripts'] ?? [];
