@@ -12,9 +12,14 @@ use Doctrine\ORM\Events;
 
 final readonly class NavigationEntityInvariantSubscriber implements EventSubscriber
 {
-    public function __construct(
-        private NavigationEntityInvariantService $invariants,
-    ) {
+    private NavigationEntityInvariantService $invariants;
+
+    /** @param NavigationEntityInvariantService|array<string, mixed> $invariants */
+    public function __construct(NavigationEntityInvariantService|array $invariants = [])
+    {
+        $this->invariants = $invariants instanceof NavigationEntityInvariantService
+            ? $invariants
+            : new NavigationEntityInvariantService($invariants);
     }
 
     public function getSubscribedEvents(): array
