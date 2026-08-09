@@ -26,23 +26,24 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertStringContainsString("prefix: 'App\\Objecting\\Embeddable'", $doctrine);
     }
 
-    public function testStandaloneKernelBootsEasyAdminAndUsesItsRouteLoader(): void
+    public function testStandaloneKernelBootsEasyAdminAndReusesCanonicalRouteConfig(): void
     {
         $kernel = self::read('src/Kernel/NavigationKernel.php');
         $routes = self::read('config/routes_dev.yaml');
+        $easyAdminRoutes = self::read('config/routes/easyadmin.yaml');
         $security = self::read('config/standalone/security.yaml');
         $dashboard = self::read('src/Controllers/Admin/DashboardController.php');
 
         self::assertStringContainsString('use EasyCorp\\Bundle\\EasyAdminBundle\\EasyAdminBundle;', $kernel);
         self::assertStringContainsString('yield new EasyAdminBundle();', $kernel);
-        self::assertStringContainsString('resource: .', $routes);
-        self::assertStringContainsString('type: easyadmin.routes', $routes);
-        self::assertStringContainsString("prefix: '/%app.back_token%'", $routes);
+        self::assertStringContainsString('resource: routes/easyadmin.yaml', $routes);
+        self::assertStringContainsString('resource: .', $easyAdminRoutes);
+        self::assertStringContainsString('type: easyadmin.routes', $easyAdminRoutes);
+        self::assertStringContainsString("prefix: '/%app.back_token%'", $easyAdminRoutes);
         self::assertStringContainsString("#[AdminDashboard(routePath: '/', routeName: 'ea')]", $dashboard);
         self::assertStringContainsString("app.default_back_token: 'ea'", $security);
         self::assertStringContainsString("path: '^/%app.back_token%'", $security);
-        self::assertStringNotContainsString("resource: '../src/Controllers/Admin/'", $routes);
-        self::assertStringNotContainsString('type: attribute', $routes);
+        self::assertStringNotContainsString('type: easyadmin.routes', $routes);
     }
 
     public function testServiceDiscoveryRegistersControllersAndFormTypesWithoutTreatingTechnicalClassesAsServices(): void
