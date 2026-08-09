@@ -22,7 +22,7 @@ final readonly class NavigationSnapshotExportService
         $groups = [];
         $archived = [];
 
-        foreach ($this->menuRepository->findAll() as $menu) {
+        foreach ($this->menuRepository->findAllForSnapshot() as $menu) {
             $items = [];
             foreach ($menu->getItems() as $item) {
                 $metadata = $item->getMetadata();
