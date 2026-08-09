@@ -15,6 +15,8 @@ final class NavigationAcceptanceContractTest extends TestCase
 
         self::assertSame('^4.0', $require['doctrine/dbal'] ?? null);
         self::assertSame('^8.1', $require['symfony/form'] ?? null);
+        self::assertSame('^3.6', $require['symfony/cache-contracts'] ?? null);
+        self::assertArrayNotHasKey('psr/cache', $require);
     }
 
     public function testStandaloneDoctrineMapsNavigatingAndObjectingEmbeddables(): void
