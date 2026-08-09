@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace App\Navigating\Tests;
 
 use App\Navigating\Entity\NavigationItem;
-use App\Navigating\EventSubscriber\NavigationItemTargetInvariantSubscriber;
+use App\Navigating\Entity\NavigationMenu;
+use App\Navigating\Service\Navigation\Persistence\NavigationEntityInvariantService;
 use PHPUnit\Framework\TestCase;
 
 final class NavigationTargetInvariantTest extends TestCase
 {
     public function testRouteAndPathCannotCoexist(): void
     {
-        $item = (new NavigationItem())
+        $item = $this->item()
             ->setRouteName('vendor_index')
             ->setPath('/vendor');
 
@@ -24,7 +25,7 @@ final class NavigationTargetInvariantTest extends TestCase
 
     public function testRouteParametersRequireRoute(): void
     {
-        $item = (new NavigationItem())
+        $item = $this->item()
             ->setRouteParameters(['slug' => 'vendor']);
 
         $this->expectException(\DomainException::class);
@@ -35,7 +36,7 @@ final class NavigationTargetInvariantTest extends TestCase
 
     public function testRouteTargetWithParametersIsValid(): void
     {
-        $item = (new NavigationItem())
+        $item = $this->item()
             ->setRouteName('vendor_show')
             ->setRouteParameters(['slug' => 'vendor']);
 
@@ -45,17 +46,33 @@ final class NavigationTargetInvariantTest extends TestCase
 
     public function testPathTargetWithoutRouteParametersIsValid(): void
     {
-        $item = (new NavigationItem())
-            ->setPath('/vendor');
+        $item = $this->item()->setPath('/vendor');
 
         $this->validate($item);
         self::addToAssertionCount(1);
     }
 
+    private function item(): NavigationItem
+    {
+        $menu = (new NavigationMenu())
+            ->setMenuKey('main')
+            ->setSlug('main')
+            ->setLabel('Main')
+            ->setLocation('shell.left.middle')
+            ->setType('navigation');
+
+        return (new NavigationItem())
+            ->setMenu($menu)
+            ->setNavigationKey('vendor')
+            ->setLabel('Vendor')
+            ->setType('link')
+            ->setOperation('index');
+    }
+
     private function validate(NavigationItem $item): void
     {
-        $subscriber = new NavigationItemTargetInvariantSubscriber();
-        $method = new \ReflectionMethod($subscriber, 'validate');
-        $method->invoke($subscriber, $item);
+        (new NavigationEntityInvariantService([
+            'shell_locations' => ['shell.left.middle' => []],
+        ]))->validate($item);
     }
 }
