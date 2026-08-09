@@ -6,6 +6,9 @@ namespace App\Navigating\Tests;
 
 use App\Navigating\Entity\NavigationItem;
 use App\Navigating\Entity\NavigationMenu;
+use App\Navigating\EventSubscriber\NavigationEntityInvariantSubscriber;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\PrePersistEventArgs;
 use PHPUnit\Framework\TestCase;
 
 final class NavigationTreeInvariantTest extends TestCase
@@ -20,17 +23,46 @@ final class NavigationTreeInvariantTest extends TestCase
         $item->setParent($item);
     }
 
-    public function testCrossMenuParentIsRejected(): void
+    public function testCrossMenuParentIsRejectedAtPersistenceBoundary(): void
     {
         $menuA = (new NavigationMenu())->setMenuKey('a')->setSlug('a');
         $menuB = (new NavigationMenu())->setMenuKey('b')->setSlug('b');
-        $item = (new NavigationItem())->setMenu($menuA);
+        $item = (new NavigationItem())
+            ->setMenu($menuA)
+            ->setNavigationKey('item')
+            ->setLabel('Item')
+            ->setType('link')
+            ->setOperation('index');
         $parent = (new NavigationItem())->setMenu($menuB);
+
+        // Cross-field setters must allow a form to transition menu and parent in one submit.
+        $item->setParent($parent);
+        self::assertSame($parent, $item->getParent());
+
+        $subscriber = new NavigationEntityInvariantSubscriber([
+            'shell_locations' => ['shell.left.middle' => []],
+        ]);
+        $entityManager = $this->createMock(EntityManagerInterface::class);
 
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('same menu');
 
-        $item->setParent($parent);
+        $subscriber->prePersist(new PrePersistEventArgs($item, $entityManager));
+    }
+
+    public function testMenuAndParentCanTransitionTogetherWithoutSetterOrderDependency(): void
+    {
+        $menuA = (new NavigationMenu())->setMenuKey('a')->setSlug('a');
+        $menuB = (new NavigationMenu())->setMenuKey('b')->setSlug('b');
+        $oldParent = (new NavigationItem())->setMenu($menuA);
+        $newParent = (new NavigationItem())->setMenu($menuB);
+        $item = (new NavigationItem())->setMenu($menuA)->setParent($oldParent);
+
+        $item->setMenu($menuB);
+        $item->setParent($newParent);
+
+        self::assertSame($menuB, $item->getMenu());
+        self::assertSame($newParent, $item->getParent());
     }
 
     public function testLongHierarchyCycleIsRejected(): void
