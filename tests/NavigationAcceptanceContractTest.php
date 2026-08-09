@@ -71,16 +71,25 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertStringContainsString("load('services_fixtures.yaml')", $extension);
     }
 
-    public function testCiHasProductionNoDevBootGate(): void
+    public function testCiHasProductionNoDevBootAndWarmupGate(): void
     {
         $workflow = self::read('.github/workflows/sqlite-recovery.yml');
 
         self::assertStringContainsString('production-no-dev:', $workflow);
         self::assertStringContainsString('APP_ENV: prod', $workflow);
+        self::assertStringContainsString('APP_DEBUG:', $workflow);
         self::assertStringContainsString('composer install --no-dev', $workflow);
         self::assertStringContainsString('php bin/console lint:container', $workflow);
+        self::assertStringContainsString('cache:clear --no-warmup --env=prod --no-debug', $workflow);
+        self::assertStringContainsString('cache:warmup --env=prod --no-debug', $workflow);
         self::assertStringContainsString('php bin/console navigation:database:update', $workflow);
         self::assertStringContainsString('php bin/console doctrine:schema:validate', $workflow);
+
+        $warmupPosition = strpos($workflow, 'cache:warmup --env=prod --no-debug');
+        $schemaPosition = strpos($workflow, 'php bin/console navigation:database:update');
+        self::assertIsInt($warmupPosition);
+        self::assertIsInt($schemaPosition);
+        self::assertLessThan($schemaPosition, $warmupPosition, 'Production cache warmup must be proven safe before navigation schema creation.');
     }
 
     public function testAcceptancePreflightIsNonDestructive(): void
