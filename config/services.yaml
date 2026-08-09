@@ -16,6 +16,11 @@ services:
       - '../src/Entity/'
       - '../src/Kernel/'
 
+  App\Navigating\Controllers\:
+    resource: '../src/Controllers/'
+    tags:
+      - { name: controller.service_arguments }
+
   App\Navigating\Service\Navigation\Cache\NavigationConfigCacheService:
     arguments:
       $cache: '@cache.app'
