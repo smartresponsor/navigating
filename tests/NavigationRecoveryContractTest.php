@@ -130,6 +130,26 @@ final class NavigationRecoveryContractTest extends TestCase
         self::assertStringContainsString('doctrine.event_subscriber', $services);
     }
 
+    public function testNavigationCacheUsesNewGenerationAndInvalidatesOnlyOutsideExplicitTransactions(): void
+    {
+        $cache = self::read('src/Service/Navigation/Cache/NavigationConfigCacheService.php');
+        $subscriber = self::read('src/EventSubscriber/NavigationConfigCacheInvalidationSubscriber.php');
+
+        self::assertStringContainsString("CACHE_KEY = 'navigating.navigation.database_config.v2'", $cache);
+        self::assertStringNotContainsString('database_config.v1', $cache);
+        self::assertStringContainsString('Events::postFlush', $subscriber);
+        self::assertStringContainsString('private bool $dirty = false;', $subscriber);
+        self::assertStringContainsString('getTransactionNestingLevel() > 0', $subscriber);
+        self::assertStringContainsString('$this->dirty = false;', $subscriber);
+        self::assertStringContainsString('$this->cache->invalidate();', $subscriber);
+
+        $transactionCheck = strpos($subscriber, 'getTransactionNestingLevel() > 0');
+        $cacheInvalidate = strpos($subscriber, '$this->cache->invalidate();');
+        self::assertIsInt($transactionCheck);
+        self::assertIsInt($cacheInvalidate);
+        self::assertLessThan($cacheInvalidate, $transactionCheck, 'Cache invalidation must occur only after the explicit-transaction guard.');
+    }
+
     public function testBulkPersistenceFinalizesOnlyAfterCommit(): void
     {
         $finalizer = self::read('src/Service/Navigation/Persistence/NavigationPersistenceFinalizeService.php');
@@ -138,7 +158,18 @@ final class NavigationRecoveryContractTest extends TestCase
 
         self::assertStringContainsString('cache->invalidate()', $finalizer);
         self::assertStringContainsString('getTransactionNestingLevel() > 0', $finalizer);
+        self::assertStringContainsString('side effects were skipped', $finalizer);
         self::assertStringContainsString('autoBackup->writeLatest()', $finalizer);
+
+        $transactionCheck = strpos($finalizer, 'getTransactionNestingLevel() > 0');
+        $cacheInvalidate = strpos($finalizer, 'cache->invalidate()');
+        $backupWrite = strpos($finalizer, 'autoBackup->writeLatest()');
+        self::assertIsInt($transactionCheck);
+        self::assertIsInt($cacheInvalidate);
+        self::assertIsInt($backupWrite);
+        self::assertLessThan($cacheInvalidate, $transactionCheck, 'The finalizer must reject active transactions before cache invalidation.');
+        self::assertLessThan($backupWrite, $cacheInvalidate, 'Rolling backup must remain after cache invalidation on the committed path.');
+
         self::assertStringContainsString('replaceFromConfig(array $config, bool $requireEmpty = false, bool $finalize = true)', $import);
         self::assertStringContainsString('finalizeCommittedChange()', $import);
         self::assertStringContainsString("replaceFromConfig(['shell_groups' => \$snapshot['shell_groups']], false, false)", $snapshot);
