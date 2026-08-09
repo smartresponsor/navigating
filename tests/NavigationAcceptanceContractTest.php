@@ -30,11 +30,15 @@ final class NavigationAcceptanceContractTest extends TestCase
     {
         $kernel = self::read('src/Kernel/NavigationKernel.php');
         $routes = self::read('config/routes_dev.yaml');
+        $security = self::read('config/standalone/security.yaml');
 
         self::assertStringContainsString('use EasyCorp\\Bundle\\EasyAdminBundle\\EasyAdminBundle;', $kernel);
         self::assertStringContainsString('yield new EasyAdminBundle();', $kernel);
         self::assertStringContainsString("resource: '../src/Controllers/Admin/'", $routes);
         self::assertStringContainsString('type: attribute', $routes);
+        self::assertStringContainsString("prefix: '/%app.back_token%'", $routes);
+        self::assertStringContainsString("app.default_back_token: 'ea'", $security);
+        self::assertStringContainsString("path: '^/%app.back_token%'", $security);
     }
 
     public function testAcceptancePreflightIsNonDestructive(): void
