@@ -6,6 +6,7 @@ namespace App\Navigating\Repository;
 
 use App\Navigating\Entity\NavigationMenu;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /** @extends ServiceEntityRepository<NavigationMenu> */
@@ -36,18 +37,38 @@ final class NavigationMenuRepository extends ServiceEntityRepository
      */
     public function findEnabled(): array
     {
+        return $this->inventoryQueryBuilder()
+            ->andWhere('menu.enabled = :enabled')
+            ->setParameter('enabled', true)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * Loads every menu/item/parent needed for a portable snapshot in one ORM query.
+     * Disabled menus and disabled/archived items are intentionally retained.
+     *
+     * @return list<NavigationMenu>
+     */
+    public function findAllForSnapshot(): array
+    {
+        return $this->inventoryQueryBuilder()
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    private function inventoryQueryBuilder(): QueryBuilder
+    {
         return $this->createQueryBuilder('menu')
             ->addSelect('item', 'parent')
             ->leftJoin('menu.items', 'item')
             ->leftJoin('item.parent', 'parent')
-            ->andWhere('menu.enabled = :enabled')
-            ->setParameter('enabled', true)
             ->orderBy('menu.priority', 'ASC')
             ->addOrderBy('menu.id', 'ASC')
             ->addOrderBy('item.position', 'ASC')
             ->addOrderBy('item.id', 'ASC')
-            ->getQuery()
-            ->getResult()
         ;
     }
 }
