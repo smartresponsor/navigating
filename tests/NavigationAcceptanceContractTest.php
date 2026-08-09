@@ -51,6 +51,7 @@ final class NavigationAcceptanceContractTest extends TestCase
         $formType = self::read('src/Form/Type/Admin/JsonListTextareaType.php');
 
         self::assertStringContainsString("resource: '../src/'", $services);
+        self::assertStringContainsString("- '../src/Controllers/'", $services);
         self::assertStringContainsString("- '../src/DataFixtures/'", $services);
         self::assertStringContainsString("- '../src/DependencyInjection/'", $services);
         self::assertStringContainsString("- '../src/Entity/'", $services);
