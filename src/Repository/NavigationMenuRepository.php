@@ -25,6 +25,16 @@ final class NavigationMenuRepository extends ServiceEntityRepository
         return $menu;
     }
 
+    public function existsOtherWithMenuKey(string $menuKey, ?int $excludeId = null): bool
+    {
+        return $this->existsOtherByField('menuKey', trim($menuKey), $excludeId);
+    }
+
+    public function existsOtherWithSlug(string $slug, ?int $excludeId = null): bool
+    {
+        return $this->existsOtherByField('slug', trim($slug), $excludeId);
+    }
+
     /**
      * Loads the complete enabled navigation inventory in one ORM query.
      *
@@ -57,6 +67,24 @@ final class NavigationMenuRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    private function existsOtherByField(string $field, string $value, ?int $excludeId): bool
+    {
+        $queryBuilder = $this->createQueryBuilder('menu')
+            ->select('COUNT(menu.id)')
+            ->andWhere(sprintf('menu.%s = :value', $field))
+            ->setParameter('value', $value)
+        ;
+
+        if (null !== $excludeId) {
+            $queryBuilder
+                ->andWhere('menu.id <> :excludeId')
+                ->setParameter('excludeId', $excludeId)
+            ;
+        }
+
+        return (int) $queryBuilder->getQuery()->getSingleScalarResult() > 0;
     }
 
     private function inventoryQueryBuilder(): QueryBuilder
