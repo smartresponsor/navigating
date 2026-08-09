@@ -101,6 +101,11 @@ jobs:
       - name: Validate production container
         run: php bin/console lint:container
 
+      - name: Warm production cache without a prepared database
+        run: |
+          php bin/console cache:clear --no-warmup --env=prod --no-debug
+          php bin/console cache:warmup --env=prod --no-debug
+
       - name: Validate production SQLite mapping
         run: |
           rm -f var/navigation.sqlite
