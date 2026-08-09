@@ -17,24 +17,30 @@ final class NavigationItemRepository extends ServiceEntityRepository
         parent::__construct($registry, NavigationItem::class);
     }
 
-    public function findOneBySlug(string $slug): ?NavigationItem
+    public function findOneByMenuAndSlug(NavigationMenu $menu, string $slug): ?NavigationItem
     {
         /** @var NavigationItem|null $item */
-        $item = $this->findOneBy(['slug' => trim($slug)]);
+        $item = $this->findOneBy([
+            'menu' => $menu,
+            'slug' => trim($slug),
+        ]);
 
         return $item;
     }
 
-    public function findOneByIdOrSlug(int|string $identifier): ?NavigationItem
+    public function findOneByMenuIdOrSlug(NavigationMenu $menu, int|string $identifier): ?NavigationItem
     {
         if (is_int($identifier) || ctype_digit($identifier)) {
             /** @var NavigationItem|null $item */
-            $item = $this->find((int) $identifier);
+            $item = $this->findOneBy([
+                'id' => (int) $identifier,
+                'menu' => $menu,
+            ]);
 
             return $item;
         }
 
-        return $this->findOneBySlug($identifier);
+        return $this->findOneByMenuAndSlug($menu, $identifier);
     }
 
     /** @return list<NavigationItem> */
