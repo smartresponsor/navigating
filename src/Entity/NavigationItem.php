@@ -121,17 +121,6 @@ class NavigationItem implements ObjectAuditedInterface
         return $this->version;
     }
 
-    public function setVersion(int $version): self
-    {
-        if ($version < 1) {
-            throw new \DomainException('Navigation item version must be positive.');
-        }
-
-        $this->version = $version;
-
-        return $this;
-    }
-
     public function getMenu(): ?NavigationMenu
     {
         return $this->menu;
