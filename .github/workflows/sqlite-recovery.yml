@@ -75,3 +75,34 @@ jobs:
 
       - name: Run QA
         run: composer qa
+
+  production-no-dev:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      APP_ENV: prod
+      APP_DEBUG: '0'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite
+          coverage: none
+          tools: composer:v2
+
+      - name: Install production dependencies only
+        run: composer install --no-dev --no-interaction --prefer-dist --no-progress --optimize-autoloader
+
+      - name: Validate production container
+        run: php bin/console lint:container
+
+      - name: Validate production SQLite mapping
+        run: |
+          rm -f var/navigation.sqlite
+          php bin/console navigation:database:update
+          php bin/console doctrine:schema:validate
