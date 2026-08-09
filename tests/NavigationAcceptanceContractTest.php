@@ -74,19 +74,22 @@ final class NavigationAcceptanceContractTest extends TestCase
     public function testCiHasProductionNoDevBootAndWarmupGate(): void
     {
         $workflow = self::read('.github/workflows/sqlite-recovery.yml');
+        $productionStart = strpos($workflow, '  production-no-dev:');
+        self::assertIsInt($productionStart);
 
-        self::assertStringContainsString('production-no-dev:', $workflow);
-        self::assertStringContainsString('APP_ENV: prod', $workflow);
-        self::assertStringContainsString('APP_DEBUG:', $workflow);
-        self::assertStringContainsString('composer install --no-dev', $workflow);
-        self::assertStringContainsString('php bin/console lint:container', $workflow);
-        self::assertStringContainsString('cache:clear --no-warmup --env=prod --no-debug', $workflow);
-        self::assertStringContainsString('cache:warmup --env=prod --no-debug', $workflow);
-        self::assertStringContainsString('php bin/console navigation:database:update', $workflow);
-        self::assertStringContainsString('php bin/console doctrine:schema:validate', $workflow);
+        $productionJob = substr($workflow, $productionStart);
+        self::assertIsString($productionJob);
+        self::assertStringContainsString('APP_ENV: prod', $productionJob);
+        self::assertStringContainsString('APP_DEBUG:', $productionJob);
+        self::assertStringContainsString('composer install --no-dev', $productionJob);
+        self::assertStringContainsString('php bin/console lint:container', $productionJob);
+        self::assertStringContainsString('cache:clear --no-warmup --env=prod --no-debug', $productionJob);
+        self::assertStringContainsString('cache:warmup --env=prod --no-debug', $productionJob);
+        self::assertStringContainsString('php bin/console navigation:database:update', $productionJob);
+        self::assertStringContainsString('php bin/console doctrine:schema:validate', $productionJob);
 
-        $warmupPosition = strpos($workflow, 'cache:warmup --env=prod --no-debug');
-        $schemaPosition = strpos($workflow, 'php bin/console navigation:database:update');
+        $warmupPosition = strpos($productionJob, 'cache:warmup --env=prod --no-debug');
+        $schemaPosition = strpos($productionJob, 'php bin/console navigation:database:update');
         self::assertIsInt($warmupPosition);
         self::assertIsInt($schemaPosition);
         self::assertLessThan($schemaPosition, $warmupPosition, 'Production cache warmup must be proven safe before navigation schema creation.');
