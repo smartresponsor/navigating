@@ -12,6 +12,7 @@ services:
   App\Navigating\:
     resource: '../src/'
     exclude:
+      - '../src/Controllers/'
       - '../src/DataFixtures/'
       - '../src/DependencyInjection/'
       - '../src/Entity/'
