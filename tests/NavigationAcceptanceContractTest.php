@@ -41,6 +41,22 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertStringContainsString("path: '^/%app.back_token%'", $security);
     }
 
+    public function testServiceDiscoveryRegistersControllersAndFormTypesWithoutTreatingEntitiesAsServices(): void
+    {
+        $services = self::read('config/services.yaml');
+        $formType = self::read('src/Form/Type/Admin/JsonListTextareaType.php');
+
+        self::assertStringContainsString("resource: '../src/'", $services);
+        self::assertStringContainsString("- '../src/DependencyInjection/'", $services);
+        self::assertStringContainsString("- '../src/Entity/'", $services);
+        self::assertStringContainsString("- '../src/Kernel/'", $services);
+        self::assertStringContainsString('App\\Navigating\\Controllers\\:', $services);
+        self::assertStringContainsString("resource: '../src/Controllers/'", $services);
+        self::assertStringContainsString('controller.service_arguments', $services);
+        self::assertStringContainsString('extends AbstractType', $formType);
+        self::assertStringContainsString('autoconfigure: true', $services);
+    }
+
     public function testAcceptancePreflightIsNonDestructive(): void
     {
         $scripts = $this->composer()['scripts'] ?? [];
