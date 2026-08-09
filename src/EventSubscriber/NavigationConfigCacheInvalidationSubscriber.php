@@ -8,45 +8,60 @@ use App\Navigating\Entity\NavigationItem;
 use App\Navigating\Entity\NavigationMenu;
 use App\Navigating\Service\Navigation\Cache\NavigationConfigCacheService;
 use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostRemoveEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 
-final readonly class NavigationConfigCacheInvalidationSubscriber implements EventSubscriber
+final class NavigationConfigCacheInvalidationSubscriber implements EventSubscriber
 {
+    private bool $dirty = false;
+
     public function __construct(
-        private NavigationConfigCacheService $cache,
+        private readonly NavigationConfigCacheService $cache,
     ) {
     }
 
     /** @return list<string> */
     public function getSubscribedEvents(): array
     {
-        return [Events::postPersist, Events::postUpdate, Events::postRemove];
+        return [Events::postPersist, Events::postUpdate, Events::postRemove, Events::postFlush];
     }
 
     public function postPersist(PostPersistEventArgs $event): void
     {
-        $this->invalidateFor($event->getObject());
+        $this->markDirty($event->getObject());
     }
 
     public function postUpdate(PostUpdateEventArgs $event): void
     {
-        $this->invalidateFor($event->getObject());
+        $this->markDirty($event->getObject());
     }
 
     public function postRemove(PostRemoveEventArgs $event): void
     {
-        $this->invalidateFor($event->getObject());
+        $this->markDirty($event->getObject());
     }
 
-    private function invalidateFor(object $entity): void
+    public function postFlush(PostFlushEventArgs $event): void
     {
-        if (!$entity instanceof NavigationMenu && !$entity instanceof NavigationItem) {
+        if (!$this->dirty) {
             return;
         }
 
+        if ($event->getObjectManager()->getConnection()->getTransactionNestingLevel() > 0) {
+            return;
+        }
+
+        $this->dirty = false;
         $this->cache->invalidate();
+    }
+
+    private function markDirty(object $entity): void
+    {
+        if ($entity instanceof NavigationMenu || $entity instanceof NavigationItem) {
+            $this->dirty = true;
+        }
     }
 }
