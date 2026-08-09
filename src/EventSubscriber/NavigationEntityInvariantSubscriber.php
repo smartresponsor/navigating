@@ -50,8 +50,23 @@ final class NavigationEntityInvariantSubscriber implements EventSubscriber
             return;
         }
 
-        if (null === $entity->getMenu()) {
+        $menu = $entity->getMenu();
+        if (null === $menu) {
             throw new \DomainException('Navigation item must belong to a navigation menu.');
+        }
+
+        $parent = $entity->getParent();
+        if (null !== $parent && $parent->getMenu() !== $menu) {
+            throw new \DomainException('Navigation item parent must belong to the same menu.');
+        }
+
+        $visited = [spl_object_id($entity) => true];
+        for ($ancestor = $parent; null !== $ancestor; $ancestor = $ancestor->getParent()) {
+            $objectId = spl_object_id($ancestor);
+            if (isset($visited[$objectId])) {
+                throw new \DomainException('Navigation item hierarchy cannot contain cycles.');
+            }
+            $visited[$objectId] = true;
         }
 
         $this->requireKey($entity->getNavigationKey(), 'Navigation item key', 160);
