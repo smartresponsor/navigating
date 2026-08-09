@@ -11,6 +11,10 @@ services:
 
   App\Navigating\:
     resource: '../src/'
+    exclude:
+      - '../src/DependencyInjection/'
+      - '../src/Entity/'
+      - '../src/Kernel/'
 
   App\Navigating\Service\Navigation\Cache\NavigationConfigCacheService:
     arguments:
