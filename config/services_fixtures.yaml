@@ -1,0 +1,9 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    bind:
+      array $navigationConfig: '%navigation.config%'
+
+  App\Navigating\DataFixtures\:
+    resource: '../src/DataFixtures/'
