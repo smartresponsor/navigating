@@ -50,11 +50,12 @@ final class NavigationConfigCacheInvalidationSubscriber implements EventSubscrib
             return;
         }
 
+        $this->dirty = false;
+
         if ($event->getObjectManager()->getConnection()->getTransactionNestingLevel() > 0) {
             return;
         }
 
-        $this->dirty = false;
         $this->cache->invalidate();
     }
 
