@@ -21,16 +21,18 @@ final readonly class NavigationPersistenceFinalizeService
 
     public function finalizeCommittedChange(): void
     {
+        if ($this->entityManager->getConnection()->getTransactionNestingLevel() > 0) {
+            $this->logger->warning('Navigation persistence finalizer was called before the transaction committed; cache and backup side effects were skipped.');
+
+            return;
+        }
+
         try {
             $this->cache->invalidate();
         } catch (\Throwable $exception) {
             $this->logger->error('Navigation cache invalidation failed after persistence change.', [
                 'exception' => $exception,
             ]);
-        }
-
-        if ($this->entityManager->getConnection()->getTransactionNestingLevel() > 0) {
-            return;
         }
 
         try {
