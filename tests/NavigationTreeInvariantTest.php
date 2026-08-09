@@ -56,6 +56,26 @@ final class NavigationTreeInvariantTest extends TestCase
 
         self::assertStringContainsString("JoinColumn(name: 'parent_id', nullable: true, onDelete: 'SET NULL')", $entity);
         self::assertStringContainsString("JoinColumn(name: 'menu_id', nullable: false, onDelete: 'CASCADE')", $entity);
+        self::assertStringContainsString("#[ORM\\OneToMany(mappedBy: 'parent', targetEntity: self::class)]", $entity);
+        self::assertStringNotContainsString("mappedBy: 'parent', targetEntity: self::class, cascade:", $entity);
+        self::assertStringNotContainsString("mappedBy: 'parent', targetEntity: self::class, orphanRemoval:", $entity);
+    }
+
+    public function testMenuOrphanRemovalDoesNotCreateAnIllegalNullableMenuState(): void
+    {
+        $menu = file_get_contents(dirname(__DIR__).'/src/Entity/NavigationMenu.php');
+        self::assertIsString($menu);
+
+        self::assertStringContainsString("mappedBy: 'menu', targetEntity: NavigationItem::class, cascade: ['persist'], orphanRemoval: true", $menu);
+        self::assertStringContainsString('public function removeItem(NavigationItem $item): self', $menu);
+        self::assertStringContainsString('$this->items->removeElement($item);', $menu);
+
+        $removeMethodStart = strpos($menu, 'public function removeItem(NavigationItem $item): self');
+        self::assertIsInt($removeMethodStart);
+        $removeMethodEnd = strpos($menu, '#[ORM\\PreUpdate]', $removeMethodStart);
+        self::assertIsInt($removeMethodEnd);
+        $removeMethod = substr($menu, $removeMethodStart, $removeMethodEnd - $removeMethodStart);
+        self::assertStringNotContainsString('setMenu(null)', $removeMethod);
     }
 
     public function testArchiveStateDoesNotDestroyEnabledPreference(): void
