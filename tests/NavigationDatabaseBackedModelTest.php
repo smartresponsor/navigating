@@ -111,10 +111,13 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString("'operation' => \$item->getOperation()", $databaseProvider);
         self::assertStringContainsString("unset(\$metadata['parent_key'])", $databaseProvider);
         self::assertStringContainsString('$this->cache->remember', $databaseProvider);
-        self::assertStringContainsString('CacheItemPoolInterface', $cacheService);
+        self::assertStringContainsString('Symfony\\Contracts\\Cache\\CacheInterface', $cacheService);
+        self::assertStringContainsString("cache->get(self::CACHE_KEY", $cacheService);
+        self::assertStringContainsString("cache->delete(self::CACHE_KEY)", $cacheService);
         self::assertStringContainsString('Events::postPersist', $subscriber);
         self::assertStringContainsString('Events::postUpdate', $subscriber);
         self::assertStringContainsString('Events::postRemove', $subscriber);
+        self::assertStringContainsString('Events::postFlush', $subscriber);
         self::assertStringContainsString('doctrine.event_subscriber', $services);
         self::assertStringContainsString("\$cache: '@cache.app'", $services);
         self::assertStringContainsString('NavigationEntityInvariantSubscriber', $services);
