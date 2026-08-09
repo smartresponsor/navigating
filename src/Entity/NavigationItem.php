@@ -126,12 +126,13 @@ class NavigationItem implements ObjectAuditedInterface
         return $this->menu;
     }
 
+    /**
+     * Cross-field menu/parent consistency is validated at the Doctrine persistence
+     * boundary so Symfony forms can change both fields in one submission without
+     * becoming dependent on property-mapping order.
+     */
     public function setMenu(?NavigationMenu $menu): self
     {
-        if (null !== $this->parent && null !== $menu && $this->parent->getMenu() !== $menu) {
-            throw new \DomainException('Navigation item parent must belong to the same menu.');
-        }
-
         $this->menu = $menu;
 
         return $this;
@@ -146,10 +147,6 @@ class NavigationItem implements ObjectAuditedInterface
     {
         if ($parent === $this) {
             throw new \DomainException('Navigation item cannot be its own parent.');
-        }
-
-        if (null !== $parent && null !== $this->menu && $parent->getMenu() !== $this->menu) {
-            throw new \DomainException('Navigation item parent must belong to the same menu.');
         }
 
         for ($ancestor = $parent; null !== $ancestor; $ancestor = $ancestor->getParent()) {
