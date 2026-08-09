@@ -26,19 +26,23 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertStringContainsString("prefix: 'App\\Objecting\\Embeddable'", $doctrine);
     }
 
-    public function testStandaloneKernelBootsEasyAdminAndLoadsAdminAttributes(): void
+    public function testStandaloneKernelBootsEasyAdminAndUsesItsRouteLoader(): void
     {
         $kernel = self::read('src/Kernel/NavigationKernel.php');
         $routes = self::read('config/routes_dev.yaml');
         $security = self::read('config/standalone/security.yaml');
+        $dashboard = self::read('src/Controllers/Admin/DashboardController.php');
 
         self::assertStringContainsString('use EasyCorp\\Bundle\\EasyAdminBundle\\EasyAdminBundle;', $kernel);
         self::assertStringContainsString('yield new EasyAdminBundle();', $kernel);
-        self::assertStringContainsString("resource: '../src/Controllers/Admin/'", $routes);
-        self::assertStringContainsString('type: attribute', $routes);
+        self::assertStringContainsString('resource: .', $routes);
+        self::assertStringContainsString('type: easyadmin.routes', $routes);
         self::assertStringContainsString("prefix: '/%app.back_token%'", $routes);
+        self::assertStringContainsString("#[AdminDashboard(routePath: '/', routeName: 'ea')]", $dashboard);
         self::assertStringContainsString("app.default_back_token: 'ea'", $security);
         self::assertStringContainsString("path: '^/%app.back_token%'", $security);
+        self::assertStringNotContainsString("resource: '../src/Controllers/Admin/'", $routes);
+        self::assertStringNotContainsString('type: attribute', $routes);
     }
 
     public function testServiceDiscoveryRegistersControllersAndFormTypesWithoutTreatingTechnicalClassesAsServices(): void
@@ -71,7 +75,7 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertStringContainsString("load('services_fixtures.yaml')", $extension);
     }
 
-    public function testCiHasProductionNoDevBootAndWarmupGate(): void
+    public function testCiHasProductionNoDevBootWarmupAndAdminRouteGate(): void
     {
         $workflow = self::read('.github/workflows/sqlite-recovery.yml');
         $productionStart = strpos($workflow, '  production-no-dev:');
@@ -85,14 +89,19 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertStringContainsString('php bin/console lint:container', $productionJob);
         self::assertStringContainsString('cache:clear --no-warmup --env=prod --no-debug', $productionJob);
         self::assertStringContainsString('cache:warmup --env=prod --no-debug', $productionJob);
+        self::assertStringContainsString('debug:router ea_navigation_menu_index --env=prod --no-debug', $productionJob);
+        self::assertStringContainsString('debug:router ea_navigation_item_index --env=prod --no-debug', $productionJob);
         self::assertStringContainsString('php bin/console navigation:database:update', $productionJob);
         self::assertStringContainsString('php bin/console doctrine:schema:validate', $productionJob);
 
         $warmupPosition = strpos($productionJob, 'cache:warmup --env=prod --no-debug');
+        $routePosition = strpos($productionJob, 'debug:router ea_navigation_menu_index');
         $schemaPosition = strpos($productionJob, 'php bin/console navigation:database:update');
         self::assertIsInt($warmupPosition);
+        self::assertIsInt($routePosition);
         self::assertIsInt($schemaPosition);
-        self::assertLessThan($schemaPosition, $warmupPosition, 'Production cache warmup must be proven safe before navigation schema creation.');
+        self::assertLessThan($routePosition, $warmupPosition, 'Production cache warmup must complete before generated EasyAdmin routes are inspected.');
+        self::assertLessThan($schemaPosition, $routePosition, 'Generated EasyAdmin routes must be proven without requiring navigation schema creation.');
     }
 
     public function testAcceptancePreflightIsNonDestructive(): void
