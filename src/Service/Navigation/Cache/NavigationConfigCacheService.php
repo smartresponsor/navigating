@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Navigating\Service\Navigation\Cache;
 
-use Psr\Cache\CacheItemPoolInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 final readonly class NavigationConfigCacheService
 {
     private const string CACHE_KEY = 'navigating.navigation.database_config.v2';
 
     public function __construct(
-        private CacheItemPoolInterface $cache,
+        private CacheInterface $cache,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -22,23 +24,31 @@ final readonly class NavigationConfigCacheService
      */
     public function remember(\Closure $loader): array
     {
-        $item = $this->cache->getItem(self::CACHE_KEY);
-        if ($item->isHit()) {
-            $value = $item->get();
+        try {
+            $value = $this->cache->get(self::CACHE_KEY, static fn (): array => $loader());
+
             if (is_array($value)) {
                 return $value;
             }
+
+            $this->logger->warning('Navigation cache returned a non-array payload; falling back to the database loader.');
+        } catch (\Throwable $exception) {
+            $this->logger->warning('Navigation cache read/write failed; falling back to the database loader.', [
+                'exception' => $exception,
+            ]);
         }
 
-        $value = $loader();
-        $item->set($value);
-        $this->cache->save($item);
-
-        return $value;
+        return $loader();
     }
 
     public function invalidate(): void
     {
-        $this->cache->deleteItem(self::CACHE_KEY);
+        try {
+            $this->cache->delete(self::CACHE_KEY);
+        } catch (\Throwable $exception) {
+            $this->logger->warning('Navigation cache invalidation failed; database-backed navigation remains authoritative.', [
+                'exception' => $exception,
+            ]);
+        }
     }
 }
