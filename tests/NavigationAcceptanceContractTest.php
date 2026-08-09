@@ -22,8 +22,19 @@ final class NavigationAcceptanceContractTest extends TestCase
         $doctrine = self::read('config/standalone/doctrine.yaml');
 
         self::assertStringContainsString("prefix: 'App\\Navigating\\Entity'", $doctrine);
-        self::assertStringContainsString("vendor/objecting/object/src/Embeddable", $doctrine);
+        self::assertStringContainsString('vendor/objecting/object/src/Embeddable', $doctrine);
         self::assertStringContainsString("prefix: 'App\\Objecting\\Embeddable'", $doctrine);
+    }
+
+    public function testStandaloneKernelBootsEasyAdminAndLoadsAdminAttributes(): void
+    {
+        $kernel = self::read('src/Kernel/NavigationKernel.php');
+        $routes = self::read('config/routes_dev.yaml');
+
+        self::assertStringContainsString('use EasyCorp\\Bundle\\EasyAdminBundle\\EasyAdminBundle;', $kernel);
+        self::assertStringContainsString('yield new EasyAdminBundle();', $kernel);
+        self::assertStringContainsString("resource: '../src/Controllers/Admin/'", $routes);
+        self::assertStringContainsString('type: attribute', $routes);
     }
 
     public function testAcceptancePreflightIsNonDestructive(): void
