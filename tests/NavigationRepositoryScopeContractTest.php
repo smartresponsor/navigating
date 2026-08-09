@@ -21,16 +21,23 @@ final class NavigationRepositoryScopeContractTest extends TestCase
         self::assertStringNotContainsString('function findOneByIdOrSlug(', $repository);
     }
 
-    public function testEnabledRuntimeInventoryFetchesItemsAndParentsInOneQueryGraph(): void
+    public function testRuntimeAndSnapshotInventoriesUseOneFetchGraphWithDifferentMenuSemantics(): void
     {
         $repository = self::read('src/Repository/NavigationMenuRepository.php');
+        $snapshot = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotExportService.php');
 
+        self::assertStringContainsString('private function inventoryQueryBuilder(): QueryBuilder', $repository);
         self::assertStringContainsString("->addSelect('item', 'parent')", $repository);
         self::assertStringContainsString("->leftJoin('menu.items', 'item')", $repository);
         self::assertStringContainsString("->leftJoin('item.parent', 'parent')", $repository);
-        self::assertStringContainsString("->andWhere('menu.enabled = :enabled')", $repository);
         self::assertStringContainsString("->addOrderBy('item.position', 'ASC')", $repository);
         self::assertStringContainsString("->addOrderBy('item.id', 'ASC')", $repository);
+
+        self::assertStringContainsString('public function findEnabled(): array', $repository);
+        self::assertStringContainsString("->andWhere('menu.enabled = :enabled')", $repository);
+        self::assertStringContainsString('public function findAllForSnapshot(): array', $repository);
+        self::assertStringContainsString('menuRepository->findAllForSnapshot()', $snapshot);
+        self::assertStringNotContainsString('menuRepository->findAll()', $snapshot);
 
         self::assertStringNotContainsString('item.enabled =', $repository);
         self::assertStringNotContainsString('item.archivedAt IS NULL', $repository);
