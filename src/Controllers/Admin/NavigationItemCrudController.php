@@ -11,6 +11,7 @@ use App\Navigating\Form\Type\Admin\NavigationItemOperationType;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -87,18 +88,51 @@ final class NavigationItemCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $currentInstance = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
+        $currentItem = $currentInstance instanceof NavigationItem ? $currentInstance : null;
+
         yield IdField::new('id')->hideOnForm();
         yield AssociationField::new('menu')
             ->setRequired(true)
             ->autocomplete()
             ->setHelp('The item belongs to exactly one navigation menu.')
         ;
-        yield AssociationField::new('parent')
+
+        $parentField = AssociationField::new('parent')
             ->setRequired(false)
-            ->autocomplete()
-            ->setHelp('Parent must belong to the same menu. The entity invariant rejects cross-menu hierarchy.')
+            ->autocomplete(callback: static function (NavigationItem $candidate): string {
+                $menuKey = $candidate->getMenu()?->getMenuKey() ?? '?';
+
+                return sprintf('[%s] %s — %s', $menuKey, $candidate->getNavigationKey(), $candidate->getLabel());
+            })
+            ->setHelp('Parent must belong to the same menu. Existing items are filtered to that menu; new items show the menu key in autocomplete results.')
             ->hideOnIndex()
         ;
+
+        if (null !== $currentItem?->getMenu()) {
+            $menu = $currentItem->getMenu();
+            $currentId = $currentItem->getId();
+            $parentField->setQueryBuilder(static function (QueryBuilder $queryBuilder) use ($menu, $currentId): QueryBuilder {
+                $alias = $queryBuilder->getRootAliases()[0] ?? 'entity';
+                $queryBuilder
+                    ->andWhere(sprintf('%s.menu = :navigation_parent_menu', $alias))
+                    ->setParameter('navigation_parent_menu', $menu)
+                    ->addOrderBy(sprintf('%s.position', $alias), 'ASC')
+                    ->addOrderBy(sprintf('%s.id', $alias), 'ASC')
+                ;
+
+                if (null !== $currentId) {
+                    $queryBuilder
+                        ->andWhere(sprintf('%s.id <> :navigation_current_item_id', $alias))
+                        ->setParameter('navigation_current_item_id', $currentId)
+                    ;
+                }
+
+                return $queryBuilder;
+            });
+        }
+
+        yield $parentField;
         yield TextField::new('navigationKey')->setHelp('Stable business key, for example catalog.index.');
         yield TextField::new('label');
         yield TextField::new('slug')->setRequired(false);
