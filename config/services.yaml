@@ -27,6 +27,10 @@ services:
     arguments:
       $cache: '@cache.app'
 
+  App\Navigating\Form\Extension\NavigationEntityInvariantTypeExtension:
+    tags:
+      - { name: form.type_extension }
+
   App\Navigating\EventSubscriber\NavigationConfigCacheInvalidationSubscriber:
     autoconfigure: false
     tags:
@@ -39,6 +43,8 @@ services:
 
   App\Navigating\EventSubscriber\NavigationEntityInvariantSubscriber:
     autoconfigure: false
+    arguments:
+      $invariants: '@App\Navigating\Service\Navigation\Persistence\NavigationEntityInvariantService'
     tags:
       - { name: doctrine.event_subscriber }
 
