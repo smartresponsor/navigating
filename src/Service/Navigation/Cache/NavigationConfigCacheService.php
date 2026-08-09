@@ -8,7 +8,7 @@ use Psr\Cache\CacheItemPoolInterface;
 
 final readonly class NavigationConfigCacheService
 {
-    private const string CACHE_KEY = 'navigating.navigation.database_config.v1';
+    private const string CACHE_KEY = 'navigating.navigation.database_config.v2';
 
     public function __construct(
         private CacheItemPoolInterface $cache,
