@@ -245,11 +245,15 @@ final class NavigationMenu implements ObjectAuditedInterface
         return $this;
     }
 
+    /**
+     * Removes the item from this aggregate. Because the association uses
+     * orphanRemoval=true and menu_id is non-nullable, the owning-side menu
+     * reference is intentionally not set to null; Doctrine schedules the
+     * removed collection element for deletion on flush.
+     */
     public function removeItem(NavigationItem $item): self
     {
-        if ($this->items->removeElement($item) && $item->getMenu() === $this) {
-            $item->setMenu(null);
-        }
+        $this->items->removeElement($item);
 
         return $this;
     }
