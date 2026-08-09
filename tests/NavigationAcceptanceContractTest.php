@@ -41,12 +41,13 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertStringContainsString("path: '^/%app.back_token%'", $security);
     }
 
-    public function testServiceDiscoveryRegistersControllersAndFormTypesWithoutTreatingEntitiesAsServices(): void
+    public function testServiceDiscoveryRegistersControllersAndFormTypesWithoutTreatingTechnicalClassesAsServices(): void
     {
         $services = self::read('config/services.yaml');
         $formType = self::read('src/Form/Type/Admin/JsonListTextareaType.php');
 
         self::assertStringContainsString("resource: '../src/'", $services);
+        self::assertStringContainsString("- '../src/DataFixtures/'", $services);
         self::assertStringContainsString("- '../src/DependencyInjection/'", $services);
         self::assertStringContainsString("- '../src/Entity/'", $services);
         self::assertStringContainsString("- '../src/Kernel/'", $services);
@@ -55,6 +56,19 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertStringContainsString('controller.service_arguments', $services);
         self::assertStringContainsString('extends AbstractType', $formType);
         self::assertStringContainsString('autoconfigure: true', $services);
+    }
+
+    public function testDevOnlyFixturesAreLoadedConditionally(): void
+    {
+        $runtimeServices = self::read('config/services.yaml');
+        $fixtureServices = self::read('config/services_fixtures.yaml');
+        $extension = self::read('src/DependencyInjection/NavigationRuntimeExtension.php');
+
+        self::assertStringContainsString("- '../src/DataFixtures/'", $runtimeServices);
+        self::assertStringContainsString('App\\Navigating\\DataFixtures\\:', $fixtureServices);
+        self::assertStringContainsString("resource: '../src/DataFixtures/'", $fixtureServices);
+        self::assertStringContainsString('class_exists(\\Doctrine\\Bundle\\FixturesBundle\\Fixture::class)', $extension);
+        self::assertStringContainsString("load('services_fixtures.yaml')", $extension);
     }
 
     public function testAcceptancePreflightIsNonDestructive(): void
