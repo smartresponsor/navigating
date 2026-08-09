@@ -31,6 +31,10 @@ class NavigationRuntimeExtension extends Extension
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
         $loader->load('services.yaml');
+
+        if (class_exists(\Doctrine\Bundle\FixturesBundle\Fixture::class)) {
+            $loader->load('services_fixtures.yaml');
+        }
     }
 
     /** @return list<array<string, mixed>> */
