@@ -7,6 +7,7 @@ namespace App\Navigating\Form\Extension;
 use App\Navigating\Entity\NavigationItem;
 use App\Navigating\Entity\NavigationMenu;
 use App\Navigating\Service\Navigation\Persistence\NavigationEntityInvariantService;
+use App\Navigating\Service\Navigation\Persistence\NavigationEntityUniquenessService;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,6 +19,7 @@ final class NavigationEntityInvariantTypeExtension extends AbstractTypeExtension
 {
     public function __construct(
         private readonly NavigationEntityInvariantService $invariants,
+        private readonly NavigationEntityUniquenessService $uniqueness,
     ) {
     }
 
@@ -41,6 +43,7 @@ final class NavigationEntityInvariantTypeExtension extends AbstractTypeExtension
 
             try {
                 $this->invariants->validate($entity);
+                $this->uniqueness->validate($entity);
             } catch (\DomainException $exception) {
                 $form->addError(new FormError($exception->getMessage()));
             }
