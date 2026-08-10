@@ -62,6 +62,23 @@ final class NavigationConcurrencyContractTest extends TestCase
         }
     }
 
+    public function testCustomStateActionsHandleOptimisticRacesWithout500(): void
+    {
+        $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+
+        foreach (['archiveItem', 'restoreItem'] as $method) {
+            $start = strpos($controller, 'public function '.$method.'(');
+            self::assertIsInt($start);
+            $end = strpos($controller, 'public function ', $start + 20);
+            self::assertIsInt($end);
+            $body = substr($controller, $start, $end - $start);
+
+            self::assertStringContainsString('catch (OptimisticLockException)', $body);
+            self::assertStringContainsString("addFlash('warning'", $body);
+            self::assertStringContainsString("redirectToRoute('ea_navigation_item_index')", $body);
+        }
+    }
+
     private static function read(string $relativePath): string
     {
         $contents = file_get_contents(dirname(__DIR__).'/'.$relativePath);
