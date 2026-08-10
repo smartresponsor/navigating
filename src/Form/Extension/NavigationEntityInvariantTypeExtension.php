@@ -19,7 +19,7 @@ final class NavigationEntityInvariantTypeExtension extends AbstractTypeExtension
 {
     public function __construct(
         private readonly NavigationEntityInvariantService $invariants,
-        private readonly NavigationEntityUniquenessService $uniqueness,
+        private readonly ?NavigationEntityUniquenessService $uniqueness = null,
     ) {
     }
 
@@ -43,7 +43,7 @@ final class NavigationEntityInvariantTypeExtension extends AbstractTypeExtension
 
             try {
                 $this->invariants->validate($entity);
-                $this->uniqueness->validate($entity);
+                $this->uniqueness?->validate($entity);
             } catch (\DomainException $exception) {
                 $form->addError(new FormError($exception->getMessage()));
             }
