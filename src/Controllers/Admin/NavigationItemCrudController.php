@@ -245,7 +245,12 @@ final class NavigationItemCrudController extends AbstractCrudController
     {
         $item = $this->resolveNavigationItem($context);
         $item->archive();
-        $entityManager->flush();
+
+        try {
+            $entityManager->flush();
+        } catch (OptimisticLockException) {
+            $this->addFlash('warning', 'This navigation item changed while Archive was being applied. Reload the list and try again.');
+        }
 
         return $this->redirectToRoute('ea_navigation_item_index');
     }
@@ -254,7 +259,12 @@ final class NavigationItemCrudController extends AbstractCrudController
     {
         $item = $this->resolveNavigationItem($context);
         $item->restore();
-        $entityManager->flush();
+
+        try {
+            $entityManager->flush();
+        } catch (OptimisticLockException) {
+            $this->addFlash('warning', 'This navigation item changed while Restore was being applied. Reload the list and try again.');
+        }
 
         return $this->redirectToRoute('ea_navigation_item_index');
     }
