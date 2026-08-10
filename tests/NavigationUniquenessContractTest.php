@@ -54,8 +54,7 @@ final class NavigationUniquenessContractTest extends TestCase
         self::assertIsInt($duplicateEnd);
         $duplicate = substr($controller, $duplicateStart, $duplicateEnd - $duplicateStart);
 
-        self::assertStringContainsString("bin2hex(random_bytes(5))", $duplicate);
-        self::assertStringContainsString("date('YmdHis').'-.'.", str_replace("date('YmdHis').'-'.", "date('YmdHis').'-.'.", $duplicate));
+        self::assertStringContainsString("\$token = date('YmdHis').'-'.bin2hex(random_bytes(5));", $duplicate);
         self::assertStringContainsString("'.copy.'.\$token", $duplicate);
         self::assertStringContainsString("'-copy-'.\$token", $duplicate);
         self::assertStringContainsString('catch (UniqueConstraintViolationException)', $duplicate);
