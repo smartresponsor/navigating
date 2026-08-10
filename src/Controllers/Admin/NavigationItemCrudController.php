@@ -262,13 +262,13 @@ final class NavigationItemCrudController extends AbstractCrudController
     public function duplicateItem(AdminContext $context, EntityManagerInterface $entityManager): RedirectResponse
     {
         $item = $this->resolveNavigationItem($context);
-        $timestamp = date('YmdHis');
+        $token = date('YmdHis').'-'.bin2hex(random_bytes(5));
         $copy = (new NavigationItem())
             ->setMenu($item->getMenu())
             ->setParent($item->getParent())
-            ->setNavigationKey($this->appendWithinLimit($item->getNavigationKey(), '.copy.'.$timestamp, 160))
+            ->setNavigationKey($this->appendWithinLimit($item->getNavigationKey(), '.copy.'.$token, 160))
             ->setLabel($this->appendWithinLimit($item->getLabel(), ' copy', 140))
-            ->setSlug(null === $item->getSlug() ? null : $this->appendWithinLimit($item->getSlug(), '-copy-'.$timestamp, 180))
+            ->setSlug(null === $item->getSlug() ? null : $this->appendWithinLimit($item->getSlug(), '-copy-'.$token, 180))
             ->setType($item->getType())
             ->setRouteName($item->getRouteName())
             ->setPath($item->getPath())
@@ -284,8 +284,14 @@ final class NavigationItemCrudController extends AbstractCrudController
             ->setMetadata($item->getMetadata())
         ;
 
-        $entityManager->persist($copy);
-        $entityManager->flush();
+        try {
+            $entityManager->persist($copy);
+            $entityManager->flush();
+        } catch (UniqueConstraintViolationException) {
+            $this->addFlash('warning', 'The navigation item could not be duplicated because a conflicting key or slug was created concurrently. Try Duplicate again.');
+
+            return $this->redirectToRoute('ea_navigation_item_index');
+        }
 
         return $this->redirectToRoute('ea_navigation_item_index');
     }
