@@ -45,6 +45,23 @@ final class NavigationUniquenessContractTest extends TestCase
         }
     }
 
+    public function testDuplicateActionUsesCollisionResistantIdentityAndDatabaseFallback(): void
+    {
+        $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+        $duplicateStart = strpos($controller, 'public function duplicateItem(');
+        self::assertIsInt($duplicateStart);
+        $duplicateEnd = strpos($controller, 'private function resolveNavigationItem(', $duplicateStart);
+        self::assertIsInt($duplicateEnd);
+        $duplicate = substr($controller, $duplicateStart, $duplicateEnd - $duplicateStart);
+
+        self::assertStringContainsString("bin2hex(random_bytes(5))", $duplicate);
+        self::assertStringContainsString("date('YmdHis').'-.'.", str_replace("date('YmdHis').'-'.", "date('YmdHis').'-.'.", $duplicate));
+        self::assertStringContainsString("'.copy.'.\$token", $duplicate);
+        self::assertStringContainsString("'-copy-'.\$token", $duplicate);
+        self::assertStringContainsString('catch (UniqueConstraintViolationException)', $duplicate);
+        self::assertStringNotContainsString("\$timestamp = date('YmdHis');", $duplicate);
+    }
+
     private static function read(string $relativePath): string
     {
         $contents = file_get_contents(dirname(__DIR__).'/'.$relativePath);
