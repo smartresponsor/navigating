@@ -8,6 +8,7 @@ use App\Navigating\Entity\NavigationItem;
 use App\Navigating\Form\Type\Admin\JsonArrayTextareaType;
 use App\Navigating\Form\Type\Admin\JsonListTextareaType;
 use App\Navigating\Form\Type\Admin\NavigationItemOperationType;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
@@ -189,6 +190,17 @@ final class NavigationItemCrudController extends AbstractCrudController
         return $builder;
     }
 
+    public function new(AdminContext $context)
+    {
+        try {
+            return parent::new($context);
+        } catch (UniqueConstraintViolationException) {
+            $this->addFlash('warning', 'This navigation item conflicts with an existing key or slug in the selected menu. Reload the list and try again.');
+
+            return $this->redirectToRoute('ea_navigation_item_index');
+        }
+    }
+
     public function edit(AdminContext $context)
     {
         $request = $context->getRequest();
@@ -204,6 +216,10 @@ final class NavigationItemCrudController extends AbstractCrudController
             return parent::edit($context);
         } catch (OptimisticLockException) {
             $this->addFlash('warning', 'This navigation item was changed by another administrator. Reload it and apply your changes again.');
+
+            return $this->redirectToRoute('ea_navigation_item_index');
+        } catch (UniqueConstraintViolationException) {
+            $this->addFlash('warning', 'This navigation item conflicts with an existing key or slug in the selected menu. Reload the list and try again.');
 
             return $this->redirectToRoute('ea_navigation_item_index');
         }
