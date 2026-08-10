@@ -43,6 +43,16 @@ final class NavigationItemRepository extends ServiceEntityRepository
         return $this->findOneByMenuAndSlug($menu, $identifier);
     }
 
+    public function existsOtherWithNavigationKey(NavigationMenu $menu, string $navigationKey, ?int $excludeId = null): bool
+    {
+        return $this->existsOtherByField($menu, 'navigationKey', trim($navigationKey), $excludeId);
+    }
+
+    public function existsOtherWithSlug(NavigationMenu $menu, string $slug, ?int $excludeId = null): bool
+    {
+        return $this->existsOtherByField($menu, 'slug', trim($slug), $excludeId);
+    }
+
     /** @return list<NavigationItem> */
     public function findEnabledByMenu(NavigationMenu $menu): array
     {
@@ -76,5 +86,25 @@ final class NavigationItemRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    private function existsOtherByField(NavigationMenu $menu, string $field, string $value, ?int $excludeId): bool
+    {
+        $queryBuilder = $this->createQueryBuilder('item')
+            ->select('COUNT(item.id)')
+            ->andWhere('item.menu = :menu')
+            ->andWhere(sprintf('item.%s = :value', $field))
+            ->setParameter('menu', $menu)
+            ->setParameter('value', $value)
+        ;
+
+        if (null !== $excludeId) {
+            $queryBuilder
+                ->andWhere('item.id <> :excludeId')
+                ->setParameter('excludeId', $excludeId)
+            ;
+        }
+
+        return (int) $queryBuilder->getQuery()->getSingleScalarResult() > 0;
     }
 }
