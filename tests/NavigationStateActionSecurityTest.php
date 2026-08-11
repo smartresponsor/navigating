@@ -13,6 +13,7 @@ final class NavigationStateActionSecurityTest extends TestCase
         $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
         $template = self::read('templates/admin/action/navigation_item_state_change.html.twig');
         $composer = self::read('composer.json');
+        $framework = self::read('config/standalone/framework.yaml');
 
         self::assertStringNotContainsString('displayAsButton()', $controller);
         self::assertSame(3, substr_count($controller, '->renderAsForm()'));
@@ -33,6 +34,8 @@ final class NavigationStateActionSecurityTest extends TestCase
         }
 
         self::assertStringContainsString('"symfony/security-csrf": "^8.1"', $composer);
+        self::assertStringContainsString('csrf_protection: true', $framework);
+        self::assertStringContainsString('session: true', $framework);
     }
 
     private static function read(string $relativePath): string
