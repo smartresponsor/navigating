@@ -142,9 +142,10 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
     {
         $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
 
-        self::assertStringContainsString("appendWithinLimit(\$item->getNavigationKey(), '.copy.'.\$timestamp, 160)", $controller);
+        self::assertStringContainsString("\$token = date('YmdHis').'-'.bin2hex(random_bytes(5));", $controller);
+        self::assertStringContainsString("appendWithinLimit(\$item->getNavigationKey(), '.copy.'.\$token, 160)", $controller);
         self::assertStringContainsString("appendWithinLimit(\$item->getLabel(), ' copy', 140)", $controller);
-        self::assertStringContainsString("appendWithinLimit(\$item->getSlug(), '-copy-'.\$timestamp, 180)", $controller);
+        self::assertStringContainsString("appendWithinLimit(\$item->getSlug(), '-copy-'.\$token, 180)", $controller);
         self::assertStringContainsString('private function appendWithinLimit', $controller);
     }
 
