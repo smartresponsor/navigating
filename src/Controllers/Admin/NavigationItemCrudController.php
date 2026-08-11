@@ -31,15 +31,20 @@ use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
 final class NavigationItemCrudController extends AbstractCrudController
 {
     private const EXPECTED_VERSION_FIELD = '_navigation_expected_version';
+    private const STATE_ACTION_TEMPLATE = '@Navigating/admin/action/navigation_item_state_change.html.twig';
 
-    public function __construct(private readonly AdminContextProvider $adminContextProvider)
-    {
+    public function __construct(
+        private readonly AdminContextProvider $adminContextProvider,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
+    ) {
     }
 
     public static function getEntityFqcn(): string
@@ -72,9 +77,22 @@ final class NavigationItemCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $archive = Action::new('archiveItem', 'Archive')->linkToCrudAction('archiveItem')->displayAsButton();
-        $restore = Action::new('restoreItem', 'Restore')->linkToCrudAction('restoreItem')->displayAsButton();
-        $duplicate = Action::new('duplicateItem', 'Duplicate')->linkToCrudAction('duplicateItem')->displayAsButton();
+        $archive = Action::new('archiveItem', 'Archive')
+            ->linkToCrudAction('archiveItem')
+            ->renderAsForm()
+            ->setTemplatePath(self::STATE_ACTION_TEMPLATE)
+            ->askConfirmation('Archive this navigation item?')
+        ;
+        $restore = Action::new('restoreItem', 'Restore')
+            ->linkToCrudAction('restoreItem')
+            ->renderAsForm()
+            ->setTemplatePath(self::STATE_ACTION_TEMPLATE)
+        ;
+        $duplicate = Action::new('duplicateItem', 'Duplicate')
+            ->linkToCrudAction('duplicateItem')
+            ->renderAsForm()
+            ->setTemplatePath(self::STATE_ACTION_TEMPLATE)
+        ;
 
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
@@ -244,6 +262,7 @@ final class NavigationItemCrudController extends AbstractCrudController
     public function archiveItem(AdminContext $context, EntityManagerInterface $entityManager): RedirectResponse
     {
         $item = $this->resolveNavigationItem($context);
+        $this->assertStateChangeRequest($context, $item, 'archiveItem');
         $item->archive();
 
         try {
@@ -258,6 +277,7 @@ final class NavigationItemCrudController extends AbstractCrudController
     public function restoreItem(AdminContext $context, EntityManagerInterface $entityManager): RedirectResponse
     {
         $item = $this->resolveNavigationItem($context);
+        $this->assertStateChangeRequest($context, $item, 'restoreItem');
         $item->restore();
 
         try {
@@ -272,6 +292,7 @@ final class NavigationItemCrudController extends AbstractCrudController
     public function duplicateItem(AdminContext $context, EntityManagerInterface $entityManager): RedirectResponse
     {
         $item = $this->resolveNavigationItem($context);
+        $this->assertStateChangeRequest($context, $item, 'duplicateItem');
         $token = date('YmdHis').'-'.bin2hex(random_bytes(5));
         $copy = (new NavigationItem())
             ->setMenu($item->getMenu())
@@ -304,6 +325,25 @@ final class NavigationItemCrudController extends AbstractCrudController
         }
 
         return $this->redirectToRoute('ea_navigation_item_index');
+    }
+
+    private function assertStateChangeRequest(AdminContext $context, NavigationItem $item, string $actionName): void
+    {
+        $request = $context->getRequest();
+        if (!$request->isMethod('POST')) {
+            throw $this->createAccessDeniedException('Navigation state-changing actions require POST.');
+        }
+
+        $id = $item->getId();
+        $submittedToken = $request->request->get('_token');
+        if (null === $id || !is_string($submittedToken)) {
+            throw $this->createAccessDeniedException('Navigation action CSRF token is missing.');
+        }
+
+        $tokenId = sprintf('navigating.item.%s.%d', $actionName, $id);
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken($tokenId, $submittedToken))) {
+            throw $this->createAccessDeniedException('Navigation action CSRF token is invalid.');
+        }
     }
 
     private function resolveNavigationItem(AdminContext $context): NavigationItem
