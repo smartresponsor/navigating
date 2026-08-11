@@ -31,7 +31,9 @@ final class NavigationEasyAdminSymfonyTypeTest extends TestCase
         self::assertFileExists(self::path('src/Form/Type/Admin/JsonListTextareaType.php'));
 
         self::assertStringContainsString('extends AbstractType', self::read('src/Form/Type/Admin/NavigationItemLocationType.php'));
-        self::assertStringContainsString('ChoiceType::class', self::read('src/Form/Type/Admin/NavigationItemLocationType.php'));
+        self::assertStringContainsString('TextType::class', self::read('src/Form/Type/Admin/NavigationItemLocationType.php'));
+        self::assertStringContainsString('data-navigation-location-contract', self::read('src/Form/Type/Admin/NavigationItemLocationType.php'));
+        self::assertStringContainsString('config-owned', self::read('src/Form/Type/Admin/NavigationItemLocationType.php'));
         self::assertStringContainsString('ChoiceType::class', self::read('src/Form/Type/Admin/NavigationItemOperationType.php'));
         self::assertStringContainsString('TextareaType::class', self::read('src/Form/Type/Admin/JsonArrayTextareaType.php'));
         self::assertStringContainsString('CallbackTransformer', self::read('src/Form/Type/Admin/JsonArrayTextareaType.php'));

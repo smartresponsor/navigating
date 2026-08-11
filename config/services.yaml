@@ -90,6 +90,9 @@ services:
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationShellPayloadProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationShellPayloadProvideService
 
+  App\Navigating\ServiceInterface\Navigation\Provide\NavigationMobileShellPayloadProvideServiceInterface:
+    alias: App\Navigating\Service\Navigation\Provide\NavigationMobileShellPayloadProvideService
+
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationResponseProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationResponseProvideService
 

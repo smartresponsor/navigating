@@ -49,6 +49,7 @@ class NavigationRuntimeExtension extends Extension
             'navigation_runtime_activation_system.yaml',
             'navigation_runtime_activation_entity.yaml',
             'navigation_access_quick.yaml',
+            'navigation.mobile.yaml',
         ] as $file) {
             $data = Yaml::parseFile(__DIR__.'/../../config/'.$file);
             $config = is_array($data) ? ($data['navigation'] ?? $data) : null;

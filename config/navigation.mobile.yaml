@@ -1,0 +1,440 @@
+navigation:
+  shell_locations:
+    shell.mobile.bottom.primary:
+      label: Mobile bottom navigation
+      description: Primary mobile destinations rendered as Android NavigationBar or iOS TabView items.
+      region: mobile
+      slot: bottom.primary
+      type: mobile_navigation
+      priority: 10
+      metadata:
+        channel: mobile
+        mobile_location: mobile.bottom.primary
+
+    shell.mobile.account.quick:
+      label: Mobile account quick menu
+      description: Account actions opened from avatar or account toolbar button.
+      region: mobile
+      slot: account.quick
+      type: mobile_sheet
+      priority: 20
+      metadata:
+        channel: mobile
+        mobile_location: mobile.account.quick
+
+    shell.mobile.more.drawer:
+      label: Mobile more drawer
+      description: Mobile drawer or More tab list for secondary modules and Coming soon entries.
+      region: mobile
+      slot: more.drawer
+      type: mobile_drawer
+      priority: 30
+      metadata:
+        channel: mobile
+        mobile_location: mobile.more.drawer
+
+    shell.mobile.vendor.context:
+      label: Mobile vendor context
+      description: Vendor-owned contextual actions for mobile vendor workspace.
+      region: mobile
+      slot: vendor.context
+      type: mobile_context
+      priority: 40
+      metadata:
+        channel: mobile
+        mobile_location: mobile.vendor.context
+
+  shell_groups:
+    mobile_bottom_primary:
+      label: Primary
+      location: shell.mobile.bottom.primary
+      type: navigation
+      priority: 10
+      visible_for_roles: [ROLE_USER]
+      visible_for_environments: [mobile]
+      metadata:
+        channel: mobile
+        mobile_group: primary
+      items:
+        tasks:
+          type: link
+          label: Tasks
+          icon: tasks
+          priority: 10
+          path: /vendor/project
+          metadata:
+            namespace_provider: App\Vendoring
+            domain: vendor
+            resource: vendor.project
+            operation: index
+            mobile_route: vendor/project
+            mobile_platforms: [android, ios]
+            runtime_entity: vendor
+        message:
+          type: link
+          label: Messages
+          icon: message
+          priority: 20
+          path: /message
+          metadata:
+            namespace_provider: App\Messaging
+            domain: message
+            resource: message
+            operation: index
+            mobile_route: message
+            mobile_platforms: [android, ios]
+        services:
+          type: link
+          label: Services
+          icon: store
+          priority: 30
+          path: /vendor/retail
+          metadata:
+            namespace_provider: App\Vendoring
+            domain: vendor
+            resource: vendor.retail
+            operation: index
+            mobile_route: vendor/retail
+            mobile_platforms: [android, ios]
+            runtime_entity: vendor
+        notification:
+          type: link
+          label: Notifications
+          icon: notification
+          priority: 40
+          path: /notification
+          metadata:
+            namespace_provider: App\Messaging
+            domain: notification
+            resource: notification
+            operation: index
+            mobile_route: notification
+            mobile_platforms: [android, ios]
+        profile:
+          type: link
+          label: Profile
+          icon: person
+          priority: 50
+          path: /vendor/profile
+          metadata:
+            namespace_provider: App\Vendoring
+            domain: vendor
+            resource: vendor.profile
+            operation: show
+            mobile_route: vendor/page
+            mobile_platforms: [android, ios]
+
+    mobile_account_quick:
+      label: Account
+      location: shell.mobile.account.quick
+      type: navigation
+      priority: 20
+      visible_for_roles: [ROLE_USER]
+      visible_for_environments: [mobile]
+      metadata:
+        channel: mobile
+        mobile_group: account
+      items:
+        vendor_profile:
+          type: link
+          label: My Profile
+          icon: person
+          priority: 10
+          path: /vendor/profile
+          metadata:
+            namespace_provider: App\Vendoring
+            domain: vendor
+            resource: vendor.profile
+            operation: show
+            mobile_route: vendor/profile
+            mobile_platforms: [android, ios]
+        access_password:
+          type: link
+          label: Change Password
+          icon: key
+          enabled: false
+          badge: Coming soon
+          priority: 20
+          path: /access/password
+          metadata:
+            namespace_provider: App\Accessing
+            domain: access
+            resource: access.password
+            operation: update
+            mobile_route: access/password
+            mobile_platforms: [android, ios]
+            mobile_disabled_label: Coming soon
+        access_verification:
+          type: link
+          label: Verification
+          icon: verified
+          enabled: false
+          badge: Coming soon
+          priority: 30
+          path: /access/verification
+          metadata:
+            namespace_provider: App\Accessing
+            domain: access
+            resource: access.verification
+            operation: show
+            mobile_route: access/verification
+            mobile_platforms: [android, ios]
+            mobile_disabled_label: Coming soon
+        vendor_attachment:
+          type: link
+          label: My Attachment
+          icon: attachment
+          enabled: false
+          badge: Coming soon
+          priority: 40
+          path: /attachment
+          metadata:
+            namespace_provider: App\Attaching
+            domain: attachment
+            resource: vendor.attachment
+            operation: index
+            mobile_route: attachment
+            mobile_platforms: [android, ios]
+            mobile_disabled_label: Coming soon
+        accessSignout:
+          type: action
+          label: Sign Out
+          icon: logout
+          priority: 90
+          action: access.signout
+          metadata:
+            namespace_provider: App\Accessing
+            domain: access
+            resource: access
+            operation: signout
+            mobile_route: access/signout
+            mobile_platforms: [android, ios]
+
+    mobile_more_active:
+      label: Active
+      location: shell.mobile.more.drawer
+      type: navigation
+      priority: 30
+      visible_for_roles: [ROLE_USER]
+      visible_for_environments: [mobile]
+      metadata:
+        channel: mobile
+        mobile_group: active
+      items:
+        dashboard:
+          type: link
+          label: Dashboard
+          icon: dashboard
+          priority: 10
+          path: /
+          metadata:
+            namespace_provider: App\Interfacing
+            domain: interface
+            resource: dashboard
+            operation: show
+            mobile_route: dashboard
+            mobile_platforms: [android, ios]
+            runtime_entity: vendor
+        vendor:
+          type: link
+          label: Vendor
+          icon: store
+          priority: 20
+          path: /vendor
+          metadata:
+            namespace_provider: App\Vendoring
+            domain: vendor
+            resource: vendor
+            operation: overview
+            mobile_route: vendor
+        message:
+          type: link
+          label: Messages
+          icon: message
+          priority: 25
+          path: /message
+          metadata:
+            namespace_provider: App\Messaging
+            domain: message
+            resource: message
+            operation: index
+            mobile_route: message
+            mobile_platforms: [android, ios]
+        attachment:
+          type: link
+          label: Attachment
+          icon: attachment
+          priority: 30
+          path: /attachment
+          metadata:
+            namespace_provider: App\Attaching
+            domain: attachment
+            resource: attachment
+            operation: index
+            mobile_route: attachment
+            mobile_platforms: [android, ios]
+        catalog:
+          type: link
+          label: Catalog
+          icon: catalog
+          priority: 40
+          path: /catalog
+          metadata:
+            namespace_provider: App\Cataloging
+            domain: catalog
+            resource: catalog
+            operation: index
+            mobile_route: catalog
+            mobile_platforms: [android, ios]
+
+    mobile_more_coming_soon:
+      label: Coming soon
+      location: shell.mobile.more.drawer
+      type: navigation
+      priority: 40
+      visible_for_roles: [ROLE_USER]
+      visible_for_environments: [mobile]
+      metadata:
+        channel: mobile
+        mobile_group: coming_soon
+      items:
+        catalog:
+          type: link
+          label: Catalog
+          icon: catalog
+          enabled: false
+          visible: false
+          badge: Coming soon
+          priority: 10
+          path: /catalog
+          metadata:
+            namespace_provider: App\Cataloging
+            domain: catalog
+            resource: catalog
+            operation: index
+            mobile_route: catalog
+            mobile_platforms: [android, ios]
+            mobile_disabled_label: Coming soon
+        attachment:
+          type: link
+          label: Attachment
+          icon: attachment
+          enabled: false
+          visible: false
+          badge: Coming soon
+          priority: 30
+          path: /attachment
+          metadata:
+            namespace_provider: App\Attaching
+            domain: attachment
+            resource: attachment
+            operation: index
+            mobile_route: attachment
+            mobile_platforms: [android, ios]
+            mobile_disabled_label: Coming soon
+
+    mobile_vendor_context:
+      label: Vendor
+      location: shell.mobile.vendor.context
+      type: navigation
+      priority: 50
+      visible_for_roles: [ROLE_USER]
+      visible_for_environments: [mobile]
+      metadata:
+        channel: mobile
+        mobile_group: vendor
+      items:
+        vendor_overview:
+          type: link
+          label: My Vendor
+          icon: store
+          priority: 10
+          path: /vendor
+          metadata:
+            namespace_provider: App\Vendoring
+            domain: vendor
+            resource: vendor
+            operation: overview
+            mobile_route: vendor
+            mobile_platforms: [android, ios]
+        vendor_profile:
+          type: link
+          label: My Profile
+          icon: person
+          priority: 20
+          path: /vendor/profile
+          metadata:
+            namespace_provider: App\Vendoring
+            domain: vendor
+            resource: vendor.profile
+            operation: show
+            mobile_route: vendor/profile
+            mobile_platforms: [android, ios]
+        vendor_summary:
+          type: link
+          label: Summary
+          icon: summary
+          priority: 30
+          path: /vendor/summary
+          metadata:
+            namespace_provider: App\Vendoring
+            domain: vendor
+            resource: vendor.summary
+            operation: show
+            mobile_route: vendor/summary
+            mobile_platforms: [android, ios]
+        vendor_statement:
+          type: link
+          label: Statement
+          icon: receipt
+          priority: 40
+          path: /vendor/statement
+          metadata:
+            namespace_provider: App\Vendoring
+            domain: vendor
+            resource: vendor.statement
+            operation: show
+            mobile_route: vendor/statement
+            mobile_platforms: [android, ios]
+        vendor_payout:
+          type: link
+          label: Payout
+          icon: payments
+          priority: 50
+          path: /vendor/payout
+          metadata:
+            namespace_provider: App\Vendoring
+            domain: vendor
+            resource: vendor.payout
+            operation: index
+            mobile_route: vendor/payout
+            mobile_platforms: [android, ios]
+        vendor_transaction:
+          type: link
+          label: Transaction
+          icon: list
+          priority: 60
+          path: /vendor/transaction
+          metadata:
+            namespace_provider: App\Vendoring
+            domain: vendor
+            resource: vendor.transaction
+            operation: index
+            mobile_route: vendor/transaction
+            mobile_platforms: [android, ios]
+        vendor_attachment:
+          type: link
+          label: My Attachment
+          icon: attachment
+          enabled: false
+          badge: Coming soon
+          priority: 70
+          path: /attachment
+          metadata:
+            namespace_provider: App\Attaching
+            domain: attachment
+            resource: vendor.attachment
+            operation: index
+            mobile_route: attachment
+            mobile_platforms: [android, ios]
+            mobile_disabled_label: Coming soon

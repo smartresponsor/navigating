@@ -31,6 +31,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -208,7 +209,7 @@ final class NavigationItemCrudController extends AbstractCrudController
         return $builder;
     }
 
-    public function new(AdminContext $context)
+    public function new(AdminContext $context): KeyValueStore|Response
     {
         try {
             return parent::new($context);
@@ -219,7 +220,7 @@ final class NavigationItemCrudController extends AbstractCrudController
         }
     }
 
-    public function edit(AdminContext $context)
+    public function edit(AdminContext $context): KeyValueStore|Response
     {
         $request = $context->getRequest();
         if ($request->isMethod('POST')) {

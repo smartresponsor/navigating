@@ -81,11 +81,58 @@ navigation:
             operation: index
             navigation_scope: user
             quick_menu: true
+        access_password:
+          type: link
+          label: Change password
+          icon: LockOutlined
+          priority: 60
+          path: /access/password
+          visible_for_roles: [ROLE_USER]
+          metadata:
+            namespace_provider: App\Accessing\Service\Http\Access\AccessSurfaceFlowService
+            route_name: access.password
+            domain: access
+            resource: access.password
+            operation: password
+            navigation_scope: user
+            quick_menu: true
+        access_switch:
+          type: link
+          label: Switch user
+          icon: SwapOutlined
+          priority: 70
+          path: /access/switch
+          visible_for_roles: [ROLE_USER, ROLE_ALLOWED_TO_SWITCH, ROLE_ADMIN, ROLE_SUPER_ADMIN]
+          metadata:
+            namespace_provider: App\Accessing\Service\Http\Access\AccessSecurityFlowService
+            route_name: access.switch
+            domain: access
+            resource: access
+            operation: switch_user
+            navigation_scope: user
+            quick_menu: true
+            http_method: POST
+        access_signout:
+          type: link
+          label: Sign out
+          icon: LogoutOutlined
+          priority: 80
+          path: /access/signout
+          visible_for_roles: [ROLE_USER]
+          metadata:
+            namespace_provider: App\Accessing\Service\Http\Access\AccessSecurityFlowService
+            route_name: access.signout
+            domain: access
+            resource: access
+            operation: signout
+            navigation_scope: user
+            quick_menu: true
+            http_method: POST
         access_security_events:
           type: link
           label: Security events
           icon: AuditOutlined
-          priority: 60
+          priority: 90
           path: /access/security-events
           visible_for_roles: [ROLE_USER]
           metadata:

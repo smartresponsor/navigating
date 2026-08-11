@@ -158,7 +158,7 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
         self::assertStringContainsString('NavigationItemCrudController.php', $rules);
         self::assertStringContainsString('all administrator-managed functional persistence fields', $rules);
         self::assertStringContainsString(
-            'Admin entry points live in `src/Controllers/Admin/`.',
+            'Admin entry points live in `src/Controllers/Admin/`',
             self::read('README.md'),
         );
         self::assertStringContainsString(
