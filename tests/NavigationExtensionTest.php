@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class NavigationExtensionTest extends TestCase
 {
-    public function testExtensionDoesNotInjectStandaloneReferenceNavigationConfig(): void
+    public function testExtensionLoadsCanonicalBootstrapNavigationConfig(): void
     {
         $container = new ContainerBuilder();
 
@@ -23,7 +23,8 @@ final class NavigationExtensionTest extends TestCase
         self::assertIsArray($config);
         self::assertSame(3, $config['schema']);
         self::assertArrayNotHasKey('left_middle_primary', $config['shell_groups'] ?? []);
-        self::assertSame([], $config['shell_groups'] ?? []);
+        self::assertArrayHasKey('left_middle_business', $config['shell_groups'] ?? []);
+        self::assertArrayHasKey('body_top', $config['shell_groups'] ?? []);
     }
 
     public function testExtensionUsesExplicitApplicationNavigationConfigOnly(): void

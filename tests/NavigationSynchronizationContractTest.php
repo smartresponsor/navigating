@@ -30,7 +30,8 @@ final class NavigationSynchronizationContractTest extends TestCase
         $items = $config['navigation']['shell_groups']['right_toolbar_quick']['items'];
 
         self::assertSame('/access/register', $items['access_register']['path']);
-        self::assertSame('access.recovery.request', $items['access_recovery']['metadata']['route_name']);
+        self::assertSame('/access/recover', $items['access_recovery']['path']);
+        self::assertSame('access.recover_request', $items['access_recovery']['metadata']['route_name']);
         self::assertSame('/access/password', $items['access_password']['path']);
         self::assertSame('access.password', $items['access_password']['metadata']['route_name']);
         self::assertSame('POST', $items['access_switch']['metadata']['http_method']);

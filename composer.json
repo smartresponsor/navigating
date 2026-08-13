@@ -5,6 +5,23 @@
   "license": "proprietary",
   "minimum-stability": "dev",
   "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../Objecting",
+      "options": { "symlink": true }
+    },
+    {
+      "type": "path",
+      "url": "../Cruding",
+      "options": { "symlink": true }
+    },
+    {
+      "type": "path",
+      "url": "../Interfacing",
+      "options": { "symlink": true }
+    }
+  ],
   "require": {
     "php": "^8.4",
     "cruding/crud": "dev-master",
@@ -48,6 +65,7 @@
     "qa:navigating-easyadmin": "@php vendor/bin/phpunit tests/NavigationEasyAdminSurfaceTest.php tests/NavigationEasyAdminSymfonyTypeTest.php tests/NavigationEasyAdminBoundaryTest.php tests/NavigationFormInvariantTest.php tests/NavigationUniquenessContractTest.php tests/NavigationStateActionSecurityTest.php",
     "qa:navigating-database": "@php vendor/bin/phpunit tests/NavigationDatabaseBackedModelTest.php tests/NavigationRecoveryContractTest.php tests/NavigationConcurrencyContractTest.php tests/NavigationAcceptanceContractTest.php tests/NavigationRepositoryScopeContractTest.php tests/NavigationTreeInvariantTest.php tests/NavigationTargetInvariantTest.php tests/NavigationEntityInvariantTest.php tests/NavigationLegacyMigrationContractTest.php tests/NavigationLegacyMigrationSemanticTest.php tests/NavigationLegacySqliteLifecycleTest.php",
     "qa:navigating-runtime": "@php vendor/bin/phpunit tests/NavigationRuntimeActivationTest.php tests/NavigationRuntimeActivationConfigTest.php tests/NavigationMenuScopedRuntimeTest.php tests/NavigationCacheFailureTest.php",
+    "qa:all": "@php vendor/bin/phpunit",
     "navigation:fixtures": "@php bin/console doctrine:fixtures:load --group=navigating --append --no-interaction",
     "navigation:backup": "@php bin/console navigation:backup:create",
     "navigation:manifest:write": "@php bin/console navigation:manifest:write",
@@ -59,6 +77,11 @@
       "@navigation:backup",
       "@navigation:schema:update"
     ],
+    "qa:preflight": [
+      "@php bin/console lint:container",
+      "@navigation:legacy:plan",
+      "@qa"
+    ],
     "navigation:acceptance:preflight": [
       "@php bin/console lint:container",
       "@navigation:legacy:plan",
@@ -69,11 +92,7 @@
       "@php bin/console navigation:manifest:verify",
       "@qa"
     ],
-    "qa": [
-      "@qa:navigating-easyadmin",
-      "@qa:navigating-database",
-      "@qa:navigating-runtime"
-    ]
+    "qa": "@qa:all"
   },
   "extra": {
     "symfony": {

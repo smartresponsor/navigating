@@ -23,6 +23,8 @@ final readonly class NavigationResponseProvideService implements NavigationRespo
         $data = $this->templateDataProvideService->provide($request);
         $section = (string) ($data['surface'] ?? NavigationTemplateDataProvideService::SURFACE);
         $template = (string) ($data['template'] ?? NavigationTemplateDataProvideService::TEMPLATE);
+        $navigation = \is_array($data['navigation'] ?? null) ? $data['navigation'] : [];
+        $interface = \is_array($data['interface'] ?? null) ? $data['interface'] : ['locations' => []];
 
         return [
             '_view' => [
@@ -32,8 +34,11 @@ final readonly class NavigationResponseProvideService implements NavigationRespo
                 'intent' => 'navigation',
                 'template_path' => sprintf('%s/%s.html.twig', $section, $template),
             ],
-            'interface' => \is_array($data['interface'] ?? null) ? $data['interface'] : ['locations' => []],
-            'groups' => $data['navigation']['groups'] ?? [],
+            'interface' => $interface,
+            'navigation' => $navigation,
+            'locations' => $navigation['locations'] ?? $interface['locations'] ?? [],
+            'groups' => $navigation['groups'] ?? [],
+            'active' => $navigation['active'] ?? $interface['active'] ?? [],
             'data' => $data,
             'meta' => [
                 'navigation_surface' => $section,
