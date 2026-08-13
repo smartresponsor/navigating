@@ -107,13 +107,17 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         self::assertStringContainsString('Navigation database contains no enabled menus', $shellProvider);
         self::assertStringNotContainsString('[] === $databaseConfig ? $this->navigationConfig : $databaseConfig', $shellProvider);
         self::assertStringContainsString("'slug' => \$menu->getSlug()", $databaseProvider);
-        self::assertStringContainsString("'slug' => \$item->getSlug()", $databaseProvider);
-        self::assertStringContainsString("'operation' => \$item->getOperation()", $databaseProvider);
+        self::assertStringContainsString("\$metadata['slug'] ??= \$item->getSlug()", $databaseProvider);
+        self::assertStringContainsString("\$metadata['operation'] ??= \$item->getOperation()", $databaseProvider);
+        self::assertStringNotContainsString("'slug' => \$item->getSlug()", $databaseProvider);
+        self::assertStringNotContainsString("'operation' => \$item->getOperation()", $databaseProvider);
+        self::assertStringContainsString("\$config['action'] = \$this->actionToken", $databaseProvider);
+        self::assertStringContainsString("\$config['widget'] = \$this->widgetToken", $databaseProvider);
         self::assertStringContainsString("unset(\$metadata['parent_key'])", $databaseProvider);
         self::assertStringContainsString('$this->cache->remember', $databaseProvider);
         self::assertStringContainsString('Symfony\\Contracts\\Cache\\CacheInterface', $cacheService);
-        self::assertStringContainsString("cache->get(self::CACHE_KEY", $cacheService);
-        self::assertStringContainsString("cache->delete(self::CACHE_KEY)", $cacheService);
+        self::assertStringContainsString('cache->get(self::CACHE_KEY', $cacheService);
+        self::assertStringContainsString('cache->delete(self::CACHE_KEY)', $cacheService);
         self::assertStringContainsString('Events::postPersist', $subscriber);
         self::assertStringContainsString('Events::postUpdate', $subscriber);
         self::assertStringContainsString('Events::postRemove', $subscriber);
@@ -127,6 +131,7 @@ final class NavigationDatabaseBackedModelTest extends TestCase
     {
         $contents = file_get_contents(dirname(__DIR__).'/'.$relativePath);
         self::assertIsString($contents);
+
         return $contents;
     }
 }

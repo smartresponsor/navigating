@@ -247,11 +247,24 @@ navigation:
             resource: vendor
             operation: overview
             mobile_route: vendor
+        wallet:
+          type: link
+          label: Wallet
+          icon: wallet
+          priority: 25
+          path: /wallet/index
+          metadata:
+            namespace_provider: App\Walleting
+            domain: wallet
+            resource: wallet
+            operation: index
+            mobile_route: wallet
+            mobile_platforms: [android, ios]
         message:
           type: link
           label: Messages
           icon: message
-          priority: 25
+          priority: 30
           path: /message
           metadata:
             namespace_provider: App\Messaging

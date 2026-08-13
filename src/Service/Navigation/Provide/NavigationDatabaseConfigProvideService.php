@@ -85,6 +85,11 @@ final readonly class NavigationDatabaseConfigProvideService implements Navigatio
         $metadata = $item->getMetadata();
         unset($metadata['parent_key']);
 
+        if (null !== $item->getSlug()) {
+            $metadata['slug'] ??= $item->getSlug();
+        }
+        $metadata['operation'] ??= $item->getOperation();
+
         if (null !== $item->getParent()) {
             $metadata['parent_key'] = $item->getParent()?->getNavigationKey();
         }
@@ -92,8 +97,6 @@ final readonly class NavigationDatabaseConfigProvideService implements Navigatio
         $config = [
             'type' => $item->getType(),
             'label' => $item->getLabel(),
-            'slug' => $item->getSlug(),
-            'operation' => $item->getOperation(),
             'priority' => $item->getPosition(),
             'enabled' => $item->isEnabled(),
             'visible' => true,
@@ -111,6 +114,14 @@ final readonly class NavigationDatabaseConfigProvideService implements Navigatio
             $config['badge'] = $item->getBadge();
         }
 
+        if ('action' === $item->getType()) {
+            $config['action'] = $this->actionToken($item, $metadata);
+        }
+
+        if ('widget' === $item->getType()) {
+            $config['widget'] = $this->widgetToken($item, $metadata);
+        }
+
         if (null !== $item->getRouteName()) {
             $config['target'] = [
                 'type' => 'route',
@@ -125,5 +136,38 @@ final readonly class NavigationDatabaseConfigProvideService implements Navigatio
         }
 
         return $config;
+    }
+
+    /** @param array<string, mixed> $metadata */
+    private function actionToken(NavigationItem $item, array $metadata): string
+    {
+        $toggle = $metadata['toggle'] ?? null;
+        if (is_string($toggle) && '' !== trim($toggle)) {
+            return 'navigation.toggle.'.trim($toggle);
+        }
+
+        $filter = $metadata['filter'] ?? null;
+        if (is_string($filter) && '' !== trim($filter)) {
+            return 'filter.'.trim($filter);
+        }
+
+        if ('index' !== $item->getOperation()) {
+            return 'navigation.'.$item->getOperation();
+        }
+
+        return 'navigation.'.$item->getNavigationKey();
+    }
+
+    /** @param array<string, mixed> $metadata */
+    private function widgetToken(NavigationItem $item, array $metadata): string
+    {
+        $tool = $metadata['tool'] ?? null;
+        if (is_string($tool) && '' !== trim($tool)) {
+            return in_array($tool, ['route_map', 'cruding_grammar'], true)
+                ? 'platform.'.trim($tool)
+                : 'shell.'.trim($tool);
+        }
+
+        return 'shell.'.$item->getNavigationKey();
     }
 }
