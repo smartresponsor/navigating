@@ -121,7 +121,7 @@ final class NavigationRecoveryContractTest extends TestCase
 
         self::assertStringContainsString('auto-latest.json', $service);
         self::assertStringContainsString('auto-previous.json', $service);
-        self::assertStringContainsString("[] === \$groups", $service);
+        self::assertStringContainsString('[] === $groups', $service);
         self::assertStringContainsString('Events::postFlush', $subscriber);
         self::assertStringContainsString('getTransactionNestingLevel() > 0', $subscriber);
         self::assertStringContainsString('autoBackup->writeLatest()', $subscriber);
@@ -135,7 +135,7 @@ final class NavigationRecoveryContractTest extends TestCase
         $cache = self::read('src/Service/Navigation/Cache/NavigationConfigCacheService.php');
         $subscriber = self::read('src/EventSubscriber/NavigationConfigCacheInvalidationSubscriber.php');
 
-        self::assertStringContainsString("CACHE_KEY = 'navigating.navigation.database_config.v2'", $cache);
+        self::assertStringContainsString("CACHE_KEY = 'navigating.navigation.database_config.v3'", $cache);
         self::assertStringNotContainsString('database_config.v1', $cache);
         self::assertStringContainsString('Events::postFlush', $subscriber);
         self::assertStringContainsString('private bool $dirty = false;', $subscriber);

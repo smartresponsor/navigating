@@ -9,7 +9,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 final readonly class NavigationConfigCacheService
 {
-    private const string CACHE_KEY = 'navigating.navigation.database_config.v2';
+    private const string CACHE_KEY = 'navigating.navigation.database_config.v3';
 
     public function __construct(
         private CacheInterface $cache,
