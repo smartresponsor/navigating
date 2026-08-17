@@ -91,7 +91,12 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertStringContainsString('APP_DEBUG:', $productionJob);
         self::assertStringContainsString('composer install --no-dev', $productionJob);
         self::assertStringContainsString('working-directory: Navigating', $productionJob);
-        self::assertStringContainsString('AUTOMATE_SOURCE_TOKEN', $productionJob);
+        self::assertStringContainsString('working-directory: .', $productionJob);
+        self::assertStringContainsString('AUTOMATER_APP_PRIVATE_KEY', $productionJob);
+        self::assertStringContainsString('AUTOMATER_APP_PRIVATE_KEY_B64', $productionJob);
+        self::assertStringContainsString('vars.AUTOMATER_APP_ID', $productionJob);
+        self::assertStringContainsString('actions/create-github-app-token@v3', $productionJob);
+        self::assertStringContainsString('token: ${{ steps.app.outputs.token }}', $productionJob);
         self::assertStringContainsString('repository: smartresponsor/objecting', $productionJob);
         self::assertStringContainsString('repository: smartresponsor/cruding', $productionJob);
         self::assertStringContainsString('repository: smartresponsor/interfacing', $productionJob);
