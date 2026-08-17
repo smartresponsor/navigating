@@ -21,17 +21,17 @@ jobs:
         working-directory: Navigating
 
     steps:
+      - name: Checkout Navigating
+        uses: actions/checkout@v4
+        with:
+          path: Navigating
+
       - name: Verify private source token
         shell: bash
         env:
           SOURCE_TOKEN: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
         run: |
           test -n "$SOURCE_TOKEN" || { echo "AUTOMATE_SOURCE_TOKEN is required for sibling component checkout."; exit 1; }
-
-      - name: Checkout Navigating
-        uses: actions/checkout@v4
-        with:
-          path: Navigating
 
       - name: Checkout Objecting
         uses: actions/checkout@v4
@@ -120,17 +120,17 @@ jobs:
         working-directory: Navigating
 
     steps:
+      - name: Checkout Navigating
+        uses: actions/checkout@v4
+        with:
+          path: Navigating
+
       - name: Verify private source token
         shell: bash
         env:
           SOURCE_TOKEN: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
         run: |
           test -n "$SOURCE_TOKEN" || { echo "AUTOMATE_SOURCE_TOKEN is required for sibling component checkout."; exit 1; }
-
-      - name: Checkout Navigating
-        uses: actions/checkout@v4
-        with:
-          path: Navigating
 
       - name: Checkout Objecting
         uses: actions/checkout@v4
