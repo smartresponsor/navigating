@@ -247,9 +247,9 @@ navigation:
             resource: vendor
             operation: overview
             mobile_route: vendor
-        wallet:
+        money:
           type: link
-          label: Wallet
+          label: Money
           icon: wallet
           priority: 25
           path: /wallet/index
@@ -258,7 +258,7 @@ navigation:
             domain: wallet
             resource: wallet
             operation: index
-            mobile_route: wallet
+            mobile_route: money
             mobile_platforms: [android, ios]
         message:
           type: link
