@@ -90,6 +90,15 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertStringContainsString('APP_ENV: prod', $productionJob);
         self::assertStringContainsString('APP_DEBUG:', $productionJob);
         self::assertStringContainsString('composer install --no-dev', $productionJob);
+        self::assertStringContainsString('working-directory: Navigating', $productionJob);
+        self::assertStringContainsString('AUTOMATE_SOURCE_TOKEN', $productionJob);
+        self::assertStringContainsString('repository: smartresponsor/objecting', $productionJob);
+        self::assertStringContainsString('repository: smartresponsor/cruding', $productionJob);
+        self::assertStringContainsString('repository: smartresponsor/interfacing', $productionJob);
+        self::assertStringContainsString('path: Navigating', $productionJob);
+        self::assertStringContainsString('path: Objecting', $productionJob);
+        self::assertStringContainsString('path: Cruding', $productionJob);
+        self::assertStringContainsString('path: Interfacing', $productionJob);
         self::assertStringContainsString('php bin/console lint:container', $productionJob);
         self::assertStringContainsString('cache:clear --no-warmup --env=prod --no-debug', $productionJob);
         self::assertStringContainsString('cache:warmup --env=prod --no-debug', $productionJob);

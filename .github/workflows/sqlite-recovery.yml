@@ -16,10 +16,43 @@ jobs:
     env:
       APP_ENV: test
       APP_DEBUG: '0'
+    defaults:
+      run:
+        working-directory: Navigating
 
     steps:
-      - name: Checkout
+      - name: Verify private source token
+        shell: bash
+        env:
+          SOURCE_TOKEN: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
+        run: |
+          test -n "$SOURCE_TOKEN" || { echo "AUTOMATE_SOURCE_TOKEN is required for sibling component checkout."; exit 1; }
+
+      - name: Checkout Navigating
         uses: actions/checkout@v4
+        with:
+          path: Navigating
+
+      - name: Checkout Objecting
+        uses: actions/checkout@v4
+        with:
+          repository: smartresponsor/objecting
+          token: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
+          path: Objecting
+
+      - name: Checkout Cruding
+        uses: actions/checkout@v4
+        with:
+          repository: smartresponsor/cruding
+          token: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
+          path: Cruding
+
+      - name: Checkout Interfacing
+        uses: actions/checkout@v4
+        with:
+          repository: smartresponsor/interfacing
+          token: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
+          path: Interfacing
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -82,10 +115,43 @@ jobs:
     env:
       APP_ENV: prod
       APP_DEBUG: '0'
+    defaults:
+      run:
+        working-directory: Navigating
 
     steps:
-      - name: Checkout
+      - name: Verify private source token
+        shell: bash
+        env:
+          SOURCE_TOKEN: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
+        run: |
+          test -n "$SOURCE_TOKEN" || { echo "AUTOMATE_SOURCE_TOKEN is required for sibling component checkout."; exit 1; }
+
+      - name: Checkout Navigating
         uses: actions/checkout@v4
+        with:
+          path: Navigating
+
+      - name: Checkout Objecting
+        uses: actions/checkout@v4
+        with:
+          repository: smartresponsor/objecting
+          token: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
+          path: Objecting
+
+      - name: Checkout Cruding
+        uses: actions/checkout@v4
+        with:
+          repository: smartresponsor/cruding
+          token: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
+          path: Cruding
+
+      - name: Checkout Interfacing
+        uses: actions/checkout@v4
+        with:
+          repository: smartresponsor/interfacing
+          token: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
+          path: Interfacing
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
