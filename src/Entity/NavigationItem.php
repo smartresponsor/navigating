@@ -5,31 +5,52 @@ declare(strict_types=1);
 namespace App\Navigating\Entity;
 
 use App\Navigating\Repository\NavigationItemRepository;
+use App\Objecting\EntityInterface\ObjectAuditedInterface;
+use App\Objecting\EntityTrait\Embeddable\ObjectAuditEmbeddableTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: NavigationItemRepository::class)]
 #[ORM\Table(name: 'navigation_item')]
-#[ORM\UniqueConstraint(name: 'uniq_navigation_item_navigation_key', columns: ['navigation_key'])]
-#[ORM\UniqueConstraint(name: 'uniq_navigation_item_slug', columns: ['slug'])]
+#[ORM\UniqueConstraint(name: 'uniq_navigation_item_menu_key', columns: ['menu_id', 'navigation_key'])]
+#[ORM\UniqueConstraint(name: 'uniq_navigation_item_menu_slug', columns: ['menu_id', 'slug'])]
+#[ORM\Index(name: 'idx_navigation_item_menu_position', columns: ['menu_id', 'position'])]
+#[ORM\Index(name: 'idx_navigation_item_parent_position', columns: ['parent_id', 'position'])]
 #[ORM\Index(name: 'idx_navigation_item_route_name', columns: ['route_name'])]
 #[ORM\Index(name: 'idx_navigation_item_operation', columns: ['operation'])]
-#[ORM\Index(name: 'idx_navigation_item_parent_key', columns: ['parent_key'])]
 #[ORM\Index(name: 'idx_navigation_item_archived_at', columns: ['archived_at'])]
-#[ORM\Index(name: 'idx_navigation_item_enabled_location_position', columns: ['enabled', 'location', 'position'])]
+#[ORM\Index(name: 'idx_navigation_item_enabled_position', columns: ['enabled', 'position'])]
 #[ORM\HasLifecycleCallbacks]
-class NavigationItem
+class NavigationItem implements ObjectAuditedInterface
 {
+    use ObjectAuditEmbeddableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
+    #[ORM\Version]
+    #[ORM\Column(type: Types::INTEGER)]
+    private int $version = 1;
+
+    #[ORM\ManyToOne(targetEntity: NavigationMenu::class, inversedBy: 'items')]
+    #[ORM\JoinColumn(name: 'menu_id', nullable: false, onDelete: 'CASCADE')]
+    private ?NavigationMenu $menu = null;
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+    #[ORM\JoinColumn(name: 'parent_id', nullable: true, onDelete: 'SET NULL')]
+    private ?self $parent = null;
+
+    /** @var Collection<int, self> */
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
+    #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
+    private Collection $children;
+
     #[ORM\Column(name: 'navigation_key', length: 160)]
     private string $navigationKey = '';
-
-    #[ORM\Column(name: 'parent_key', length: 160, nullable: true)]
-    private ?string $parentKey = null;
 
     #[ORM\Column(length: 140)]
     private string $label = '';
@@ -37,27 +58,42 @@ class NavigationItem
     #[ORM\Column(length: 180, nullable: true)]
     private ?string $slug = null;
 
-    #[ORM\Column(name: 'route_name', length: 180)]
-    private string $routeName = '';
+    #[ORM\Column(name: 'route_name', length: 180, nullable: true)]
+    private ?string $routeName = null;
 
     /** @var array<string, mixed> */
     #[ORM\Column(name: 'route_parameters', type: Types::JSON)]
     private array $routeParameters = [];
 
-    #[ORM\Column(length: 120)]
-    private string $location = 'shell.context.middle';
+    #[ORM\Column(name: 'path_target', length: 512, nullable: true)]
+    private ?string $path = null;
 
     #[ORM\Column(length: 60)]
     private string $operation = 'index';
 
+    #[ORM\Column(length: 40)]
+    private string $type = 'link';
+
     #[ORM\Column(length: 80, nullable: true)]
     private ?string $icon = null;
 
-    #[ORM\Column(name: 'required_role', length: 80, nullable: true)]
-    private ?string $requiredRole = null;
+    #[ORM\Column(length: 80, nullable: true)]
+    private ?string $badge = null;
+
+    /** @var list<string> */
+    #[ORM\Column(name: 'visible_for_roles', type: Types::JSON)]
+    private array $visibleForRoles = [];
+
+    /** @var list<string> */
+    #[ORM\Column(name: 'visible_for_scopes', type: Types::JSON)]
+    private array $visibleForScopes = [];
+
+    /** @var list<string> */
+    #[ORM\Column(name: 'visible_for_environments', type: Types::JSON)]
+    private array $visibleForEnvironments = [];
 
     #[ORM\Column(type: Types::INTEGER)]
-    private int $position = 0;
+    private int $position = 100;
 
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $enabled = true;
@@ -66,25 +102,68 @@ class NavigationItem
     #[ORM\Column(type: Types::JSON)]
     private array $metadata = [];
 
-    #[ORM\Column(name: 'created_at', type: Types::DATETIME_IMMUTABLE)]
-    private \DateTimeImmutable $createdAt;
-
-    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_IMMUTABLE)]
-    private \DateTimeImmutable $updatedAt;
-
     #[ORM\Column(name: 'archived_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $archivedAt = null;
 
     public function __construct()
     {
-        $now = new \DateTimeImmutable();
-        $this->createdAt = $now;
-        $this->updatedAt = $now;
+        $this->initializeObjectAudit();
+        $this->children = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getVersion(): int
+    {
+        return $this->version;
+    }
+
+    public function getMenu(): ?NavigationMenu
+    {
+        return $this->menu;
+    }
+
+    /**
+     * Cross-field menu/parent consistency is validated at the Doctrine persistence
+     * boundary so Symfony forms can change both fields in one submission without
+     * becoming dependent on property-mapping order.
+     */
+    public function setMenu(?NavigationMenu $menu): self
+    {
+        $this->menu = $menu;
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): self
+    {
+        if ($parent === $this) {
+            throw new \DomainException('Navigation item cannot be its own parent.');
+        }
+
+        for ($ancestor = $parent; null !== $ancestor; $ancestor = $ancestor->getParent()) {
+            if ($ancestor === $this) {
+                throw new \DomainException('Navigation item hierarchy cannot contain cycles.');
+            }
+        }
+
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /** @return Collection<int, self> */
+    public function getChildren(): Collection
+    {
+        return $this->children;
     }
 
     public function getNavigationKey(): string
@@ -95,19 +174,6 @@ class NavigationItem
     public function setNavigationKey(string $navigationKey): self
     {
         $this->navigationKey = trim($navigationKey);
-
-        return $this;
-    }
-
-    public function getParentKey(): ?string
-    {
-        return $this->parentKey;
-    }
-
-    public function setParentKey(?string $parentKey): self
-    {
-        $parentKey = null === $parentKey ? null : trim($parentKey);
-        $this->parentKey = '' === $parentKey ? null : $parentKey;
 
         return $this;
     }
@@ -137,14 +203,15 @@ class NavigationItem
         return $this;
     }
 
-    public function getRouteName(): string
+    public function getRouteName(): ?string
     {
         return $this->routeName;
     }
 
-    public function setRouteName(string $routeName): self
+    public function setRouteName(?string $routeName): self
     {
-        $this->routeName = trim($routeName);
+        $routeName = null === $routeName ? null : trim($routeName);
+        $this->routeName = '' === $routeName ? null : $routeName;
 
         return $this;
     }
@@ -163,14 +230,15 @@ class NavigationItem
         return $this;
     }
 
-    public function getLocation(): string
+    public function getPath(): ?string
     {
-        return $this->location;
+        return $this->path;
     }
 
-    public function setLocation(string $location): self
+    public function setPath(?string $path): self
     {
-        $this->location = trim($location);
+        $path = null === $path ? null : trim($path);
+        $this->path = '' === $path ? null : $path;
 
         return $this;
     }
@@ -183,6 +251,18 @@ class NavigationItem
     public function setOperation(string $operation): self
     {
         $this->operation = trim($operation);
+
+        return $this;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = trim($type);
 
         return $this;
     }
@@ -200,15 +280,57 @@ class NavigationItem
         return $this;
     }
 
-    public function getRequiredRole(): ?string
+    public function getBadge(): ?string
     {
-        return $this->requiredRole;
+        return $this->badge;
     }
 
-    public function setRequiredRole(?string $requiredRole): self
+    public function setBadge(?string $badge): self
     {
-        $requiredRole = null === $requiredRole ? null : trim($requiredRole);
-        $this->requiredRole = '' === $requiredRole ? null : $requiredRole;
+        $badge = null === $badge ? null : trim($badge);
+        $this->badge = '' === $badge ? null : $badge;
+
+        return $this;
+    }
+
+    /** @return list<string> */
+    public function getVisibleForRoles(): array
+    {
+        return $this->visibleForRoles;
+    }
+
+    /** @param list<string> $visibleForRoles */
+    public function setVisibleForRoles(array $visibleForRoles): self
+    {
+        $this->visibleForRoles = $this->normalizeTokens($visibleForRoles, true);
+
+        return $this;
+    }
+
+    /** @return list<string> */
+    public function getVisibleForScopes(): array
+    {
+        return $this->visibleForScopes;
+    }
+
+    /** @param list<string> $visibleForScopes */
+    public function setVisibleForScopes(array $visibleForScopes): self
+    {
+        $this->visibleForScopes = $this->normalizeTokens($visibleForScopes, false);
+
+        return $this;
+    }
+
+    /** @return list<string> */
+    public function getVisibleForEnvironments(): array
+    {
+        return $this->visibleForEnvironments;
+    }
+
+    /** @param list<string> $visibleForEnvironments */
+    public function setVisibleForEnvironments(array $visibleForEnvironments): self
+    {
+        $this->visibleForEnvironments = $this->normalizeTokens($visibleForEnvironments, false);
 
         return $this;
     }
@@ -251,16 +373,6 @@ class NavigationItem
         return $this;
     }
 
-    public function getCreatedAt(): \DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function getUpdatedAt(): \DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
     public function getArchivedAt(): ?\DateTimeImmutable
     {
         return $this->archivedAt;
@@ -269,7 +381,6 @@ class NavigationItem
     public function archive(): self
     {
         $this->archivedAt = new \DateTimeImmutable();
-        $this->enabled = false;
 
         return $this;
     }
@@ -277,7 +388,6 @@ class NavigationItem
     public function restore(): self
     {
         $this->archivedAt = null;
-        $this->enabled = true;
 
         return $this;
     }
@@ -290,6 +400,33 @@ class NavigationItem
     #[ORM\PreUpdate]
     public function touch(): void
     {
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->touchModified();
+    }
+
+    public function __toString(): string
+    {
+        return '' !== $this->label ? $this->label : $this->navigationKey;
+    }
+
+    /**
+     * @param list<string> $tokens
+     *
+     * @return list<string>
+     */
+    private function normalizeTokens(array $tokens, bool $upper): array
+    {
+        $normalized = [];
+
+        foreach ($tokens as $token) {
+            $token = trim($token);
+            if ('' === $token) {
+                continue;
+            }
+
+            $token = $upper ? strtoupper($token) : strtolower($token);
+            $normalized[$token] = $token;
+        }
+
+        return array_values($normalized);
     }
 }

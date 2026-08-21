@@ -8,6 +8,7 @@ use App\Navigating\Service\Navigation\Build\NavigationTreeBuildService;
 use App\Navigating\Service\Navigation\Filter\NavigationVisibilityFilterService;
 use App\Navigating\Service\Navigation\Normalize\NavigationConfigNormalizeService;
 use App\Navigating\Service\Navigation\Provide\NavigationRequestRoleProvideService;
+use App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService;
 use App\Navigating\Service\Navigation\Provide\NavigationShellProvideService;
 use App\Navigating\Service\Navigation\Resolve\NavigationTargetResolveService;
 use App\Navigating\Service\Navigation\Validate\NavigationConfigValidateService;
@@ -172,11 +173,33 @@ final class NavigationBusinessVisibleSurfaceTest extends TestCase
      */
     private function provider(array $config): NavigationShellProvideService
     {
+        foreach ($config['shell_groups'] as &$group) {
+            if (is_array($group)) {
+                $group['namespace_provider'] ??= 'App\\Interfacing';
+            }
+        }
+        unset($group);
+
         return new NavigationShellProvideService(
             new NavigationConfigNormalizeService(),
             new NavigationConfigValidateService(),
-            new NavigationVisibilityFilterService(new NavigationRequestRoleProvideService($config), $config),
+            new NavigationVisibilityFilterService(
+                new NavigationRequestRoleProvideService($config),
+                new NavigationRuntimeActivationProvideService('interfacing'),
+                $config,
+            ),
             new NavigationTreeBuildService(new NavigationTargetResolveService()),
+            new class($config) implements \App\Navigating\ServiceInterface\Navigation\Provide\NavigationDatabaseConfigProvideServiceInterface {
+                /** @param array<string, mixed> $config */
+                public function __construct(private array $config)
+                {
+                }
+
+                public function provideConfig(): array
+                {
+                    return ['shell_groups' => $this->config['shell_groups'] ?? []];
+                }
+            },
             $config,
         );
     }

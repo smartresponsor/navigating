@@ -11,7 +11,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
 {
     public function testAcceptsShellGroupsOnlyConfig(): void
     {
-        $result = (new NavigationConfigValidateService())->validate([
+        $result = $this->validate([
             'schema' => 3,
             'shell_groups' => [
                 'left_middle_primary' => [
@@ -32,7 +32,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
 
     public function testRejectsRemovedLegacyRootFooterAndSlotKeys(): void
     {
-        $result = (new NavigationConfigValidateService())->validate([
+        $result = $this->validate([
             'schema' => 3,
             'slots' => ['roots' => 'shell.left.middle'],
             'roots' => [],
@@ -48,7 +48,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
 
     public function testAcceptsConfigDefinedShellLocation(): void
     {
-        $result = (new NavigationConfigValidateService())->validate([
+        $result = $this->validate([
             'schema' => 3,
             'shell_locations' => [
                 'shell.header.right.quick.menu' => [
@@ -77,7 +77,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
 
     public function testRejectsNonCanonicalShellLocation(): void
     {
-        $result = (new NavigationConfigValidateService())->validate([
+        $result = $this->validate([
             'schema' => 3,
             'shell_groups' => [
                 'legacy' => [
@@ -88,13 +88,13 @@ final class NavigationConfigValidateServiceTest extends TestCase
         ]);
 
         self::assertFalse($result->isValid());
-        self::assertStringContainsString('must use a canonical shell location', implode(' ', $result->errors));
+        self::assertStringContainsString('must use a config-owned shell location', implode(' ', $result->errors));
         self::assertStringContainsString('shell.left.primary', implode(' ', $result->errors));
     }
 
     public function testAcceptsProcessedConfigurationDefaultsForTypedItems(): void
     {
-        $result = (new NavigationConfigValidateService())->validate([
+        $result = $this->validate([
             'schema' => 3,
             'shell_groups' => [
                 'left_middle_primary' => [
@@ -143,7 +143,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
 
     public function testRejectsMissingShellItemType(): void
     {
-        $result = (new NavigationConfigValidateService())->validate([
+        $result = $this->validate([
             'schema' => 3,
             'shell_groups' => [
                 'left_middle_primary' => [
@@ -164,7 +164,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
 
     public function testRejectsInvalidShellItemType(): void
     {
-        $result = (new NavigationConfigValidateService())->validate([
+        $result = $this->validate([
             'schema' => 3,
             'shell_groups' => [
                 'left_middle_primary' => [
@@ -187,7 +187,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
 
     public function testRejectsActionWithoutActionToken(): void
     {
-        $result = (new NavigationConfigValidateService())->validate([
+        $result = $this->validate([
             'schema' => 3,
             'shell_groups' => [
                 'main_toolbar_actions' => [
@@ -208,7 +208,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
 
     public function testAcceptsTargetlessHeadingAndSeparator(): void
     {
-        $result = (new NavigationConfigValidateService())->validate([
+        $result = $this->validate([
             'schema' => 3,
             'shell_groups' => [
                 'left_middle_primary' => [
@@ -231,7 +231,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
 
     public function testRejectsTargetOnTargetlessItem(): void
     {
-        $result = (new NavigationConfigValidateService())->validate([
+        $result = $this->validate([
             'schema' => 3,
             'shell_groups' => [
                 'main_toolbar_actions' => [
@@ -255,7 +255,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
     public function testRejectsAnyNestedItemShapeKeyIndependently(): void
     {
         foreach (['items', 'sections', 'children'] as $nestedKey) {
-            $result = (new NavigationConfigValidateService())->validate([
+            $result = $this->validate([
                 'schema' => 3,
                 'shell_groups' => [
                     'left_middle_primary' => [
@@ -283,7 +283,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
 
     public function testAcceptsRouteTargetParametersAlias(): void
     {
-        $result = (new NavigationConfigValidateService())->validate([
+        $result = $this->validate([
             'schema' => 3,
             'shell_groups' => [
                 'main_toolbar_actions' => [
@@ -310,7 +310,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
 
     public function testAcceptsScopeAndEnvironmentVisibility(): void
     {
-        $result = (new NavigationConfigValidateService())->validate([
+        $result = $this->validate([
             'schema' => 3,
             'runtime_scopes' => [
                 'fallback_scopes' => ['user', 'system'],
@@ -339,7 +339,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
 
     public function testRejectsInvalidScopeAndEnvironmentVisibility(): void
     {
-        $result = (new NavigationConfigValidateService())->validate([
+        $result = $this->validate([
             'schema' => 3,
             'runtime_scopes' => [
                 'fallback_scopes' => ['user', ''],
@@ -368,5 +368,18 @@ final class NavigationConfigValidateServiceTest extends TestCase
         self::assertStringContainsString('runtime_environment.fallback_environment must be a non-empty string', implode(' ', $result->errors));
         self::assertStringContainsString('visible_for_scopes must be a list of scope strings', implode(' ', $result->errors));
         self::assertStringContainsString('visible_for_environments must contain only non-empty environment strings', implode(' ', $result->errors));
+    }
+
+    /** @param array<string, mixed> $config */
+    private function validate(array $config): \App\Navigating\Value\Navigation\NavigationValidationResult
+    {
+        $config['shell_locations'] ??= [
+            'shell.left.middle' => [],
+            'shell.main.toolbar' => [],
+            'shell.footer.context' => [],
+            'shell.right.tool' => [],
+        ];
+
+        return (new NavigationConfigValidateService())->validate($config);
     }
 }

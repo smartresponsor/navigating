@@ -1,6 +1,8 @@
 framework:
   secret: '%env(default:default_navigation_secret:APP_SECRET)%'
   test: true
+  csrf_protection: true
+  session: true
   router:
     utf8: true
     resource: '%kernel.project_dir%/config/routes_dev.yaml'

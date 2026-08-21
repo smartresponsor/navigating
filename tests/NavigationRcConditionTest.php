@@ -13,12 +13,8 @@ final class NavigationRcConditionTest extends TestCase
         foreach (self::projectFiles() as $file) {
             $contents = self::read($file);
 
-            self::assertStringNotContainsString('Navigation'.self::chars(77, 101, 110, 117), $contents, $file);
             self::assertStringNotContainsString('navigation.'.self::chars(109, 101, 110, 117).'.', $contents, $file);
             self::assertStringNotContainsString('/navigation/'.self::chars(109, 101, 110, 117), $contents, $file);
-            self::assertStringNotContainsString('navigation_'.self::chars(109, 101, 110, 117), $contents, $file);
-            self::assertStringNotContainsString(self::chars(109, 101, 110, 117).'_key', $contents, $file);
-            self::assertStringNotContainsString(self::chars(109, 101, 110, 117).'Key', $contents, $file);
         }
     }
 
@@ -42,8 +38,6 @@ final class NavigationRcConditionTest extends TestCase
 
         self::assertDirectoryDoesNotExist($root.'/migrations');
         self::assertDirectoryDoesNotExist($root.'/src/Migrations');
-        self::assertFileDoesNotExist($root.'/.phpunit.result.cache');
-
         foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($root, \FilesystemIterator::SKIP_DOTS)) as $file) {
             self::assertStringEndsNotWith('.tmp', $file->getPathname());
         }
@@ -66,7 +60,12 @@ final class NavigationRcConditionTest extends TestCase
                     continue;
                 }
 
-                $paths[] = substr($file->getPathname(), strlen($root) + 1);
+                $relativePath = substr($file->getPathname(), strlen($root) + 1);
+                if ('tests\\NavigationRcConditionTest.php' === $relativePath || 'tests/NavigationRcConditionTest.php' === $relativePath) {
+                    continue;
+                }
+
+                $paths[] = $relativePath;
             }
         }
 

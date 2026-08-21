@@ -11,6 +11,42 @@ services:
 
   App\Navigating\:
     resource: '../src/'
+    exclude:
+      - '../src/Controllers/'
+      - '../src/DataFixtures/'
+      - '../src/DependencyInjection/'
+      - '../src/Entity/'
+      - '../src/Kernel/'
+
+  App\Navigating\Controllers\:
+    resource: '../src/Controllers/'
+    tags:
+      - { name: controller.service_arguments }
+
+  App\Navigating\Service\Navigation\Cache\NavigationConfigCacheService:
+    arguments:
+      $cache: '@cache.app'
+
+  App\Navigating\Form\Extension\NavigationEntityInvariantTypeExtension:
+    tags:
+      - { name: form.type_extension }
+
+  App\Navigating\EventSubscriber\NavigationConfigCacheInvalidationSubscriber:
+    autoconfigure: false
+    tags:
+      - { name: doctrine.event_subscriber }
+
+  App\Navigating\EventSubscriber\NavigationAutoBackupSubscriber:
+    autoconfigure: false
+    tags:
+      - { name: doctrine.event_subscriber }
+
+  App\Navigating\EventSubscriber\NavigationEntityInvariantSubscriber:
+    autoconfigure: false
+    arguments:
+      $invariants: '@App\Navigating\Service\Navigation\Persistence\NavigationEntityInvariantService'
+    tags:
+      - { name: doctrine.event_subscriber }
 
   App\Navigating\ServiceInterface\Navigation\Normalize\NavigationConfigNormalizeServiceInterface:
     alias: App\Navigating\Service\Navigation\Normalize\NavigationConfigNormalizeService
@@ -33,6 +69,9 @@ services:
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationRuntimeActivationProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService
 
+  App\Navigating\ServiceInterface\Navigation\Provide\NavigationDatabaseConfigProvideServiceInterface:
+    alias: App\Navigating\Service\Navigation\Provide\NavigationDatabaseConfigProvideService
+
   App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService:
     arguments:
       $runtimeScope: '%env(default:navigation.runtime_scope_default:APP_RUNTIME_SCOPE)%'
@@ -48,11 +87,26 @@ services:
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationTemplateDataProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationTemplateDataProvideService
 
+  navigating.template_data_provider:
+    alias: App\Navigating\Service\Navigation\Provide\NavigationTemplateDataProvideService
+    public: true
+
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationShellPayloadProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationShellPayloadProvideService
 
+  navigating.shell_payload_provider:
+    alias: App\Navigating\Service\Navigation\Provide\NavigationShellPayloadProvideService
+    public: true
+
+  App\Navigating\ServiceInterface\Navigation\Provide\NavigationMobileShellPayloadProvideServiceInterface:
+    alias: App\Navigating\Service\Navigation\Provide\NavigationMobileShellPayloadProvideService
+
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationResponseProvideServiceInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationResponseProvideService
+
+  navigating.response_provider:
+    alias: App\Navigating\Service\Navigation\Provide\NavigationResponseProvideService
+    public: true
 
   App\Navigating\ServiceInterface\Navigation\Provide\NavigationInterfaceLocationProjectionProviderInterface:
     alias: App\Navigating\Service\Navigation\Provide\NavigationInterfaceLocationProjectionProvider
@@ -67,8 +121,19 @@ services:
   App\Navigating\ServiceInterface\Navigation\Render\NavigationRenderServiceInterface:
     alias: App\Navigating\Service\Navigation\Render\NavigationRenderService
 
+  navigating.renderer:
+    alias: App\Navigating\Service\Navigation\Render\NavigationTemplateRenderService
+    public: true
+
+  App\Navigating\ServiceInterface\Navigation\Render\NavigationTemplateRenderServiceInterface:
+    alias: App\Navigating\Service\Navigation\Render\NavigationTemplateRenderService
+
   App\Navigating\ServiceInterface\Navigation\NavigationRendererInterface:
     alias: App\Navigating\Service\Navigation\Render\NavigationTemplateRenderService
+
+  App\Navigating\Service\Twig\Navigation\NavigationTwigExtension:
+    tags:
+      - twig.extension
 
   App\Navigating\Service\Http\Navigation\NavigationHttpService:
     tags:

@@ -1,0 +1,10 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var action \EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+<form action="{{ action.linkUrl }}" method="post" class="d-inline">
+    <input type="hidden" name="_token" value="{{ csrf_token('navigating.item.' ~ action.name ~ '.' ~ entity.primaryKeyValue) }}">
+    <button type="submit" class="{{ action.cssClass }}">
+        {% if action.icon %}<i class="{{ action.icon }}"></i>{% endif %}
+        {% if action.label %}<span class="action-label">{{ action.label|trans }}</span>{% endif %}
+    </button>
+</form>
