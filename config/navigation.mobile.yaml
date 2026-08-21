@@ -196,6 +196,19 @@ navigation:
             mobile_route: attachment
             mobile_platforms: [android, ios]
             mobile_disabled_label: Coming soon
+        casing_cases:
+          type: link
+          label: My cases
+          icon: support
+          priority: 50
+          path: /support/case
+          metadata:
+            namespace_provider: App\Casing
+            domain: support
+            resource: case
+            operation: index
+            mobile_route: support/case
+            mobile_platforms: [android, ios]
         accessSignout:
           type: action
           label: Sign Out
@@ -285,6 +298,19 @@ navigation:
             resource: attachment
             operation: index
             mobile_route: attachment
+            mobile_platforms: [android, ios]
+        support:
+          type: link
+          label: Support
+          icon: support
+          priority: 35
+          path: /support
+          metadata:
+            namespace_provider: App\Casing
+            domain: support
+            resource: support
+            operation: index
+            mobile_route: support
             mobile_platforms: [android, ios]
         catalog:
           type: link
