@@ -21,7 +21,7 @@ final readonly class NavigationTargetResolveService implements NavigationTargetR
         $url = match ($target->type) {
             'route' => $this->resolveRouteUrl($target),
             'path' => $this->normalizePath($target->path ?? '/'),
-            'url' => $target->path ?? '/',
+            'url' => $this->sanitizeUrl($target->path ?? '/'),
             default => '',
         };
 
@@ -50,6 +50,22 @@ final readonly class NavigationTargetResolveService implements NavigationTargetR
         } catch (RouteNotFoundException) {
             return '';
         }
+    }
+
+    private function sanitizeUrl(string $url): string
+    {
+        $url = trim($url);
+        if ('' === $url) {
+            return '/';
+        }
+        if (1 === preg_match('/[\x00-\x1F\x7F]/', $url)) {
+            return '';
+        }
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        if (null === $scheme || false === $scheme || '' === $scheme) {
+            return $url;
+        }
+        return in_array(strtolower($scheme), ['http', 'https', 'mailto', 'tel'], true) ? $url : '';
     }
 
     private function normalizePath(string $path): string
