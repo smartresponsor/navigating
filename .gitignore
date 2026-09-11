@@ -40,6 +40,9 @@ Thumbs.db
 /test-results/
 /playwright-report/
 
+# Local policy/tooling worktrees
+/.gating/
+
 # AI
 /Domain/Ai/agent-trigger/worker/.dev.vars
 /Domain/Ai/agent-trigger/worker/.dev.vars.*
