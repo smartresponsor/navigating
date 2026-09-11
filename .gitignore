@@ -12,6 +12,7 @@ composer.lock
 /allure-results/
 /allure-report/
 /var/
+/resources/navigation/.navigation.install.json.lock
 
 # PHPUnit
 .phpunit.result.cache

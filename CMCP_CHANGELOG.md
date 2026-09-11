@@ -36,7 +36,8 @@
 
 - Added `resources/navigation/navigation.install.json` as the documented versioned recovery/install surface required after canonical bootstrap.
 - Kept pre-existing untracked `.gating/` outside task ownership.
-- Composer-generated `config/reference.php` drift is unrelated generated reference output and is intentionally excluded from the task commit rather than being represented as product work.
+- Composer-generated `config/reference.php` drift was reverted to the pre-task tracked content rather than being represented as product work.
+- Added the runtime manifest lock file to `.gitignore`; the pre-existing untracked `.gating/` remains outside task ownership.
 - Growth work remains deferred; no speculative navigation-item changes were introduced.
 
 ### Iteration 5 — Final acceptance and handoff
