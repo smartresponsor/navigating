@@ -12,6 +12,7 @@ composer.lock
 /allure-results/
 /allure-report/
 /var/
+/resources/navigation/.navigation.install.json.lock
 
 # PHPUnit
 .phpunit.result.cache
@@ -38,6 +39,9 @@ Thumbs.db
 **/node_modules/
 /test-results/
 /playwright-report/
+
+# Local policy/tooling worktrees
+/.gating/
 
 # AI
 /Domain/Ai/agent-trigger/worker/.dev.vars

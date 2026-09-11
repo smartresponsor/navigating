@@ -38,7 +38,7 @@ Menu administration owns shell placement, group visibility and metadata. Item ad
 
 ## Cruding and Interfacing
 
-`cruding/crud` and `interfacing/interface` are explicit component dependencies.
+`cruding/crud`, `viewing/view`, `interfacing/interface`, and `objecting/object` are explicit component dependencies.
 
 Navigating does not add generic business CRUD routes or controllers. Cruding remains the generic CRUD owner. Interfacing continues consuming Navigating's existing location projection/view-model boundary and does not depend on the persistence source.
 

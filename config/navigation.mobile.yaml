@@ -209,6 +209,19 @@ navigation:
             operation: index
             mobile_route: support/case
             mobile_platforms: [android, ios]
+        casing_order_help:
+          type: link
+          label: Order help
+          icon: receipt
+          priority: 55
+          path: /support/order
+          metadata:
+            namespace_provider: App\Casing
+            domain: support
+            resource: order-context
+            operation: index
+            mobile_route: support/order
+            mobile_platforms: [android, ios]
         accessSignout:
           type: action
           label: Sign Out

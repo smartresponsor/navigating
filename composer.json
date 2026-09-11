@@ -20,6 +20,11 @@
       "type": "path",
       "url": "../Interfacing",
       "options": { "symlink": true }
+    },
+    {
+      "type": "path",
+      "url": "../Viewing",
+      "options": { "symlink": true }
     }
   ],
   "require": {
@@ -32,6 +37,7 @@
     "interfacing/interface": "dev-master",
     "objecting/object": "dev-master",
     "psr/log": "^3.0",
+    "viewing/view": "dev-master",
     "symfony/cache-contracts": "^3.6",
     "symfony/config": "^8.1",
     "symfony/console": "^8.1",
