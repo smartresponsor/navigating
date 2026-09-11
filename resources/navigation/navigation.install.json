@@ -1,0 +1,4001 @@
+{
+    "format": "smartresponsor.navigation",
+    "version": 1,
+    "created_at": "2026-09-11T19:11:01+00:00",
+    "shell_groups": {
+        "body_top": {
+            "label": "Workspace status",
+            "slug": "body-top",
+            "location": "shell.body.top",
+            "type": "status",
+            "priority": 10,
+            "enabled": true,
+            "visible_for_roles": [],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": []
+        },
+        "mobile_bottom_primary": {
+            "label": "Primary",
+            "slug": "mobile-bottom-primary",
+            "location": "shell.mobile.bottom.primary",
+            "type": "navigation",
+            "priority": 10,
+            "enabled": true,
+            "visible_for_roles": [
+                "ROLE_USER"
+            ],
+            "visible_for_scopes": [],
+            "visible_for_environments": [
+                "mobile"
+            ],
+            "metadata": {
+                "channel": "mobile",
+                "mobile_group": "primary"
+            },
+            "items": {
+                "tasks": {
+                    "type": "link",
+                    "label": "Tasks",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "tasks",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Vendoring",
+                        "domain": "vendor",
+                        "resource": "vendor.project",
+                        "operation": "index",
+                        "mobile_route": "vendor/project",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ],
+                        "runtime_entity": "vendor"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/vendor/project"
+                    }
+                },
+                "message": {
+                    "type": "link",
+                    "label": "Messages",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "message",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Messaging",
+                        "domain": "message",
+                        "resource": "message",
+                        "operation": "index",
+                        "mobile_route": "message",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/message"
+                    }
+                },
+                "services": {
+                    "type": "link",
+                    "label": "Services",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "store",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Vendoring",
+                        "domain": "vendor",
+                        "resource": "vendor.retail",
+                        "operation": "index",
+                        "mobile_route": "vendor/retail",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ],
+                        "runtime_entity": "vendor"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/vendor/retail"
+                    }
+                },
+                "notification": {
+                    "type": "link",
+                    "label": "Notifications",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "notification",
+                    "badge": null,
+                    "priority": 40,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Messaging",
+                        "domain": "notification",
+                        "resource": "notification",
+                        "operation": "index",
+                        "mobile_route": "notification",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/notification"
+                    }
+                },
+                "profile": {
+                    "type": "link",
+                    "label": "Profile",
+                    "slug": null,
+                    "operation": "show",
+                    "icon": "person",
+                    "badge": null,
+                    "priority": 50,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Vendoring",
+                        "domain": "vendor",
+                        "resource": "vendor.profile",
+                        "operation": "show",
+                        "mobile_route": "vendor/page",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/vendor/profile"
+                    }
+                }
+            }
+        },
+        "mobile_account_quick": {
+            "label": "Account",
+            "slug": "mobile-account-quick",
+            "location": "shell.mobile.account.quick",
+            "type": "navigation",
+            "priority": 20,
+            "enabled": true,
+            "visible_for_roles": [
+                "ROLE_USER"
+            ],
+            "visible_for_scopes": [],
+            "visible_for_environments": [
+                "mobile"
+            ],
+            "metadata": {
+                "channel": "mobile",
+                "mobile_group": "account"
+            },
+            "items": {
+                "vendor_profile": {
+                    "type": "link",
+                    "label": "My Profile",
+                    "slug": null,
+                    "operation": "show",
+                    "icon": "person",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Vendoring",
+                        "domain": "vendor",
+                        "resource": "vendor.profile",
+                        "operation": "show",
+                        "mobile_route": "vendor/profile",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/vendor/profile"
+                    }
+                },
+                "access_password": {
+                    "type": "link",
+                    "label": "Change Password",
+                    "slug": null,
+                    "operation": "update",
+                    "icon": "key",
+                    "badge": "Coming soon",
+                    "priority": 20,
+                    "enabled": false,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Accessing",
+                        "domain": "access",
+                        "resource": "access.password",
+                        "operation": "update",
+                        "mobile_route": "access/password",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ],
+                        "mobile_disabled_label": "Coming soon"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/access/password"
+                    }
+                },
+                "access_verification": {
+                    "type": "link",
+                    "label": "Verification",
+                    "slug": null,
+                    "operation": "show",
+                    "icon": "verified",
+                    "badge": "Coming soon",
+                    "priority": 30,
+                    "enabled": false,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Accessing",
+                        "domain": "access",
+                        "resource": "access.verification",
+                        "operation": "show",
+                        "mobile_route": "access/verification",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ],
+                        "mobile_disabled_label": "Coming soon"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/access/verification"
+                    }
+                },
+                "vendor_attachment": {
+                    "type": "link",
+                    "label": "My Attachment",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "attachment",
+                    "badge": "Coming soon",
+                    "priority": 40,
+                    "enabled": false,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Attaching",
+                        "domain": "attachment",
+                        "resource": "vendor.attachment",
+                        "operation": "index",
+                        "mobile_route": "attachment",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ],
+                        "mobile_disabled_label": "Coming soon"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/attachment"
+                    }
+                },
+                "casing_cases": {
+                    "type": "link",
+                    "label": "My cases",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "support",
+                    "badge": null,
+                    "priority": 50,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Casing",
+                        "domain": "support",
+                        "resource": "case",
+                        "operation": "index",
+                        "mobile_route": "support/case",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/support/case"
+                    }
+                },
+                "casing_order_help": {
+                    "type": "link",
+                    "label": "Order help",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "receipt",
+                    "badge": null,
+                    "priority": 55,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Casing",
+                        "domain": "support",
+                        "resource": "order-context",
+                        "operation": "index",
+                        "mobile_route": "support/order",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/support/order"
+                    }
+                },
+                "accessSignout": {
+                    "type": "action",
+                    "label": "Sign Out",
+                    "slug": null,
+                    "operation": "signout",
+                    "icon": "logout",
+                    "badge": null,
+                    "priority": 90,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Accessing",
+                        "domain": "access",
+                        "resource": "access",
+                        "operation": "signout",
+                        "mobile_route": "access/signout",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    }
+                }
+            }
+        },
+        "left_top": {
+            "label": "Workspace",
+            "slug": "left-top",
+            "location": "shell.left.top",
+            "type": "navigation",
+            "priority": 25,
+            "enabled": true,
+            "visible_for_roles": [],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "dashboard": {
+                    "type": "link",
+                    "label": "Dashboard",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "DashboardOutlined",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "app.index",
+                        "domain": "app",
+                        "resource": "dashboard",
+                        "operation": "index",
+                        "namespace_provider": "App\\Interfacing"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/app"
+                    }
+                }
+            }
+        },
+        "left_middle_business": {
+            "label": "Business",
+            "slug": "left-middle-business",
+            "location": "shell.left.middle",
+            "type": "navigation",
+            "priority": 30,
+            "enabled": true,
+            "visible_for_roles": [],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "vendor": {
+                    "type": "link",
+                    "label": "Vendor",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ShopOutlined",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "vendor.index",
+                        "domain": "vendor",
+                        "resource": "profile",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Vendoring"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/vendor/index"
+                    }
+                },
+                "catalog": {
+                    "type": "link",
+                    "label": "Catalog",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "AppstoreOutlined",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "catalog.product.index",
+                        "domain": "catalog",
+                        "resource": "product",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Cataloging"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/catalog/product/index"
+                    }
+                },
+                "consumer": {
+                    "type": "link",
+                    "label": "Consumer",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "consumer",
+                    "badge": null,
+                    "priority": 25,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "consumer.index",
+                        "domain": "consumer",
+                        "resource": "consumer",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/consumer/index"
+                    }
+                },
+                "merchandise": {
+                    "type": "link",
+                    "label": "Merchandise",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ShoppingOutlined",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "merchandise.index",
+                        "domain": "merchandise",
+                        "resource": "merchandise",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Merchandising"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/merchandise/index"
+                    }
+                },
+                "commerce": {
+                    "type": "link",
+                    "label": "Commerce",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ShopOutlined",
+                    "badge": null,
+                    "priority": 40,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "commerce.index",
+                        "domain": "commerce",
+                        "resource": "offer",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Commercializing"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/commerce/index"
+                    }
+                },
+                "cart": {
+                    "type": "link",
+                    "label": "Cart",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ShoppingCartOutlined",
+                    "badge": null,
+                    "priority": 50,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "cart.index",
+                        "domain": "cart",
+                        "resource": "cart",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Carting"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/cart/index"
+                    }
+                },
+                "order": {
+                    "type": "link",
+                    "label": "Order",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "FileDoneOutlined",
+                    "badge": null,
+                    "priority": 60,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "order.index",
+                        "domain": "order",
+                        "resource": "order",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Ordering"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/order/index"
+                    }
+                },
+                "retail": {
+                    "type": "link",
+                    "label": "Retail",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ShopOutlined",
+                    "badge": null,
+                    "priority": 80,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "retail.index",
+                        "domain": "retail",
+                        "resource": "retail",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Retailing"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/retail/index"
+                    }
+                },
+                "promotion": {
+                    "type": "link",
+                    "label": "Promotion",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "TagsOutlined",
+                    "badge": null,
+                    "priority": 90,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "promotion.index",
+                        "domain": "promotion",
+                        "resource": "promotion",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Promoting"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/promotion/index"
+                    }
+                },
+                "pricing": {
+                    "type": "link",
+                    "label": "Pricing",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "DollarOutlined",
+                    "badge": null,
+                    "priority": 100,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "price.index",
+                        "domain": "price",
+                        "resource": "price",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Pricing"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/price/index"
+                    }
+                },
+                "billing": {
+                    "type": "link",
+                    "label": "Billing",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "FileTextOutlined",
+                    "badge": null,
+                    "priority": 110,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "billing.index",
+                        "domain": "billing",
+                        "resource": "billing",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Billing"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/billing/index"
+                    }
+                },
+                "payment": {
+                    "type": "link",
+                    "label": "Payment",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "CreditCardOutlined",
+                    "badge": null,
+                    "priority": 120,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "payment.index",
+                        "domain": "payment",
+                        "resource": "payment",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Paying"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/payment/index"
+                    }
+                },
+                "wallet": {
+                    "type": "link",
+                    "label": "Wallet",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "WalletOutlined",
+                    "badge": null,
+                    "priority": 125,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "wallet.index",
+                        "domain": "wallet",
+                        "resource": "wallet",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/wallet/index"
+                    }
+                },
+                "finance": {
+                    "type": "link",
+                    "label": "Finance",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "BankOutlined",
+                    "badge": null,
+                    "priority": 130,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "finance.index",
+                        "domain": "finance",
+                        "resource": "finance",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Financing"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/finance/index"
+                    }
+                },
+                "subscription": {
+                    "type": "link",
+                    "label": "Subscription",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "CalendarOutlined",
+                    "badge": null,
+                    "priority": 140,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "subscription.index",
+                        "domain": "subscription",
+                        "resource": "subscription",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Subscribing"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/subscription/index"
+                    }
+                },
+                "shipment": {
+                    "type": "link",
+                    "label": "Shipment",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "TruckOutlined",
+                    "badge": null,
+                    "priority": 150,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "shipment.index",
+                        "domain": "shipment",
+                        "resource": "shipment",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Shipping"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/shipment/index"
+                    }
+                },
+                "review": {
+                    "type": "link",
+                    "label": "Review",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "StarOutlined",
+                    "badge": null,
+                    "priority": 160,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "review.index",
+                        "domain": "review",
+                        "resource": "review",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Reviewing"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/review/index"
+                    }
+                },
+                "tax": {
+                    "type": "link",
+                    "label": "Tax",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "PercentageOutlined",
+                    "badge": null,
+                    "priority": 170,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "tax.index",
+                        "domain": "tax",
+                        "resource": "tax",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Taxating"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/tax/index"
+                    }
+                },
+                "commission": {
+                    "type": "link",
+                    "label": "Commission",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "TransactionOutlined",
+                    "badge": null,
+                    "priority": 180,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "commission.index",
+                        "domain": "commission",
+                        "resource": "commission",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Commissioning"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/commission/index"
+                    }
+                },
+                "currency": {
+                    "type": "link",
+                    "label": "Currency",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "DollarCircleOutlined",
+                    "badge": null,
+                    "priority": 190,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "currency.index",
+                        "domain": "currency",
+                        "resource": "currency",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Currencing"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/currency/index"
+                    }
+                },
+                "exchange": {
+                    "type": "link",
+                    "label": "Exchange",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "SwapOutlined",
+                    "badge": null,
+                    "priority": 200,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "exchange.index",
+                        "domain": "exchange",
+                        "resource": "exchange",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Exchanging"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/exchange/index"
+                    }
+                },
+                "attachment": {
+                    "type": "link",
+                    "label": "Attachment",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "PaperClipOutlined",
+                    "badge": null,
+                    "priority": 210,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "attachment.index",
+                        "domain": "attachment",
+                        "resource": "attachment",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Attaching",
+                        "navigation_mode": "workspace",
+                        "context_provider": "attachment.tree",
+                        "context_location": "shell.context.middle",
+                        "content_location": "shell.main.content",
+                        "turbo_frame": "_top",
+                        "turbo_action": "advance"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/attachment/index"
+                    }
+                },
+                "address": {
+                    "type": "link",
+                    "label": "Address",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "EnvironmentOutlined",
+                    "badge": null,
+                    "priority": 220,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "address.index",
+                        "domain": "address",
+                        "resource": "address",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Addressing"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/address/index"
+                    }
+                },
+                "locator": {
+                    "type": "link",
+                    "label": "Locator",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "AimOutlined",
+                    "badge": null,
+                    "priority": 230,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "location.index",
+                        "domain": "location",
+                        "resource": "location",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Locating"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/location/index"
+                    }
+                },
+                "analysis": {
+                    "type": "link",
+                    "label": "Analysis",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "BarChartOutlined",
+                    "badge": null,
+                    "priority": 240,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "analysis.index",
+                        "domain": "analysis",
+                        "resource": "analysis",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Analysing"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/analysis/index"
+                    }
+                }
+            }
+        },
+        "right_toolbar_quick": {
+            "label": "My",
+            "slug": "right-toolbar-quick",
+            "location": "shell.header.right.quick.menu",
+            "type": "navigation",
+            "priority": 30,
+            "enabled": true,
+            "visible_for_roles": [],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "vendor": {
+                    "type": "link",
+                    "label": "My Vendor",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ShopOutlined",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "actor_scope": "my",
+                        "route_name": "my.vendor.index",
+                        "domain": "vendor",
+                        "resource": "vendor",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "quick_menu": true,
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Vendoring"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/my/vendor/index"
+                    }
+                },
+                "access_signin": {
+                    "type": "link",
+                    "label": "Sign in",
+                    "slug": null,
+                    "operation": "sign_in",
+                    "icon": "LoginOutlined",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_GUEST"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Accessing\\Service\\Http\\Access\\AccessSignInService",
+                        "route_name": "access.signin",
+                        "domain": "access",
+                        "resource": "access",
+                        "operation": "sign_in",
+                        "navigation_scope": "guest",
+                        "quick_menu": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/access/signin"
+                    }
+                },
+                "catalog": {
+                    "type": "link",
+                    "label": "My Catalog",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "AppstoreOutlined",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "actor_scope": "my",
+                        "route_name": "my.catalog.index",
+                        "domain": "catalog",
+                        "resource": "catalog",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "quick_menu": true,
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Cataloging"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/my/catalog/index"
+                    }
+                },
+                "access_register": {
+                    "type": "link",
+                    "label": "Register",
+                    "slug": null,
+                    "operation": "register",
+                    "icon": "UserAddOutlined",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_GUEST"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Accessing\\Service\\Http\\Access\\AccessRegisterService",
+                        "route_name": "access.register",
+                        "domain": "access",
+                        "resource": "access",
+                        "operation": "register",
+                        "navigation_scope": "guest",
+                        "quick_menu": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/access/register"
+                    }
+                },
+                "merchandise": {
+                    "type": "link",
+                    "label": "My Products",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ShoppingOutlined",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "actor_scope": "my",
+                        "route_name": "my.merchandise.index",
+                        "domain": "merchandise",
+                        "resource": "merchandise",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "quick_menu": true,
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Merchandising"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/my/merchandise/index"
+                    }
+                },
+                "access_recovery": {
+                    "type": "link",
+                    "label": "Recover access",
+                    "slug": null,
+                    "operation": "request",
+                    "icon": "KeyOutlined",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_GUEST"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Accessing\\Service\\Http\\Access\\AccessSecurityFlowService",
+                        "route_name": "access.recover_request",
+                        "domain": "access",
+                        "resource": "access.recovery",
+                        "operation": "request",
+                        "navigation_scope": "guest",
+                        "quick_menu": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/access/recover"
+                    }
+                },
+                "cart": {
+                    "type": "link",
+                    "label": "My Cart",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ShoppingCartOutlined",
+                    "badge": null,
+                    "priority": 40,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "actor_scope": "my",
+                        "route_name": "my.cart.index",
+                        "domain": "cart",
+                        "resource": "cart",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "quick_menu": true,
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Carting"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/my/cart/index"
+                    }
+                },
+                "order": {
+                    "type": "link",
+                    "label": "My Orders",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "FileDoneOutlined",
+                    "badge": null,
+                    "priority": 50,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "actor_scope": "my",
+                        "route_name": "my.order.index",
+                        "domain": "order",
+                        "resource": "order",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "quick_menu": true,
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Ordering"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/my/order/index"
+                    }
+                },
+                "payment": {
+                    "type": "link",
+                    "label": "My Payments",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "CreditCardOutlined",
+                    "badge": null,
+                    "priority": 60,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "actor_scope": "my",
+                        "route_name": "my.payment.index",
+                        "domain": "payment",
+                        "resource": "payment",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "quick_menu": true,
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Paying"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/my/payment/index"
+                    }
+                },
+                "access_password": {
+                    "type": "link",
+                    "label": "Change password",
+                    "slug": null,
+                    "operation": "password",
+                    "icon": "LockOutlined",
+                    "badge": null,
+                    "priority": 60,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_USER"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Accessing\\Service\\Http\\Access\\AccessSurfaceFlowService",
+                        "route_name": "access.password",
+                        "domain": "access",
+                        "resource": "access.password",
+                        "operation": "password",
+                        "navigation_scope": "user",
+                        "quick_menu": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/access/password"
+                    }
+                },
+                "wallet": {
+                    "type": "link",
+                    "label": "My Wallet",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "WalletOutlined",
+                    "badge": null,
+                    "priority": 65,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "actor_scope": "my",
+                        "route_name": "my.wallet.index",
+                        "domain": "wallet",
+                        "resource": "wallet",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "quick_menu": true,
+                        "root_only": true,
+                        "crud_index_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/my/wallet/index"
+                    }
+                },
+                "shipment": {
+                    "type": "link",
+                    "label": "My Shipments",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "TruckOutlined",
+                    "badge": null,
+                    "priority": 70,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "actor_scope": "my",
+                        "route_name": "my.shipment.index",
+                        "domain": "shipment",
+                        "resource": "shipment",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "quick_menu": true,
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Shipping"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/my/shipment/index"
+                    }
+                },
+                "access_switch": {
+                    "type": "link",
+                    "label": "Switch user",
+                    "slug": null,
+                    "operation": "switch_user",
+                    "icon": "SwapOutlined",
+                    "badge": null,
+                    "priority": 70,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_USER",
+                        "ROLE_ALLOWED_TO_SWITCH",
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Accessing\\Service\\Http\\Access\\AccessSecurityFlowService",
+                        "route_name": "access.switch",
+                        "domain": "access",
+                        "resource": "access",
+                        "operation": "switch_user",
+                        "navigation_scope": "user",
+                        "quick_menu": true,
+                        "http_method": "POST"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/access/switch"
+                    }
+                },
+                "attachment": {
+                    "type": "link",
+                    "label": "My Attachments",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "PaperClipOutlined",
+                    "badge": null,
+                    "priority": 80,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "actor_scope": "my",
+                        "route_name": "my.attachment.index",
+                        "domain": "attachment",
+                        "resource": "attachment",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "quick_menu": true,
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "namespace_provider": "App\\Attaching"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/my/attachment/index"
+                    }
+                },
+                "access_signout": {
+                    "type": "link",
+                    "label": "Sign out",
+                    "slug": null,
+                    "operation": "signout",
+                    "icon": "LogoutOutlined",
+                    "badge": null,
+                    "priority": 80,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_USER"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Accessing\\Service\\Http\\Access\\AccessSecurityFlowService",
+                        "route_name": "access.signout",
+                        "domain": "access",
+                        "resource": "access",
+                        "operation": "signout",
+                        "navigation_scope": "user",
+                        "quick_menu": true,
+                        "http_method": "POST"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/access/signout"
+                    }
+                }
+            }
+        },
+        "mobile_more_active": {
+            "label": "Active",
+            "slug": "mobile-more-active",
+            "location": "shell.mobile.more.drawer",
+            "type": "navigation",
+            "priority": 30,
+            "enabled": true,
+            "visible_for_roles": [
+                "ROLE_USER"
+            ],
+            "visible_for_scopes": [],
+            "visible_for_environments": [
+                "mobile"
+            ],
+            "metadata": {
+                "channel": "mobile",
+                "mobile_group": "active"
+            },
+            "items": {
+                "dashboard": {
+                    "type": "link",
+                    "label": "Dashboard",
+                    "slug": null,
+                    "operation": "show",
+                    "icon": "dashboard",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Interfacing",
+                        "domain": "interface",
+                        "resource": "dashboard",
+                        "operation": "show",
+                        "mobile_route": "dashboard",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ],
+                        "runtime_entity": "vendor"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/"
+                    }
+                },
+                "vendor": {
+                    "type": "link",
+                    "label": "Vendor",
+                    "slug": null,
+                    "operation": "overview",
+                    "icon": "store",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Vendoring",
+                        "domain": "vendor",
+                        "resource": "vendor",
+                        "operation": "overview",
+                        "mobile_route": "vendor"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/vendor"
+                    }
+                },
+                "money": {
+                    "type": "link",
+                    "label": "Money",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "wallet",
+                    "badge": null,
+                    "priority": 25,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Walleting",
+                        "domain": "wallet",
+                        "resource": "wallet",
+                        "operation": "index",
+                        "mobile_route": "money",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/wallet/index"
+                    }
+                },
+                "message": {
+                    "type": "link",
+                    "label": "Messages",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "message",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Messaging",
+                        "domain": "message",
+                        "resource": "message",
+                        "operation": "index",
+                        "mobile_route": "message",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/message"
+                    }
+                },
+                "attachment": {
+                    "type": "link",
+                    "label": "Attachment",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "attachment",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Attaching",
+                        "domain": "attachment",
+                        "resource": "attachment",
+                        "operation": "index",
+                        "mobile_route": "attachment",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/attachment"
+                    }
+                },
+                "support": {
+                    "type": "link",
+                    "label": "Support",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "support",
+                    "badge": null,
+                    "priority": 35,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Casing",
+                        "domain": "support",
+                        "resource": "support",
+                        "operation": "index",
+                        "mobile_route": "support",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/support"
+                    }
+                },
+                "catalog": {
+                    "type": "link",
+                    "label": "Catalog",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "catalog",
+                    "badge": null,
+                    "priority": 40,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Cataloging",
+                        "domain": "catalog",
+                        "resource": "catalog",
+                        "operation": "index",
+                        "mobile_route": "catalog",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/catalog"
+                    }
+                }
+            }
+        },
+        "left_bottom": {
+            "label": "System roots",
+            "slug": "left-bottom",
+            "location": "shell.left.bottom",
+            "type": "navigation",
+            "priority": 35,
+            "enabled": true,
+            "visible_for_roles": [
+                "ROLE_ADMIN",
+                "ROLE_SUPER_ADMIN"
+            ],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "access": {
+                    "type": "link",
+                    "label": "Access",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "LockOutlined",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "access.index",
+                        "domain": "access",
+                        "resource": "user",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true,
+                        "namespace_provider": "App\\Accessing"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/access/index"
+                    }
+                },
+                "governance": {
+                    "type": "link",
+                    "label": "Governance",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "SafetyCertificateOutlined",
+                    "badge": null,
+                    "priority": 40,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "governance.index",
+                        "domain": "governance",
+                        "resource": "governance",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/governance/index"
+                    }
+                },
+                "gating": {
+                    "type": "link",
+                    "label": "Gating",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ControlOutlined",
+                    "badge": null,
+                    "priority": 50,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "gate.index",
+                        "domain": "gate",
+                        "resource": "gate",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/gate/index"
+                    }
+                },
+                "rolling": {
+                    "type": "link",
+                    "label": "Role",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "RocketOutlined",
+                    "badge": null,
+                    "priority": 60,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "role.index",
+                        "domain": "role",
+                        "resource": "role",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/role/index"
+                    }
+                },
+                "config": {
+                    "type": "link",
+                    "label": "Config",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "SettingOutlined",
+                    "badge": null,
+                    "priority": 70,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "configuration.index",
+                        "domain": "configuration",
+                        "resource": "configuration",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/configuration/index"
+                    }
+                },
+                "automation": {
+                    "type": "link",
+                    "label": "Automation",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ThunderboltOutlined",
+                    "badge": null,
+                    "priority": 80,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "automation.index",
+                        "domain": "automation",
+                        "resource": "automation",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/automation/index"
+                    }
+                },
+                "codex": {
+                    "type": "link",
+                    "label": "Codex",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "RobotOutlined",
+                    "badge": null,
+                    "priority": 90,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "codex.index",
+                        "domain": "codex",
+                        "resource": "codex",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/codex/index"
+                    }
+                },
+                "command": {
+                    "type": "link",
+                    "label": "Command",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "CodeOutlined",
+                    "badge": null,
+                    "priority": 100,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "command.index",
+                        "domain": "command",
+                        "resource": "command",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/command/index"
+                    }
+                },
+                "compliance": {
+                    "type": "link",
+                    "label": "Compliance",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "AuditOutlined",
+                    "badge": null,
+                    "priority": 110,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "compliance.index",
+                        "domain": "compliance",
+                        "resource": "compliance",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/compliance/index"
+                    }
+                },
+                "canon": {
+                    "type": "link",
+                    "label": "Canon",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "BookOutlined",
+                    "badge": null,
+                    "priority": 120,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "canon.index",
+                        "domain": "canon",
+                        "resource": "canon",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/canon/index"
+                    }
+                },
+                "boundary": {
+                    "type": "link",
+                    "label": "Boundary",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "BorderOuterOutlined",
+                    "badge": null,
+                    "priority": 130,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "boundary.index",
+                        "domain": "boundary",
+                        "resource": "boundary",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/boundary/index"
+                    }
+                },
+                "runtime": {
+                    "type": "link",
+                    "label": "Runtime",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "CloudServerOutlined",
+                    "badge": null,
+                    "priority": 140,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "runtime.index",
+                        "domain": "runtime",
+                        "resource": "runtime",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/runtime/index"
+                    }
+                },
+                "operation": {
+                    "type": "link",
+                    "label": "Operation",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ToolOutlined",
+                    "badge": null,
+                    "priority": 150,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "operation.index",
+                        "domain": "operation",
+                        "resource": "operation",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/operation/index"
+                    }
+                },
+                "orchestration": {
+                    "type": "link",
+                    "label": "Orchestration",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "BranchesOutlined",
+                    "badge": null,
+                    "priority": 160,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "orchestration.index",
+                        "domain": "orchestration",
+                        "resource": "orchestration",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/orchestration/index"
+                    }
+                },
+                "container": {
+                    "type": "link",
+                    "label": "Container",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "DatabaseOutlined",
+                    "badge": null,
+                    "priority": 170,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "container.index",
+                        "domain": "container",
+                        "resource": "container",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/container/index"
+                    }
+                },
+                "observability": {
+                    "type": "link",
+                    "label": "Observability",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "LineChartOutlined",
+                    "badge": null,
+                    "priority": 180,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "observability.index",
+                        "domain": "observability",
+                        "resource": "observability",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/observability/index"
+                    }
+                },
+                "incident": {
+                    "type": "link",
+                    "label": "Incident",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "WarningOutlined",
+                    "badge": null,
+                    "priority": 190,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "incident.index",
+                        "domain": "incident",
+                        "resource": "incident",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/incident/index"
+                    }
+                },
+                "locale": {
+                    "type": "link",
+                    "label": "Locale",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "GlobalOutlined",
+                    "badge": null,
+                    "priority": 200,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "locale.index",
+                        "domain": "locale",
+                        "resource": "locale",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/locale/index"
+                    }
+                },
+                "domain": {
+                    "type": "link",
+                    "label": "Domain model",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ApartmentOutlined",
+                    "badge": null,
+                    "priority": 210,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "domain.index",
+                        "domain": "domain",
+                        "resource": "domain",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/domain/index"
+                    }
+                },
+                "object": {
+                    "type": "link",
+                    "label": "Object",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ClusterOutlined",
+                    "badge": null,
+                    "priority": 220,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "object.index",
+                        "domain": "object",
+                        "resource": "object",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/object/index"
+                    }
+                },
+                "interface": {
+                    "type": "link",
+                    "label": "Interface",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "BlockOutlined",
+                    "badge": null,
+                    "priority": 230,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "interface.index",
+                        "domain": "interface",
+                        "resource": "interface",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true,
+                        "namespace_provider": "App\\Interfacing"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/interface/index"
+                    }
+                }
+            }
+        },
+        "left_bottom_platform": {
+            "label": "Platform",
+            "slug": "left-bottom-platform",
+            "location": "shell.left.bottom",
+            "type": "navigation",
+            "priority": 35,
+            "enabled": true,
+            "visible_for_roles": [
+                "ROLE_ADMIN",
+                "ROLE_SUPER_ADMIN"
+            ],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "navigation": {
+                    "type": "link",
+                    "label": "Navigation",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "MenuOutlined",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "navigation.index",
+                        "domain": "navigation",
+                        "resource": "navigation",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/navigation/index"
+                    }
+                },
+                "management": {
+                    "type": "link",
+                    "label": "Management",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "AppstoreOutlined",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "management.index",
+                        "domain": "management",
+                        "resource": "management",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/management/index"
+                    }
+                },
+                "access": {
+                    "type": "link",
+                    "label": "Access",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "LockOutlined",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "access.index",
+                        "domain": "access",
+                        "resource": "access",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/access/index"
+                    }
+                },
+                "governance": {
+                    "type": "link",
+                    "label": "Governance",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "SafetyCertificateOutlined",
+                    "badge": null,
+                    "priority": 40,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "governance.index",
+                        "domain": "governance",
+                        "resource": "governance",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/governance/index"
+                    }
+                },
+                "gating": {
+                    "type": "link",
+                    "label": "Gating",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ControlOutlined",
+                    "badge": null,
+                    "priority": 50,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "gate.index",
+                        "domain": "gate",
+                        "resource": "gate",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "root_only": true,
+                        "crud_index_only": true,
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/gate/index"
+                    }
+                }
+            }
+        },
+        "context_top_related_business": {
+            "label": "Related business entities",
+            "slug": "context-top-related-business",
+            "location": "shell.context.top",
+            "type": "context",
+            "priority": 40,
+            "enabled": true,
+            "visible_for_roles": [],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "attachment": {
+                    "type": "link",
+                    "label": "Attachment",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "PaperClipOutlined",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "attachment.media.index",
+                        "domain": "attachment",
+                        "resource": "media",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "related_entity": true,
+                        "crud_index_only": true,
+                        "relation_role": "attachment",
+                        "example_parent": "vendor.profile"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/attachment/media/index"
+                    }
+                },
+                "tag": {
+                    "type": "link",
+                    "label": "Tag",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "TagOutlined",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "tag.item.index",
+                        "domain": "tag",
+                        "resource": "item",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "related_entity": true,
+                        "crud_index_only": true,
+                        "relation_role": "tag",
+                        "example_parent": "vendor.profile"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/tag/item/index"
+                    }
+                },
+                "address": {
+                    "type": "link",
+                    "label": "Address",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "EnvironmentOutlined",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "address.location.index",
+                        "domain": "address",
+                        "resource": "location",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "related_entity": true,
+                        "crud_index_only": true,
+                        "relation_role": "address",
+                        "example_parent": "vendor.profile"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/address/location/index"
+                    }
+                },
+                "document": {
+                    "type": "link",
+                    "label": "Document",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "FileTextOutlined",
+                    "badge": null,
+                    "priority": 40,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "document.page.index",
+                        "domain": "document",
+                        "resource": "page",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "related_entity": true,
+                        "crud_index_only": true,
+                        "relation_role": "document"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/document/page/index"
+                    }
+                },
+                "message": {
+                    "type": "link",
+                    "label": "Message",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "MessageOutlined",
+                    "badge": null,
+                    "priority": 50,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "message.thread.index",
+                        "domain": "message",
+                        "resource": "thread",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "related_entity": true,
+                        "crud_index_only": true,
+                        "relation_role": "communication"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/message/thread/index"
+                    }
+                },
+                "review": {
+                    "type": "link",
+                    "label": "Review",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "StarOutlined",
+                    "badge": null,
+                    "priority": 60,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "review.product.index",
+                        "domain": "review",
+                        "resource": "product",
+                        "operation": "index",
+                        "navigation_scope": "business",
+                        "menu_scope": "business",
+                        "related_entity": true,
+                        "crud_index_only": true,
+                        "relation_role": "review"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/review/product/index"
+                    }
+                }
+            }
+        },
+        "mobile_more_coming_soon": {
+            "label": "Coming soon",
+            "slug": "mobile-more-coming-soon",
+            "location": "shell.mobile.more.drawer",
+            "type": "navigation",
+            "priority": 40,
+            "enabled": true,
+            "visible_for_roles": [
+                "ROLE_USER"
+            ],
+            "visible_for_scopes": [],
+            "visible_for_environments": [
+                "mobile"
+            ],
+            "metadata": {
+                "channel": "mobile",
+                "mobile_group": "coming_soon"
+            },
+            "items": {
+                "catalog": {
+                    "type": "link",
+                    "label": "Catalog",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "catalog",
+                    "badge": "Coming soon",
+                    "priority": 10,
+                    "enabled": false,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Cataloging",
+                        "domain": "catalog",
+                        "resource": "catalog",
+                        "operation": "index",
+                        "mobile_route": "catalog",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ],
+                        "mobile_disabled_label": "Coming soon"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/catalog"
+                    }
+                },
+                "attachment": {
+                    "type": "link",
+                    "label": "Attachment",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "attachment",
+                    "badge": "Coming soon",
+                    "priority": 30,
+                    "enabled": false,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Attaching",
+                        "domain": "attachment",
+                        "resource": "attachment",
+                        "operation": "index",
+                        "mobile_route": "attachment",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ],
+                        "mobile_disabled_label": "Coming soon"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/attachment"
+                    }
+                }
+            }
+        },
+        "context_bottom_related_system": {
+            "label": "Related system entities",
+            "slug": "context-bottom-related-system",
+            "location": "shell.context.bottom",
+            "type": "context",
+            "priority": 48,
+            "enabled": true,
+            "visible_for_roles": [
+                "ROLE_ADMIN",
+                "ROLE_SUPER_ADMIN"
+            ],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "access": {
+                    "type": "link",
+                    "label": "Access",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "LockOutlined",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "access.user.index",
+                        "domain": "access",
+                        "resource": "user",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "related_entity": true,
+                        "crud_index_only": true,
+                        "relation_role": "permission",
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/access/user/index"
+                    }
+                },
+                "governance": {
+                    "type": "link",
+                    "label": "Governance",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "SafetyCertificateOutlined",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "governance.decision.index",
+                        "domain": "governance",
+                        "resource": "decision",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "related_entity": true,
+                        "crud_index_only": true,
+                        "relation_role": "decision",
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/governance/decision/index"
+                    }
+                },
+                "audit": {
+                    "type": "link",
+                    "label": "Incident",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "WarningOutlined",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "incident.report.index",
+                        "domain": "incident",
+                        "resource": "report",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "related_entity": true,
+                        "crud_index_only": true,
+                        "relation_role": "audit",
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/incident/report/index"
+                    }
+                },
+                "observability": {
+                    "type": "link",
+                    "label": "Metric",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "LineChartOutlined",
+                    "badge": null,
+                    "priority": 40,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "observability.metric.index",
+                        "domain": "observability",
+                        "resource": "metric",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "related_entity": true,
+                        "crud_index_only": true,
+                        "relation_role": "metric",
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/observability/metric/index"
+                    }
+                },
+                "boundary": {
+                    "type": "link",
+                    "label": "Boundary",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "BorderOuterOutlined",
+                    "badge": null,
+                    "priority": 50,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "boundary.rule.index",
+                        "domain": "boundary",
+                        "resource": "rule",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "related_entity": true,
+                        "crud_index_only": true,
+                        "relation_role": "boundary",
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/boundary/rule/index"
+                    }
+                },
+                "schema": {
+                    "type": "link",
+                    "label": "Object schema",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ClusterOutlined",
+                    "badge": null,
+                    "priority": 60,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN",
+                        "ROLE_SUPER_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "object.schema.index",
+                        "domain": "object",
+                        "resource": "schema",
+                        "operation": "index",
+                        "navigation_scope": "system",
+                        "menu_scope": "system",
+                        "related_entity": true,
+                        "crud_index_only": true,
+                        "relation_role": "schema",
+                        "admin_only": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/object/schema/index"
+                    }
+                }
+            }
+        },
+        "mobile_vendor_context": {
+            "label": "Vendor",
+            "slug": "mobile-vendor-context",
+            "location": "shell.mobile.vendor.context",
+            "type": "navigation",
+            "priority": 50,
+            "enabled": true,
+            "visible_for_roles": [
+                "ROLE_USER"
+            ],
+            "visible_for_scopes": [],
+            "visible_for_environments": [
+                "mobile"
+            ],
+            "metadata": {
+                "channel": "mobile",
+                "mobile_group": "vendor"
+            },
+            "items": {
+                "vendor_overview": {
+                    "type": "link",
+                    "label": "My Vendor",
+                    "slug": null,
+                    "operation": "overview",
+                    "icon": "store",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Vendoring",
+                        "domain": "vendor",
+                        "resource": "vendor",
+                        "operation": "overview",
+                        "mobile_route": "vendor",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/vendor"
+                    }
+                },
+                "vendor_profile": {
+                    "type": "link",
+                    "label": "My Profile",
+                    "slug": null,
+                    "operation": "show",
+                    "icon": "person",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Vendoring",
+                        "domain": "vendor",
+                        "resource": "vendor.profile",
+                        "operation": "show",
+                        "mobile_route": "vendor/profile",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/vendor/profile"
+                    }
+                },
+                "vendor_summary": {
+                    "type": "link",
+                    "label": "Summary",
+                    "slug": null,
+                    "operation": "show",
+                    "icon": "summary",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Vendoring",
+                        "domain": "vendor",
+                        "resource": "vendor.summary",
+                        "operation": "show",
+                        "mobile_route": "vendor/summary",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/vendor/summary"
+                    }
+                },
+                "vendor_statement": {
+                    "type": "link",
+                    "label": "Statement",
+                    "slug": null,
+                    "operation": "show",
+                    "icon": "receipt",
+                    "badge": null,
+                    "priority": 40,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Vendoring",
+                        "domain": "vendor",
+                        "resource": "vendor.statement",
+                        "operation": "show",
+                        "mobile_route": "vendor/statement",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/vendor/statement"
+                    }
+                },
+                "vendor_payout": {
+                    "type": "link",
+                    "label": "Payout",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "payments",
+                    "badge": null,
+                    "priority": 50,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Vendoring",
+                        "domain": "vendor",
+                        "resource": "vendor.payout",
+                        "operation": "index",
+                        "mobile_route": "vendor/payout",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/vendor/payout"
+                    }
+                },
+                "vendor_transaction": {
+                    "type": "link",
+                    "label": "Transaction",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "list",
+                    "badge": null,
+                    "priority": 60,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Vendoring",
+                        "domain": "vendor",
+                        "resource": "vendor.transaction",
+                        "operation": "index",
+                        "mobile_route": "vendor/transaction",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ]
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/vendor/transaction"
+                    }
+                },
+                "vendor_attachment": {
+                    "type": "link",
+                    "label": "My Attachment",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "attachment",
+                    "badge": "Coming soon",
+                    "priority": 70,
+                    "enabled": false,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "namespace_provider": "App\\Attaching",
+                        "domain": "attachment",
+                        "resource": "vendor.attachment",
+                        "operation": "index",
+                        "mobile_route": "attachment",
+                        "mobile_platforms": [
+                            "android",
+                            "ios"
+                        ],
+                        "mobile_disabled_label": "Coming soon"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/attachment"
+                    }
+                }
+            }
+        },
+        "right_top_toggles": {
+            "label": "Toggles",
+            "slug": "right-top-toggles",
+            "location": "shell.right.top",
+            "type": "toggle",
+            "priority": 55,
+            "enabled": true,
+            "visible_for_roles": [],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "command_palette": {
+                    "type": "action",
+                    "label": "Command palette",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "CodeOutlined",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "toggle": "command_palette"
+                    }
+                },
+                "tools_panel": {
+                    "type": "action",
+                    "label": "Tools panel",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ToolOutlined",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "toggle": "tools_panel"
+                    }
+                },
+                "filter_panel": {
+                    "type": "action",
+                    "label": "Filters",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "FilterOutlined",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "toggle": "filter_panel"
+                    }
+                },
+                "compact_navigation": {
+                    "type": "action",
+                    "label": "Compact navigation",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "CompressOutlined",
+                    "badge": null,
+                    "priority": 40,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "toggle": "compact_navigation"
+                    }
+                },
+                "developer_surface": {
+                    "type": "action",
+                    "label": "Developer surface",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "CodeOutlined",
+                    "badge": null,
+                    "priority": 50,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [
+                        "dev"
+                    ],
+                    "metadata": {
+                        "business_visible": true,
+                        "toggle": "developer_surface"
+                    }
+                }
+            }
+        },
+        "right_tool_panel": {
+            "label": "Tools",
+            "slug": "right-tool-panel",
+            "location": "shell.right.tool",
+            "type": "tool",
+            "priority": 60,
+            "enabled": true,
+            "visible_for_roles": [],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "route_map": {
+                    "type": "widget",
+                    "label": "Route map",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "NodeIndexOutlined",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "tool": "route_map",
+                        "source": "platform-route-map-id-slug-with-cruding-grammar"
+                    }
+                },
+                "cruding_grammar": {
+                    "type": "widget",
+                    "label": "Cruding grammar",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "ReadOutlined",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "tool": "cruding_grammar"
+                    }
+                },
+                "inspector": {
+                    "type": "widget",
+                    "label": "Inspector",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "EyeOutlined",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "tool": "inspector"
+                    }
+                },
+                "ai_assistant": {
+                    "type": "widget",
+                    "label": "AI assistant",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "RobotOutlined",
+                    "badge": null,
+                    "priority": 40,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "tool": "ai_assistant"
+                    }
+                },
+                "activity": {
+                    "type": "widget",
+                    "label": "Activity",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "HistoryOutlined",
+                    "badge": null,
+                    "priority": 50,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "tool": "activity"
+                    }
+                },
+                "permission": {
+                    "type": "widget",
+                    "label": "Permissions",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "KeyOutlined",
+                    "badge": null,
+                    "priority": 60,
+                    "enabled": true,
+                    "visible_for_roles": [
+                        "ROLE_ADMIN"
+                    ],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "tool": "permission"
+                    }
+                }
+            }
+        },
+        "right_filter_panel": {
+            "label": "Filters",
+            "slug": "right-filter-panel",
+            "location": "shell.right.filter",
+            "type": "filter",
+            "priority": 70,
+            "enabled": true,
+            "visible_for_roles": [],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "status": {
+                    "type": "action",
+                    "label": "Status",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "CheckCircleOutlined",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "filter": "status"
+                    }
+                },
+                "owner": {
+                    "type": "action",
+                    "label": "Owner",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "UserOutlined",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "filter": "owner"
+                    }
+                },
+                "date": {
+                    "type": "action",
+                    "label": "Date",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "CalendarOutlined",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "filter": "date"
+                    }
+                },
+                "tag": {
+                    "type": "action",
+                    "label": "Tag",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "TagOutlined",
+                    "badge": null,
+                    "priority": 40,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "filter": "tag"
+                    }
+                },
+                "tenant": {
+                    "type": "action",
+                    "label": "Tenant",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "TeamOutlined",
+                    "badge": null,
+                    "priority": 50,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "filter": "tenant"
+                    }
+                }
+            }
+        },
+        "footer_left_system": {
+            "label": "System",
+            "slug": "footer-left-system",
+            "location": "shell.footer.left",
+            "type": "footer",
+            "priority": 80,
+            "enabled": true,
+            "visible_for_roles": [],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "system_status": {
+                    "type": "link",
+                    "label": "System status",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "CheckCircleOutlined",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "observability.metric.index",
+                        "domain": "observability",
+                        "resource": "metric"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/observability/metric/index"
+                    }
+                },
+                "releases": {
+                    "type": "link",
+                    "label": "Releases",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "RocketOutlined",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "rollout.release.index",
+                        "domain": "rollout",
+                        "resource": "release"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/rollout/release/index"
+                    }
+                }
+            }
+        },
+        "footer_context_environment": {
+            "label": "Environment",
+            "slug": "footer-context-environment",
+            "location": "shell.footer.context",
+            "type": "footer",
+            "priority": 90,
+            "enabled": true,
+            "visible_for_roles": [],
+            "visible_for_scopes": [
+                "system"
+            ],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "environment": {
+                    "type": "badge",
+                    "label": "Environment",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": null,
+                    "badge": "dev",
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [
+                        "dev"
+                    ],
+                    "metadata": {
+                        "business_visible": true,
+                        "environment": "dev"
+                    }
+                },
+                "build": {
+                    "type": "badge",
+                    "label": "Build",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": null,
+                    "badge": "local",
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "build": "local"
+                    }
+                }
+            }
+        },
+        "footer_main_support": {
+            "label": "Support",
+            "slug": "footer-main-support",
+            "location": "shell.footer.main",
+            "type": "footer",
+            "priority": 100,
+            "enabled": true,
+            "visible_for_roles": [],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "documentation": {
+                    "type": "link",
+                    "label": "Documentation",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "FileTextOutlined",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "document.page.index",
+                        "domain": "document",
+                        "resource": "page"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/document/page/index"
+                    }
+                },
+                "content": {
+                    "type": "link",
+                    "label": "Content pages",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "FileOutlined",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "route_name": "page.content.index",
+                        "domain": "page",
+                        "resource": "content"
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/page/content/index"
+                    }
+                },
+                "help": {
+                    "type": "link",
+                    "label": "Help",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "QuestionCircleOutlined",
+                    "badge": null,
+                    "priority": 30,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "static_path": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/help"
+                    }
+                }
+            }
+        },
+        "footer_right_legal": {
+            "label": "Legal",
+            "slug": "footer-right-legal",
+            "location": "shell.footer.right",
+            "type": "footer",
+            "priority": 110,
+            "enabled": true,
+            "visible_for_roles": [],
+            "visible_for_scopes": [],
+            "visible_for_environments": [],
+            "metadata": [],
+            "items": {
+                "privacy": {
+                    "type": "link",
+                    "label": "Privacy",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "SafetyOutlined",
+                    "badge": null,
+                    "priority": 10,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "static_path": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/privacy"
+                    }
+                },
+                "terms": {
+                    "type": "link",
+                    "label": "Terms",
+                    "slug": null,
+                    "operation": "index",
+                    "icon": "FileProtectOutlined",
+                    "badge": null,
+                    "priority": 20,
+                    "enabled": true,
+                    "visible_for_roles": [],
+                    "visible_for_scopes": [],
+                    "visible_for_environments": [],
+                    "metadata": {
+                        "business_visible": true,
+                        "static_path": true
+                    },
+                    "target": {
+                        "type": "path",
+                        "path": "/terms"
+                    }
+                }
+            }
+        }
+    },
+    "archived_items": [],
+    "sha256": "5f4475bf6ec8159804ece2986247023d3b4a045d1c1b7557849700948fc1f57c"
+}
