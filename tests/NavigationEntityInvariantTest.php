@@ -18,7 +18,7 @@ final class NavigationEntityInvariantTest extends TestCase
     public function testRequiredCanonicalAndLengthMenuFieldsAreRejected(NavigationMenu $menu, string $message): void
     {
         $subscriber = $this->subscriber();
-        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
 
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage($message);
@@ -46,7 +46,7 @@ final class NavigationEntityInvariantTest extends TestCase
     public function testRequiredCanonicalAndLengthItemFieldsAreRejected(NavigationItem $item, string $message): void
     {
         $subscriber = $this->subscriber();
-        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
 
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage($message);
@@ -93,7 +93,7 @@ final class NavigationEntityInvariantTest extends TestCase
             ->setType('link')
             ->setOperation('sign_in');
 
-        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
         $subscriber = $this->subscriber();
 
         $subscriber->prePersist(new PrePersistEventArgs($menu, $entityManager));
@@ -111,7 +111,7 @@ final class NavigationEntityInvariantTest extends TestCase
             ->setLocation('shell.left.middle')
             ->setType('navigation');
 
-        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
         $this->subscriber()->prePersist(new PrePersistEventArgs($menu, $entityManager));
 
         self::addToAssertionCount(1);

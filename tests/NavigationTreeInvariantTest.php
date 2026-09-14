@@ -42,7 +42,7 @@ final class NavigationTreeInvariantTest extends TestCase
         $subscriber = new NavigationEntityInvariantSubscriber([
             'shell_locations' => ['shell.left.middle' => []],
         ]);
-        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
 
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('same menu');
@@ -136,7 +136,7 @@ final class NavigationTreeInvariantTest extends TestCase
 
         self::assertStringContainsString('isEffectivelyEnabled($item)', $provider);
         self::assertStringContainsString('while (null !== $cursor)', $provider);
-        self::assertStringContainsString("!\$cursor->isEnabled() || \$cursor->isArchived()", $provider);
+        self::assertStringContainsString('!$cursor->isEnabled() || $cursor->isArchived()', $provider);
         self::assertStringContainsString("throw new \\LogicException('Navigation item hierarchy contains a cycle.')", $provider);
     }
 
