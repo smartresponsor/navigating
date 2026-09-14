@@ -45,3 +45,29 @@
 - RC-critical dependency, security, schema, manifest, EasyAdmin, container, and PHPUnit checks are green.
 - Task-owned repository changes are limited to the dependency declaration, dependency documentation, install manifest, and this orchestration journal.
 - Final Git integration is the remaining acceptance step; the branch began one commit ahead of `origin/master`, so remote publication must not silently attribute that pre-existing commit to this task.
+
+## Task 2026-09-14 — Navigating RC dependency contour hardening
+
+### Reconnaissance and baseline
+
+- Workspace: `D:\PhpstormProjects\www\Navigating`; branch baseline `cmcp/navigating-rc-20260911` at `40ef6f58bb3e52550a4d2ff022338db805848273`, clean and synchronized with `origin/cmcp/navigating-rc-20260911`.
+- Read target contracts and implementation around navigation persistence, projection, visibility, recovery, EasyAdmin administration, CI and acceptance tests. The documented Code Memory scope resolver is not declared for this repository, so no repository-local memory graph command is available.
+- Read the mandatory Objecting, Cruding, Viewing, Interfacing, Gating and Canonization contracts; also inspected Collectioning and Tabling after Canon022 established them as standalone baseline dependencies.
+- Normative Canonization rules consulted and mapped to Navigating: Canon018 (`navigating/navigation` -> `App\\Navigating\\` and `Navigation*`), Canon019 (no alternative layer roots), Canon021 (Cruding owns generic CRUD; EasyAdmin admin CRUD is exempt), Canon022 (direct standalone platform dependency baseline), Canon038 (`navigation_*` component YAML naming), Canon043 (local first-party path dependencies use `dev-master` plus `options.versions`) and Canon045 (root Composer exposes the reachable local repository closure).
+- Market/open-source baseline reviewed KnpMenu/KnpMenuBundle and EasyAdmin practices: menu model/provider concerns are separated from rendering, hierarchy and visibility are first-class, and authorization remains a security concern rather than template discovery. RC therefore prioritizes persistence/projection integrity, visibility, recovery and reproducible package integration rather than speculative UI growth.
+- Baseline gates: `composer validate --strict --check-lock` passed; `composer qa` passed 175 tests with 32 PHPUnit notices.
+- RC-critical work selected: repair standalone Composer dependency/path closure and make CI reproduce that dependency graph. Growth workstream (richer authoring UX, deeper diagnostics and broader navigation capability) remains post-RC.
+
+### Implementation and verification
+
+- Added direct `collectioning/collection` and `tabling/table` dependencies required by Canon022.
+- Added root path repositories for Collectioning and Tabling, and canonical `options.versions = dev-master` identity pins for all first-party path repositories required by Canon043/Canon045.
+- Updated both SQLite recovery CI jobs to authorize and checkout Collectioning, Tabling and Viewing before Composer installation.
+- Strengthened `NavigationAcceptanceContractTest` so the direct dependency baseline and CI checkout contour are regression-tested.
+- Updated the README platform baseline to include Collectioning, Tabling and Viewing.
+- Package-scoped Composer resolution succeeded and installed the local Collectioning/Tabling symlink packages; `composer validate --strict --check-lock` passes and `composer audit` reports no security advisories.
+- `composer qa:navigating-easyadmin`: 20 tests / 201 assertions pass.
+- `navigation:acceptance:preflight`: container lint, legacy-plan and 175-test suite pass (32 existing PHPUnit notices).
+- `navigation:acceptance:verify`: Doctrine mapping/schema, install manifest and 175-test suite pass; schema is in sync.
+- Changed PHP syntax check passes.
+- No navigation item, route semantics, rendering behavior or persistence schema was changed in this RC workstream.

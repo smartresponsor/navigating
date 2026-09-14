@@ -188,6 +188,9 @@ Navigation publication retains namespace-owned runtime activation. Component own
 - EasyAdmin 5
 - Objecting
 - Cruding
+- Collectioning
+- Tabling
+- Viewing
 - Interfacing
 
 ## Local validation

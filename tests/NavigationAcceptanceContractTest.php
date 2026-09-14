@@ -13,6 +13,13 @@ final class NavigationAcceptanceContractTest extends TestCase
         $composer = $this->composer();
         $require = $composer['require'] ?? [];
 
+        self::assertSame('dev-master', $require['objecting/object'] ?? null);
+        self::assertSame('dev-master', $require['cruding/crud'] ?? null);
+        self::assertSame('dev-master', $require['collectioning/collection'] ?? null);
+        self::assertSame('dev-master', $require['tabling/table'] ?? null);
+        self::assertSame('dev-master', $require['viewing/view'] ?? null);
+        self::assertSame('dev-master', $require['interfacing/interface'] ?? null);
+        self::assertArrayHasKey('easycorp/easyadmin-bundle', $require);
         self::assertSame('^4.0', $require['doctrine/dbal'] ?? null);
         self::assertSame('^8.1', $require['symfony/form'] ?? null);
         self::assertSame('^3.6', $require['symfony/cache-contracts'] ?? null);
@@ -99,10 +106,16 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertStringContainsString('token: ${{ steps.app.outputs.token }}', $productionJob);
         self::assertStringContainsString('repository: smartresponsor/objecting', $productionJob);
         self::assertStringContainsString('repository: smartresponsor/cruding', $productionJob);
+        self::assertStringContainsString('repository: smartresponsor/collectioning', $productionJob);
+        self::assertStringContainsString('repository: smartresponsor/tabling', $productionJob);
+        self::assertStringContainsString('repository: smartresponsor/viewing', $productionJob);
         self::assertStringContainsString('repository: smartresponsor/interfacing', $productionJob);
         self::assertStringContainsString('path: Navigating', $productionJob);
         self::assertStringContainsString('path: Objecting', $productionJob);
         self::assertStringContainsString('path: Cruding', $productionJob);
+        self::assertStringContainsString('path: Collectioning', $productionJob);
+        self::assertStringContainsString('path: Tabling', $productionJob);
+        self::assertStringContainsString('path: Viewing', $productionJob);
         self::assertStringContainsString('path: Interfacing', $productionJob);
         self::assertStringContainsString('php bin/console lint:container', $productionJob);
         self::assertStringContainsString('cache:clear --no-warmup --env=prod --no-debug', $productionJob);

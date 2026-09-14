@@ -54,6 +54,9 @@ jobs:
             navigating
             objecting
             cruding
+            collectioning
+            tabling
+            viewing
             interfacing
 
       - name: Checkout Navigating
@@ -75,6 +78,27 @@ jobs:
           repository: smartresponsor/cruding
           token: ${{ steps.app.outputs.token }}
           path: Cruding
+
+      - name: Checkout Collectioning
+        uses: actions/checkout@v4
+        with:
+          repository: smartresponsor/collectioning
+          token: ${{ steps.app.outputs.token }}
+          path: Collectioning
+
+      - name: Checkout Tabling
+        uses: actions/checkout@v4
+        with:
+          repository: smartresponsor/tabling
+          token: ${{ steps.app.outputs.token }}
+          path: Tabling
+
+      - name: Checkout Viewing
+        uses: actions/checkout@v4
+        with:
+          repository: smartresponsor/viewing
+          token: ${{ steps.app.outputs.token }}
+          path: Viewing
 
       - name: Checkout Interfacing
         uses: actions/checkout@v4
@@ -185,6 +209,9 @@ jobs:
             navigating
             objecting
             cruding
+            collectioning
+            tabling
+            viewing
             interfacing
 
       - name: Checkout Navigating
@@ -206,6 +233,27 @@ jobs:
           repository: smartresponsor/cruding
           token: ${{ steps.app.outputs.token }}
           path: Cruding
+
+      - name: Checkout Collectioning
+        uses: actions/checkout@v4
+        with:
+          repository: smartresponsor/collectioning
+          token: ${{ steps.app.outputs.token }}
+          path: Collectioning
+
+      - name: Checkout Tabling
+        uses: actions/checkout@v4
+        with:
+          repository: smartresponsor/tabling
+          token: ${{ steps.app.outputs.token }}
+          path: Tabling
+
+      - name: Checkout Viewing
+        uses: actions/checkout@v4
+        with:
+          repository: smartresponsor/viewing
+          token: ${{ steps.app.outputs.token }}
+          path: Viewing
 
       - name: Checkout Interfacing
         uses: actions/checkout@v4
