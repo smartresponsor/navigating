@@ -47,12 +47,15 @@ final class NavigationMenuRepository extends ServiceEntityRepository
      */
     public function findEnabled(): array
     {
-        return $this->inventoryQueryBuilder()
+        /** @var list<NavigationMenu> $menus */
+        $menus = $this->inventoryQueryBuilder()
             ->andWhere('menu.enabled = :enabled')
             ->setParameter('enabled', true)
             ->getQuery()
             ->getResult()
         ;
+
+        return $menus;
     }
 
     /**
@@ -63,10 +66,13 @@ final class NavigationMenuRepository extends ServiceEntityRepository
      */
     public function findAllForSnapshot(): array
     {
-        return $this->inventoryQueryBuilder()
+        /** @var list<NavigationMenu> $menus */
+        $menus = $this->inventoryQueryBuilder()
             ->getQuery()
             ->getResult()
         ;
+
+        return $menus;
     }
 
     private function existsOtherByField(string $field, string $value, ?int $excludeId): bool

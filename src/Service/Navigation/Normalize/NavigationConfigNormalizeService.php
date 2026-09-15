@@ -30,10 +30,10 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
             if (!is_string($key) || !is_array($groupConfig)) {
                 continue;
             }
-
+            /** @var array<string, mixed> $groupConfig */
             $items = [];
             $itemsConfig = $groupConfig['items'] ?? [];
-            $groupMetadata = is_array($groupConfig['metadata'] ?? null) ? $groupConfig['metadata'] : [];
+            $groupMetadata = $this->objectValue($groupConfig['metadata'] ?? null, 'navigation group metadata');
             $groupNamespaceProvider = $this->firstString(
                 $groupConfig['namespace_provider'] ?? null,
                 $groupMetadata['namespace_provider'] ?? null,
@@ -48,10 +48,10 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
                     if (!is_string($itemKey) || !is_array($itemConfig)) {
                         continue;
                     }
-
-                    $type = (string) ($itemConfig['type'] ?? '');
+                    /** @var array<string, mixed> $itemConfig */
+                    $type = $this->stringValue($itemConfig['type'] ?? null, '');
                     $targetConfig = $this->targetConfig($itemConfig);
-                    $metadata = is_array($itemConfig['metadata'] ?? null) ? $itemConfig['metadata'] : [];
+                    $metadata = $this->objectValue($itemConfig['metadata'] ?? null, 'navigation item metadata');
                     $namespaceProvider = $this->firstString(
                         $itemConfig['namespace_provider'] ?? null,
                         $metadata['namespace_provider'] ?? null,
@@ -66,18 +66,18 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
                     $items[] = new NavigationShellItem(
                         key: $itemKey,
                         type: $type,
-                        label: (string) ($itemConfig['label'] ?? $itemKey),
-                        priority: (int) ($itemConfig['priority'] ?? 100),
+                        label: $this->stringValue($itemConfig['label'] ?? null, $itemKey),
+                        priority: $this->intValue($itemConfig['priority'] ?? null, 100),
                         enabled: (bool) ($itemConfig['enabled'] ?? true),
                         visible: (bool) ($itemConfig['visible'] ?? true),
                         visibleForRoles: $this->roleList($itemConfig['visible_for_roles'] ?? []),
                         visibleForScopes: $this->tokenList($itemConfig['visible_for_scopes'] ?? []),
                         visibleForEnvironments: $this->tokenList($itemConfig['visible_for_environments'] ?? []),
                         target: null === $targetConfig ? null : NavigationTarget::fromArray($targetConfig),
-                        action: isset($itemConfig['action']) ? (string) $itemConfig['action'] : null,
-                        widget: isset($itemConfig['widget']) ? (string) $itemConfig['widget'] : null,
-                        icon: isset($itemConfig['icon']) ? (string) $itemConfig['icon'] : null,
-                        badge: isset($itemConfig['badge']) ? (string) $itemConfig['badge'] : null,
+                        action: $this->nullableString($itemConfig['action'] ?? null),
+                        widget: $this->nullableString($itemConfig['widget'] ?? null),
+                        icon: $this->nullableString($itemConfig['icon'] ?? null),
+                        badge: $this->nullableString($itemConfig['badge'] ?? null),
                         metadata: $metadata,
                         namespaceProvider: $namespaceProvider,
                         namespace: $namespace,
@@ -90,15 +90,15 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
 
             $groups[] = new NavigationShellGroup(
                 key: $key,
-                label: (string) ($groupConfig['label'] ?? $key),
-                priority: (int) ($groupConfig['priority'] ?? 100),
+                label: $this->stringValue($groupConfig['label'] ?? null, $key),
+                priority: $this->intValue($groupConfig['priority'] ?? null, 100),
                 enabled: (bool) ($groupConfig['enabled'] ?? true),
                 visible: (bool) ($groupConfig['visible'] ?? true),
                 visibleForRoles: $this->roleList($groupConfig['visible_for_roles'] ?? []),
                 visibleForScopes: $this->tokenList($groupConfig['visible_for_scopes'] ?? []),
                 visibleForEnvironments: $this->tokenList($groupConfig['visible_for_environments'] ?? []),
-                location: (string) ($groupConfig['location'] ?? sprintf('shell.%s', str_replace('_', '.', $key))),
-                type: (string) ($groupConfig['type'] ?? 'navigation'),
+                location: $this->stringValue($groupConfig['location'] ?? null, sprintf('shell.%s', str_replace('_', '.', $key))),
+                type: $this->stringValue($groupConfig['type'] ?? null, 'navigation'),
                 items: $items,
             );
         }
@@ -162,7 +162,7 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
             return null;
         }
 
-        $namespace = trim($namespace, " \\t\\n\\r\\0\\x0B\\\\");
+        $namespace = trim($namespace, ' \\t\\n\\r\\0\\x0B\\\\');
         if ('' === $namespace) {
             return null;
         }
@@ -192,6 +192,45 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
         return null;
     }
 
+    private function stringValue(mixed $value, string $fallback): string
+    {
+        return is_string($value) && '' !== trim($value) ? trim($value) : $fallback;
+    }
+
+    private function nullableString(mixed $value): ?string
+    {
+        return is_string($value) && '' !== trim($value) ? trim($value) : null;
+    }
+
+    private function intValue(mixed $value, int $fallback): int
+    {
+        if (null === $value) {
+            return $fallback;
+        }
+        if (is_int($value)) {
+            return $value;
+        }
+        if (is_string($value) && preg_match('/^-?\\d+$/', trim($value))) {
+            return (int) trim($value);
+        }
+
+        throw new \InvalidArgumentException('Navigation numeric configuration values must be integers.');
+    }
+
+    /** @return array<string, mixed> */
+    private function objectValue(mixed $value, string $field): array
+    {
+        if (null === $value) {
+            return [];
+        }
+        if (!is_array($value) || ([] !== $value && array_is_list($value))) {
+            throw new \InvalidArgumentException(sprintf('%s must be an object-shaped map.', ucfirst($field)));
+        }
+
+        /** @var array<string, mixed> $value */
+        return $value;
+    }
+
     /**
      * @param array<string, mixed> $nodeConfig
      *
@@ -199,20 +238,26 @@ final class NavigationConfigNormalizeService implements \App\Navigating\ServiceI
      */
     private function targetConfig(array $nodeConfig): ?array
     {
-        $type = (string) ($nodeConfig['type'] ?? '');
-        $target = $nodeConfig['target'] ?? null;
+        $type = $this->stringValue($nodeConfig['type'] ?? null, '');
+        $target = $this->objectValue($nodeConfig['target'] ?? null, 'navigation target');
 
-        if (is_array($target) && [] !== $target) {
+        if ([] !== $target) {
             return $target;
         }
 
         if (NavigationShellItemTypeRegistry::LINK === $type) {
             if ($this->hasConfiguredValue($nodeConfig, 'route')) {
-                return ['type' => 'route', 'route' => (string) $nodeConfig['route']];
+                $route = $this->nullableString($nodeConfig['route'] ?? null);
+                if (null !== $route) {
+                    return ['type' => 'route', 'route' => $route];
+                }
             }
 
             if ($this->hasConfiguredValue($nodeConfig, 'path')) {
-                return ['type' => 'path', 'path' => (string) $nodeConfig['path']];
+                $path = $this->nullableString($nodeConfig['path'] ?? null);
+                if (null !== $path) {
+                    return ['type' => 'path', 'path' => $path];
+                }
             }
         }
 

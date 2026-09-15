@@ -40,10 +40,12 @@ final class NavigationBackupCreateCommand extends Command
             $this->snapshotFileService->write($path, $this->snapshotService->create());
         } catch (\Throwable $exception) {
             $output->writeln('<error>'.$exception->getMessage().'</error>');
+
             return Command::FAILURE;
         }
 
         $output->writeln('<info>Navigation backup written: '.$path.'</info>');
+
         return Command::SUCCESS;
     }
 
@@ -52,6 +54,7 @@ final class NavigationBackupCreateCommand extends Command
         if (str_starts_with($path, '/') || preg_match('/^[A-Za-z]:[\\\\\/]/', $path)) {
             return $path;
         }
+
         return $this->projectDir.'/'.$path;
     }
 }

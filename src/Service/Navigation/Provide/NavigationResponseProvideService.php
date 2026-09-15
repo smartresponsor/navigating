@@ -21,8 +21,10 @@ final readonly class NavigationResponseProvideService implements NavigationRespo
     public function providePayload(Request $request): array
     {
         $data = $this->templateDataProvideService->provide($request);
-        $section = (string) ($data['surface'] ?? NavigationTemplateDataProvideService::SURFACE);
-        $template = (string) ($data['template'] ?? NavigationTemplateDataProvideService::TEMPLATE);
+        $sectionValue = $data['surface'] ?? null;
+        $templateValue = $data['template'] ?? null;
+        $section = is_string($sectionValue) && '' !== trim($sectionValue) ? $sectionValue : NavigationTemplateDataProvideService::SURFACE;
+        $template = is_string($templateValue) && '' !== trim($templateValue) ? $templateValue : NavigationTemplateDataProvideService::TEMPLATE;
         $navigation = \is_array($data['navigation'] ?? null) ? $data['navigation'] : [];
         $interface = \is_array($data['interface'] ?? null) ? $data['interface'] : ['locations' => []];
 

@@ -29,7 +29,7 @@ final readonly class NavigationSnapshotExportService
                 unset($metadata['parent_key']);
 
                 if (null !== $item->getParent()) {
-                    $metadata['parent_key'] = $item->getParent()?->getNavigationKey();
+                    $metadata['parent_key'] = $item->getParent()->getNavigationKey();
                 }
 
                 $itemConfig = [

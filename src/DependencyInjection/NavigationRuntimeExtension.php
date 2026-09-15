@@ -21,6 +21,7 @@ class NavigationRuntimeExtension extends Extension
             new Configuration(),
             array_merge($this->defaultConfigs(), $configs),
         );
+        /** @var array<string, mixed> $config */
         $validation = (new NavigationConfigValidateService())->validate($config);
 
         if (!$validation->isValid()) {
@@ -55,6 +56,7 @@ class NavigationRuntimeExtension extends Extension
             $config = is_array($data) ? ($data['navigation'] ?? $data) : null;
 
             if (is_array($config)) {
+                /** @var array<string, mixed> $config */
                 $configs[] = $config;
             }
         }

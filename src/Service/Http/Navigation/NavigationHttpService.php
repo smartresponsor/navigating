@@ -18,10 +18,8 @@ final readonly class NavigationHttpService
     ) {
     }
 
-    /**
-     * @return Response|array<string, mixed>
-     */
-    public function index(Request $request): Response|array
+    /** @return array<string, mixed> */
+    public function index(Request $request): array
     {
         return $this->responseProvider->providePayload($request);
     }

@@ -23,6 +23,7 @@ final class NavigationManifestVerifyCommand extends Command
         $path = dirname(__DIR__, 2).'/resources/navigation/navigation.install.json';
         if (!is_file($path)) {
             $output->writeln('<error>Navigation install manifest does not exist. Run navigation:manifest:write.</error>');
+
             return Command::FAILURE;
         }
 
@@ -35,21 +36,25 @@ final class NavigationManifestVerifyCommand extends Command
             if (!is_array($manifest)) {
                 throw new \RuntimeException('Navigation install manifest must decode to an object.');
             }
+            /** @var array<string, mixed> $manifest */
             $this->snapshotService->assertValid($manifest);
             $current = $this->snapshotService->create();
         } catch (\Throwable $exception) {
             $output->writeln('<error>'.$exception->getMessage().'</error>');
+
             return Command::FAILURE;
         }
 
         foreach (['shell_groups', 'archived_items'] as $key) {
             if (($manifest[$key] ?? null) !== ($current[$key] ?? null)) {
                 $output->writeln('<error>Navigation install manifest differs from the current database. Run navigation:manifest:write and commit the updated manifest.</error>');
+
                 return Command::FAILURE;
             }
         }
 
         $output->writeln('<info>Navigation install manifest matches the current database configuration.</info>');
+
         return Command::SUCCESS;
     }
 }

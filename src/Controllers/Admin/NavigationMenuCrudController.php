@@ -29,6 +29,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+/** @extends AbstractCrudController<NavigationMenu> */
 #[IsGranted('ROLE_ADMIN')]
 final class NavigationMenuCrudController extends AbstractCrudController
 {
@@ -138,10 +139,6 @@ final class NavigationMenuCrudController extends AbstractCrudController
 
     public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
-        if (!$entityInstance instanceof NavigationMenu) {
-            throw new \InvalidArgumentException('NavigationMenuCrudController can update only NavigationMenu entities.');
-        }
-
         $context = $this->adminContextProvider->getContext();
         $expectedVersion = $context?->getRequest()->attributes->get(self::EXPECTED_VERSION_FIELD);
         if (!is_int($expectedVersion) || $expectedVersion < 1) {

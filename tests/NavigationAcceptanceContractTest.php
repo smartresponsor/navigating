@@ -12,6 +12,8 @@ final class NavigationAcceptanceContractTest extends TestCase
     {
         $composer = $this->composer();
         $require = $composer['require'] ?? [];
+        self::assertIsArray($require);
+        /* @var array<string, mixed> $require */
 
         self::assertSame('dev-master', $require['objecting/object'] ?? null);
         self::assertSame('dev-master', $require['cruding/crud'] ?? null);
@@ -93,7 +95,6 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertIsInt($productionStart);
 
         $productionJob = substr($workflow, $productionStart);
-        self::assertIsString($productionJob);
         self::assertStringContainsString('APP_ENV: prod', $productionJob);
         self::assertStringContainsString('APP_DEBUG:', $productionJob);
         self::assertStringContainsString('composer install --no-dev', $productionJob);
@@ -138,6 +139,8 @@ final class NavigationAcceptanceContractTest extends TestCase
     public function testAcceptancePreflightIsNonDestructive(): void
     {
         $scripts = $this->composer()['scripts'] ?? [];
+        self::assertIsArray($scripts);
+        /** @var array<string, mixed> $scripts */
         $preflight = $scripts['navigation:acceptance:preflight'] ?? null;
 
         self::assertSame([
@@ -155,6 +158,8 @@ final class NavigationAcceptanceContractTest extends TestCase
     public function testAcceptanceVerifyChecksSchemaManifestAndQa(): void
     {
         $scripts = $this->composer()['scripts'] ?? [];
+        self::assertIsArray($scripts);
+        /* @var array<string, mixed> $scripts */
 
         self::assertSame([
             '@php bin/console doctrine:schema:validate',
@@ -168,6 +173,7 @@ final class NavigationAcceptanceContractTest extends TestCase
     {
         $decoded = json_decode(self::read('composer.json'), true, 512, JSON_THROW_ON_ERROR);
         self::assertIsArray($decoded);
+        /* @var array<string, mixed> $decoded */
 
         return $decoded;
     }

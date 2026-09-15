@@ -12,6 +12,7 @@ use App\Navigating\Service\Navigation\Migration\NavigationLegacyMigrationPlanSer
 use App\Navigating\Service\Navigation\Persistence\NavigationPersistenceFinalizeService;
 use Doctrine\DBAL\Platforms\SQLitePlatform;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -54,7 +55,13 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
             return Command::FAILURE;
         }
 
-        $path = (string) $input->getArgument('plan');
+        $pathArgument = $input->getArgument('plan');
+        if (!is_string($pathArgument) || '' === trim($pathArgument)) {
+            $output->writeln('<error>Legacy migration plan path must be a non-empty string.</error>');
+
+            return Command::FAILURE;
+        }
+        $path = $pathArgument;
         try {
             $payload = $this->readAndValidatePlan($path);
             $livePlan = $this->planService->createPlan();
@@ -93,7 +100,11 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
             $this->entityManager->getClassMetadata(NavigationItem::class),
         ];
 
-        $foreignKeysEnabled = '1' === (string) $connection->fetchOne('PRAGMA foreign_keys');
+        $foreignKeyPragma = $connection->fetchOne('PRAGMA foreign_keys');
+        if (!is_int($foreignKeyPragma) && !is_string($foreignKeyPragma)) {
+            throw new \RuntimeException('SQLite returned an invalid PRAGMA foreign_keys value.');
+        }
+        $foreignKeysEnabled = '1' === (string) $foreignKeyPragma;
 
         try {
             if ($foreignKeysEnabled) {
@@ -149,7 +160,9 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
         return Command::SUCCESS;
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @return array{format:string,version:int,created_at:string,source_state:string,row_count:int,raw_rows:list<array<string,mixed>>,shell_groups:array<string,mixed>,archived_items:list<string>,sha256:string}
+     */
     private function readAndValidatePlan(string $path): array
     {
         if (!is_file($path)) {
@@ -163,6 +176,7 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
         if (!is_array($payload)) {
             throw new \RuntimeException('Migration plan must decode to an object.');
         }
+        /** @var array<string, mixed> $payload */
         if (($payload['format'] ?? null) !== 'smartresponsor.navigation.legacy-upgrade-plan' || ($payload['version'] ?? null) !== 1) {
             throw new \RuntimeException('Unsupported legacy migration plan format or version.');
         }
@@ -170,14 +184,38 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
         if (!is_string($expected) || !hash_equals($expected, $this->checksum($payload))) {
             throw new \RuntimeException('Legacy migration plan SHA-256 verification failed.');
         }
-        if (!is_array($payload['raw_rows'] ?? null) || !is_array($payload['shell_groups'] ?? null) || !is_array($payload['archived_items'] ?? null)) {
-            throw new \RuntimeException('Legacy migration plan payload is incomplete.');
+        $createdAt = $payload['created_at'] ?? null;
+        $sourceState = $payload['source_state'] ?? null;
+        $rowCount = $payload['row_count'] ?? null;
+        $rawRows = $payload['raw_rows'] ?? null;
+        $shellGroups = $payload['shell_groups'] ?? null;
+        $archivedItems = $payload['archived_items'] ?? null;
+        if (!is_string($createdAt) || !is_string($sourceState) || !is_int($rowCount)
+            || !is_array($rawRows) || !array_is_list($rawRows)
+            || !is_array($shellGroups) || ([] !== $shellGroups && array_is_list($shellGroups))
+            || !is_array($archivedItems) || !array_is_list($archivedItems)
+        ) {
+            throw new \RuntimeException('Legacy migration plan payload is incomplete or has invalid field types.');
+        }
+        foreach ($rawRows as $row) {
+            if (!is_array($row)) {
+                throw new \RuntimeException('Legacy migration plan raw_rows must contain objects.');
+            }
+        }
+        foreach ($archivedItems as $archivedItem) {
+            if (!is_string($archivedItem)) {
+                throw new \RuntimeException('Legacy migration plan archived_items must contain strings.');
+            }
         }
 
+        /** @var array{format:string,version:int,created_at:string,source_state:string,row_count:int,raw_rows:list<array<string,mixed>>,shell_groups:array<string,mixed>,archived_items:list<string>,sha256:string} $payload */
         return $payload;
     }
 
-    /** @param array<string, mixed> $payload @param array<string, mixed> $livePlan */
+    /**
+     * @param array<string, mixed> $payload
+     * @param array<string, mixed> $livePlan
+     */
     private function assertPlanStillMatchesDatabase(array $payload, array $livePlan): void
     {
         if (($livePlan['state'] ?? null) !== 'legacy') {
@@ -202,7 +240,14 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
             "SELECT name FROM sqlite_schema WHERE type = 'view' AND sql IS NOT NULL AND lower(sql) LIKE '%navigation_item%'",
         )->fetchFirstColumn();
         if ([] !== $views) {
-            throw new \RuntimeException('Views reference legacy navigation_item: '.implode(', ', array_map('strval', $views)).'.');
+            $viewNames = [];
+            foreach ($views as $view) {
+                if (!is_string($view)) {
+                    throw new \RuntimeException('SQLite returned a non-string legacy view name.');
+                }
+                $viewNames[] = $view;
+            }
+            throw new \RuntimeException('Views reference legacy navigation_item: '.implode(', ', $viewNames).'.');
         }
 
         $tables = $connection->executeQuery(
@@ -210,7 +255,9 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
         )->fetchFirstColumn();
         $foreignKeyDependents = [];
         foreach ($tables as $table) {
-            $table = (string) $table;
+            if (!is_string($table)) {
+                throw new \RuntimeException('SQLite returned a non-string table name.');
+            }
             foreach ($connection->executeQuery('PRAGMA foreign_key_list('.$this->quoteSqliteIdentifier($table).')')->fetchAllAssociative() as $foreignKey) {
                 if ('navigation_item' === ($foreignKey['table'] ?? null)) {
                     $foreignKeyDependents[] = $table;
@@ -289,7 +336,10 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
         }
     }
 
-    /** @param list<object> $metadata @param list<array{name:string,type:string,sql:string}> $legacySchemaObjects */
+    /**
+     * @param list<ClassMetadata<object>>                     $metadata
+     * @param list<array{name:string,type:string,sql:string}> $legacySchemaObjects
+     */
     private function restoreLegacySchema(array $metadata, array $legacySchemaObjects): bool
     {
         $connection = $this->entityManager->getConnection();

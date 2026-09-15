@@ -29,10 +29,12 @@ final class NavigationManifestWriteCommand extends Command
             $this->snapshotFileService->write($path, $this->snapshotService->create());
         } catch (\Throwable $exception) {
             $output->writeln('<error>'.$exception->getMessage().'</error>');
+
             return Command::FAILURE;
         }
 
         $output->writeln('<info>Navigation install manifest written: '.$path.'</info>');
+
         return Command::SUCCESS;
     }
 }

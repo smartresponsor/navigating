@@ -43,10 +43,6 @@ final readonly class NavigationRuntimeActivationProvideService implements Naviga
         $normalized = [];
 
         foreach ($tokens as $token) {
-            if (!is_string($token)) {
-                continue;
-            }
-
             $token = strtolower(trim($token));
 
             if ('' !== $token) {

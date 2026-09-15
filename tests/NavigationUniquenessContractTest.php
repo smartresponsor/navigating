@@ -16,10 +16,10 @@ final class NavigationUniquenessContractTest extends TestCase
         $itemRepository = self::read('src/Repository/NavigationItemRepository.php');
         $service = self::read('src/Service/Navigation/Persistence/NavigationEntityUniquenessService.php');
 
-        self::assertStringContainsString("uniq_navigation_menu_key", $menuEntity);
-        self::assertStringContainsString("uniq_navigation_menu_slug", $menuEntity);
-        self::assertStringContainsString("uniq_navigation_item_menu_key", $itemEntity);
-        self::assertStringContainsString("uniq_navigation_item_menu_slug", $itemEntity);
+        self::assertStringContainsString('uniq_navigation_menu_key', $menuEntity);
+        self::assertStringContainsString('uniq_navigation_menu_slug', $menuEntity);
+        self::assertStringContainsString('uniq_navigation_item_menu_key', $itemEntity);
+        self::assertStringContainsString('uniq_navigation_item_menu_slug', $itemEntity);
 
         self::assertStringContainsString('existsOtherWithMenuKey', $menuRepository);
         self::assertStringContainsString('existsOtherWithSlug', $menuRepository);

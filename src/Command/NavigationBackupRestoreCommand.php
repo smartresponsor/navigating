@@ -35,12 +35,20 @@ final class NavigationBackupRestoreCommand extends Command
     {
         if ([] !== $this->menuRepository->findAll() && true !== $input->getOption('force')) {
             $output->writeln('<error>Navigation database is not empty. Re-run with --force to restore this backup.</error>');
+
             return Command::FAILURE;
         }
 
-        $path = $this->absolutePath((string) $input->getArgument('path'));
+        $pathArgument = $input->getArgument('path');
+        if (!is_string($pathArgument) || '' === trim($pathArgument)) {
+            $output->writeln('<error>Navigation backup path must be a non-empty string.</error>');
+
+            return Command::FAILURE;
+        }
+        $path = $this->absolutePath($pathArgument);
         if (!is_file($path)) {
             $output->writeln('<error>Navigation backup file not found: '.$path.'</error>');
+
             return Command::FAILURE;
         }
 
@@ -53,13 +61,16 @@ final class NavigationBackupRestoreCommand extends Command
             if (!is_array($snapshot)) {
                 throw new \RuntimeException('Navigation backup must decode to an object.');
             }
+            /** @var array<string, mixed> $snapshot */
             $count = $this->snapshotService->restore($snapshot);
         } catch (\Throwable $exception) {
             $output->writeln('<error>'.$exception->getMessage().'</error>');
+
             return Command::FAILURE;
         }
 
         $output->writeln(sprintf('<info>Restored %d navigation menus from %s.</info>', $count, $path));
+
         return Command::SUCCESS;
     }
 
@@ -69,6 +80,7 @@ final class NavigationBackupRestoreCommand extends Command
         if (str_starts_with($path, '/') || preg_match('/^[A-Za-z]:[\\\\\/]/', $path)) {
             return $path;
         }
+
         return $this->projectDir.'/'.$path;
     }
 }

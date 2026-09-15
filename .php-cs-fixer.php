@@ -25,12 +25,15 @@ $config
     ->setRiskyAllowed(true)
     ->setUsingCache(true)
     ->setCacheFile(__DIR__.'/var/.php-cs-fixer.cache')
+    ->setLineEnding("\r\n")
     ->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => true,
 
         // keep strict_types
         'declare_strict_types' => true,
+        'phpdoc_to_comment' => false,
+        'fopen_flags' => false,
 
         // ok to delete unused imports
         'no_unused_imports' => true,

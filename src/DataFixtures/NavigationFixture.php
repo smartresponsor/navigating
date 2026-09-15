@@ -41,7 +41,7 @@ final class NavigationFixture extends Fixture implements FixtureGroupInterface
             if (!is_array($manifest)) {
                 throw new \RuntimeException('Navigating install manifest must decode to an object.');
             }
-
+            /** @var array<string, mixed> $manifest */
             $this->snapshotService->restore($manifest);
 
             return;

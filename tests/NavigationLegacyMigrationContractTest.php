@@ -32,7 +32,7 @@ final class NavigationLegacyMigrationContractTest extends TestCase
         self::assertStringContainsString('assertNoExternalSqliteDependencies', $upgrade);
         self::assertStringContainsString('captureLegacySchemaObjects', $upgrade);
         self::assertStringContainsString('dropLegacySchemaObjects', $upgrade);
-        self::assertStringContainsString("PRAGMA foreign_keys = OFF", $upgrade);
+        self::assertStringContainsString('PRAGMA foreign_keys = OFF', $upgrade);
         self::assertStringContainsString('PRAGMA foreign_key_check', $upgrade);
         self::assertStringContainsString('restoreForeignKeyPragma', $upgrade);
         self::assertStringContainsString("type IN ('index', 'trigger')", $upgrade);

@@ -42,11 +42,17 @@ final class NavigationDatabaseUpdateCommand extends Command
 
         $configuration->setSchemaAssetsFilter(
             static function (mixed $asset): bool {
-                $name = is_string($asset)
-                    ? $asset
-                    : (method_exists($asset, 'getObjectName')
-                        ? $asset->getObjectName()->toString()
-                        : (method_exists($asset, 'getName') ? $asset->getName() : ''));
+                if (is_string($asset)) {
+                    return isset(self::OWNED_TABLES[$asset]);
+                }
+                if (!is_object($asset)) {
+                    return false;
+                }
+
+                $name = method_exists($asset, 'getName') ? $asset->getName() : null;
+                if (!is_string($name)) {
+                    return false;
+                }
 
                 return isset(self::OWNED_TABLES[$name]);
             },

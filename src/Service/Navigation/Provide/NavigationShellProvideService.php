@@ -75,7 +75,11 @@ final readonly class NavigationShellProvideService implements NavigationShellPro
         ];
     }
 
-    /** @return array<string, NavigationGroupView> */
+    /**
+     * @param array<string, mixed> $config
+     *
+     * @return array<string, NavigationGroupView>
+     */
     private function emptyCanonicalGroups(array $config): array
     {
         $groups = [];
@@ -111,9 +115,7 @@ final readonly class NavigationShellProvideService implements NavigationShellPro
         $databaseGroups = $databaseConfig['shell_groups'] ?? null;
 
         if (!is_array($databaseGroups) || [] === $databaseGroups) {
-            throw new \RuntimeException(
-                'Navigation database contains no enabled menus. Bootstrap it with "php bin/console navigation:database:import-config" or create a menu in EasyAdmin.',
-            );
+            throw new \RuntimeException('Navigation database contains no enabled menus. Bootstrap it with "php bin/console navigation:database:import-config" or create a menu in EasyAdmin.');
         }
 
         $config = $this->navigationConfig;

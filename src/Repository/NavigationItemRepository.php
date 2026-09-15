@@ -56,7 +56,8 @@ final class NavigationItemRepository extends ServiceEntityRepository
     /** @return list<NavigationItem> */
     public function findEnabledByMenu(NavigationMenu $menu): array
     {
-        return $this->createQueryBuilder('item')
+        /** @var list<NavigationItem> $items */
+        $items = $this->createQueryBuilder('item')
             ->andWhere('item.menu = :menu')
             ->andWhere('item.enabled = :enabled')
             ->andWhere('item.archivedAt IS NULL')
@@ -67,12 +68,15 @@ final class NavigationItemRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+
+        return $items;
     }
 
     /** @return list<NavigationItem> */
     public function findEnabledByLocation(string $location): array
     {
-        return $this->createQueryBuilder('item')
+        /** @var list<NavigationItem> $items */
+        $items = $this->createQueryBuilder('item')
             ->innerJoin('item.menu', 'menu')
             ->andWhere('menu.enabled = :enabled')
             ->andWhere('menu.location = :location')
@@ -86,6 +90,8 @@ final class NavigationItemRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+
+        return $items;
     }
 
     private function existsOtherByField(NavigationMenu $menu, string $field, string $value, ?int $excludeId): bool

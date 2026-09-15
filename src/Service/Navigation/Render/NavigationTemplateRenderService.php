@@ -77,10 +77,6 @@ final readonly class NavigationTemplateRenderService implements NavigationRender
 
         $loader = $this->twig->getLoader();
 
-        if (!method_exists($loader, 'exists')) {
-            return false;
-        }
-
         try {
             return $loader->exists($candidateName);
         } catch (\Throwable) {
