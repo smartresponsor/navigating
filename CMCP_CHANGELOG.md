@@ -98,3 +98,16 @@
 - Targeted suites pass: EasyAdmin 20/20 (201 assertions), database/recovery 82/82 (565 assertions), runtime 11/11 (22 assertions).
 - `navigation:acceptance:preflight` passes container lint, W31 legacy-plan state and full PHPUnit. `navigation:acceptance:verify` passes Doctrine mapping/schema sync, install manifest verification and full PHPUnit.
 - Auto-generated `config/reference.php` environment drift was explicitly restored to HEAD and excluded from product work. Growth remains post-RC and no speculative navigation item/route changes were introduced.
+
+## Task 2026-09-16 — Navigating behavioral/browser tooling closure
+
+- Re-read Canonization rules Canon039, Canon040, Canon041 and Canon042 plus the existing Navigating dependency/canon mapping.
+- Canon041 applicability is direct because Navigating is a standalone Symfony application. The missing repository-local tooling surface was materialized with `symfony/test-pack`, `symfony/panther`, `@playwright/test`, `package.json`, and `playwright.config.js`.
+- No navigation item, route semantics, business-action execution, persistence model, or menu ownership boundary was changed.
+- Post-change `composer qa` passes 175 tests / 17462 assertions and PHPStan reports 0 errors across 95 production paths.
+- The existing valid Canon040 evidence remains below target: lines 38.23%, methods 21.25%, branches 41.55%, so Navigating is `HIGH_TEST_DEBT`. A repeat coverage run was started but the Console wrapper timed out before completion; the prior complete summary remains the authoritative evidence rather than an incomplete rerun.
+- Commit `7c8c378` (`Add Navigating browser test tooling`) was signed and pushed to `origin/cmcp/navigating-rc-20260911` before this journal closure.
+- Canon042 behavioral/UI evidence remains a separate debt surface; no test-count heuristic is used as a substitute for explicit eligible/covered inventories.
+
+Что имеем? Canon041 executable tooling is present and PHP/static regressions are green.
+Что осталось? Canon040 coverage and Canon042 explicit behavioral/UI evidence remain RC quality debt; growth UX remains post-RC.
