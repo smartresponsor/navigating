@@ -196,7 +196,12 @@ final readonly class NavigationVisibilityFilterService implements \App\Navigatin
         }
 
         if (!is_array($requestScopes) || [] === $requestScopes) {
-            $requestScopes = $this->navigationConfig['runtime_scopes']['fallback_scopes'] ?? [];
+            $runtimeScopes = $this->navigationConfig['runtime_scopes'] ?? [];
+            $runtimeScopes = is_array($runtimeScopes) ? $runtimeScopes : [];
+            $requestScopes = $runtimeScopes['fallback_scopes'] ?? [];
+        }
+        if (!is_array($requestScopes)) {
+            $requestScopes = [];
         }
 
         $normalized = [];
@@ -221,7 +226,9 @@ final readonly class NavigationVisibilityFilterService implements \App\Navigatin
         $environment = $request->attributes->get('_navigation_environment', $request->attributes->get('navigation_environment'));
 
         if (!is_string($environment) || '' === trim($environment)) {
-            $environment = $this->navigationConfig['runtime_environment']['fallback_environment'] ?? null;
+            $runtimeEnvironment = $this->navigationConfig['runtime_environment'] ?? [];
+            $runtimeEnvironment = is_array($runtimeEnvironment) ? $runtimeEnvironment : [];
+            $environment = $runtimeEnvironment['fallback_environment'] ?? null;
         }
 
         if (!is_string($environment) || '' === trim($environment)) {

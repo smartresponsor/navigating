@@ -23,8 +23,8 @@ final class NavigationConcurrencyContractTest extends TestCase
         $backup = self::read('src/Command/NavigationBackupCreateCommand.php');
         $legacyPlan = self::read('src/Command/NavigationLegacyMigrationPlanCommand.php');
 
-        self::assertStringContainsString("bin2hex(random_bytes(4))", $backup);
-        self::assertStringContainsString("bin2hex(random_bytes(4))", $legacyPlan);
+        self::assertStringContainsString('bin2hex(random_bytes(4))', $backup);
+        self::assertStringContainsString('bin2hex(random_bytes(4))', $legacyPlan);
     }
 
     public function testDoctrineEntitiesUseOrmOwnedOptimisticVersionColumns(): void

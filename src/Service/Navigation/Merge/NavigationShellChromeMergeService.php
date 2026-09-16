@@ -23,7 +23,9 @@ final readonly class NavigationShellChromeMergeService implements NavigationShel
     public function merge(array $shell, Request $request): array
     {
         $navigationPayload = $this->shellPayloadProvideService->provideShellNavigation($request);
+        /** @var array<string, mixed> $merged */
+        $merged = array_replace_recursive($shell, $navigationPayload);
 
-        return array_replace_recursive($shell, $navigationPayload);
+        return $merged;
     }
 }

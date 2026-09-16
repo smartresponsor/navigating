@@ -34,12 +34,18 @@ final class JsonArrayTextareaType extends AbstractType
                 return $json;
             },
             static function (mixed $value): array {
-                if (null === $value || '' === trim((string) $value)) {
+                if (null === $value) {
+                    return [];
+                }
+                if (!is_string($value)) {
+                    throw new TransformationFailedException('Expected JSON textarea input to be a string.');
+                }
+                if ('' === trim($value)) {
                     return [];
                 }
 
                 try {
-                    $decoded = json_decode((string) $value, true, 512, JSON_THROW_ON_ERROR);
+                    $decoded = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
                 } catch (\JsonException $exception) {
                     throw new TransformationFailedException('Invalid JSON object.', 0, $exception);
                 }
@@ -54,7 +60,7 @@ final class JsonArrayTextareaType extends AbstractType
                     }
                 }
 
-                /* @var array<string, mixed> $decoded */
+                /** @var array<string, mixed> $decoded */
                 return $decoded;
             }
         ));

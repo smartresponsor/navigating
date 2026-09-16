@@ -71,3 +71,43 @@
 - `navigation:acceptance:verify`: Doctrine mapping/schema, install manifest and 175-test suite pass; schema is in sync.
 - Changed PHP syntax check passes.
 - No navigation item, route semantics, rendering behavior or persistence schema was changed in this RC workstream.
+
+## Task 2026-09-15 - Navigating RC quality-contract closure
+
+### Reconnaissance and baseline
+
+- Baseline: branch `cmcp/navigating-rc-20260911` at `980f52b9c38d01059821dba5cc1ef63939c19be9`, clean and synchronized with upstream.
+- Read target contracts/config plus current Objecting, Cruding, Viewing, Interfacing, Gating and Canonization rules Canon018, Canon019, Canon021, Canon022, Canon029, Canon038, Canon039, Canon043 and Canon045.
+- Canon mapping confirms current namespace, CRUD exception, dependency baseline, YAML prefix and local path closure are already aligned.
+- RC-critical work: close Canon029/Canon039 by materializing PHPStan, CS and persistent PHPUnit coverage execution contracts. No navigation runtime, item, route or persistence semantics are in scope.
+- Growth work remains post-RC: richer authoring UX, diagnostics and navigation capability expansion.
+- Planned gates: Composer validate/audit, CS, PHPStan, PHPUnit/coverage, component QA, container/preflight and acceptance verification.
+
+### Implementation and verification
+
+- Added executable Canon029/Canon039 contracts: repository-owned CS check/fix, PHPStan `level: max` over production `src/`, ordinary PHPUnit execution, explicit `src/` coverage population, and persistent Xdebug path/branch coverage summary.
+- Added `phpstan/phpstan` and `phpstan/phpstan-doctrine`; Doctrine-aware analysis removed ORM lifecycle false positives without a suppression baseline.
+- PHPStan exposed and drove explicit type validation at Console, JSON, YAML, DBAL, Doctrine repository, form and legacy-migration boundaries rather than mixed casts.
+- Updated the EasyAdmin 5 dashboard menu API from removed `MenuItem::linkToCrud()` calls to controller-based `MenuItem::linkTo(...)`; corresponding surface contract tests were updated.
+- Aligned the required NavigationItem -> NavigationMenu association with the non-null Doctrine join while retaining safe transient reads.
+- Formatter policy now preserves PHPStan annotations and binary-safe recovery file modes; repository formatting converged without changing recovery semantics.
+- `composer validate --strict --check-lock` passes; `composer audit` reports no security advisories.
+- `cs:check`: 0 of 129 files require fixes. `phpstan`: 0 errors across 95 production PHP files.
+- `qa`: 175 tests / 16864 assertions pass; acceptance reruns report 175 tests / 16865 assertions after contract assertion updates.
+- `test:coverage` passes under PHP 8.4.13 + Xdebug 3.5.1 and writes `var/coverage/summary.txt`: classes 13.51%, methods 21.25%, paths 1.12%, branches 41.55%, lines 38.23%.
+- Targeted suites pass: EasyAdmin 20/20 (201 assertions), database/recovery 82/82 (565 assertions), runtime 11/11 (22 assertions).
+- `navigation:acceptance:preflight` passes container lint, W31 legacy-plan state and full PHPUnit. `navigation:acceptance:verify` passes Doctrine mapping/schema sync, install manifest verification and full PHPUnit.
+- Auto-generated `config/reference.php` environment drift was explicitly restored to HEAD and excluded from product work. Growth remains post-RC and no speculative navigation item/route changes were introduced.
+
+## Task 2026-09-16 — Navigating behavioral/browser tooling closure
+
+- Re-read Canonization rules Canon039, Canon040, Canon041 and Canon042 plus the existing Navigating dependency/canon mapping.
+- Canon041 applicability is direct because Navigating is a standalone Symfony application. The missing repository-local tooling surface was materialized with `symfony/test-pack`, `symfony/panther`, `@playwright/test`, `package.json`, and `playwright.config.js`.
+- No navigation item, route semantics, business-action execution, persistence model, or menu ownership boundary was changed.
+- Post-change `composer qa` passes 175 tests / 17462 assertions and PHPStan reports 0 errors across 95 production paths.
+- The existing valid Canon040 evidence remains below target: lines 38.23%, methods 21.25%, branches 41.55%, so Navigating is `HIGH_TEST_DEBT`. A repeat coverage run was started but the Console wrapper timed out before completion; the prior complete summary remains the authoritative evidence rather than an incomplete rerun.
+- Commit `7c8c378` (`Add Navigating browser test tooling`) was signed and pushed to `origin/cmcp/navigating-rc-20260911` before this journal closure.
+- Canon042 behavioral/UI evidence remains a separate debt surface; no test-count heuristic is used as a substitute for explicit eligible/covered inventories.
+
+Что имеем? Canon041 executable tooling is present and PHP/static regressions are green.
+Что осталось? Canon040 coverage and Canon042 explicit behavioral/UI evidence remain RC quality debt; growth UX remains post-RC.

@@ -38,7 +38,7 @@ class NavigationItem implements ObjectAuditedInterface
 
     #[ORM\ManyToOne(targetEntity: NavigationMenu::class, inversedBy: 'items')]
     #[ORM\JoinColumn(name: 'menu_id', nullable: false, onDelete: 'CASCADE')]
-    private ?NavigationMenu $menu = null;
+    private NavigationMenu $menu;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
     #[ORM\JoinColumn(name: 'parent_id', nullable: true, onDelete: 'SET NULL')]
@@ -123,7 +123,7 @@ class NavigationItem implements ObjectAuditedInterface
 
     public function getMenu(): ?NavigationMenu
     {
-        return $this->menu;
+        return $this->menu ?? null;
     }
 
     /**
@@ -131,7 +131,7 @@ class NavigationItem implements ObjectAuditedInterface
      * boundary so Symfony forms can change both fields in one submission without
      * becoming dependent on property-mapping order.
      */
-    public function setMenu(?NavigationMenu $menu): self
+    public function setMenu(NavigationMenu $menu): self
     {
         $this->menu = $menu;
 

@@ -83,8 +83,8 @@ final class NavigationLegacyMigrationPlanCommand extends Command
     }
 
     /**
-     * @param array<string, mixed> $groups
-     * @param list<mixed> $archivedItems
+     * @param array<string, mixed>       $groups
+     * @param list<mixed>                $archivedItems
      * @param list<array<string, mixed>> $rawRows
      */
     private function renderReport(OutputInterface $output, array $groups, array $archivedItems, array $rawRows): void
@@ -111,7 +111,7 @@ final class NavigationLegacyMigrationPlanCommand extends Command
         $output->writeln(sprintf('<info>Future W31 menus: %d.</info>', count($groups)));
 
         foreach ($groups as $groupKey => $groupConfig) {
-            if (!is_string($groupKey) || !is_array($groupConfig)) {
+            if (!is_array($groupConfig)) {
                 continue;
             }
 

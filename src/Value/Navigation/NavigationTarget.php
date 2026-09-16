@@ -24,14 +24,17 @@ final readonly class NavigationTarget
      */
     public static function fromArray(array $data): self
     {
-        $type = (string) ($data['type'] ?? 'path');
+        $typeValue = $data['type'] ?? null;
+        $type = is_string($typeValue) && '' !== trim($typeValue) ? trim($typeValue) : 'path';
+        $pathValue = $data['path'] ?? null;
+        $routeValue = $data['route'] ?? $data['nameEntity'] ?? null;
 
         return new self(
             type: $type,
-            path: isset($data['path']) ? (string) $data['path'] : null,
-            route: isset($data['route']) ? (string) $data['route'] : (isset($data['nameEntity']) ? (string) $data['nameEntity'] : null),
+            path: is_string($pathValue) && '' !== trim($pathValue) ? trim($pathValue) : null,
+            route: is_string($routeValue) && '' !== trim($routeValue) ? trim($routeValue) : null,
             params: self::parametersFromArray($data),
-            query: is_array($data['query'] ?? null) ? $data['query'] : [],
+            query: self::objectMap($data['query'] ?? null),
         );
     }
 
@@ -42,14 +45,32 @@ final readonly class NavigationTarget
      */
     private static function parametersFromArray(array $data): array
     {
-        if (isset($data['params']) && is_array($data['params'])) {
-            return $data['params'];
+        if (array_key_exists('params', $data)) {
+            return self::objectMap($data['params']);
         }
 
-        if (isset($data['parameters']) && is_array($data['parameters'])) {
-            return $data['parameters'];
+        if (array_key_exists('parameters', $data)) {
+            return self::objectMap($data['parameters']);
         }
 
         return [];
+    }
+
+    /** @return array<string, mixed> */
+    private static function objectMap(mixed $value): array
+    {
+        if (!is_array($value) || ([] !== $value && array_is_list($value))) {
+            return [];
+        }
+
+        $map = [];
+        foreach ($value as $key => $item) {
+            if (!is_string($key)) {
+                return [];
+            }
+            $map[$key] = $item;
+        }
+
+        return $map;
     }
 }

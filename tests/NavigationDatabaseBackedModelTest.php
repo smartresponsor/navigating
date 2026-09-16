@@ -65,7 +65,7 @@ final class NavigationDatabaseBackedModelTest extends TestCase
         $import = self::read('src/Service/Navigation/Import/NavigationConfigImportService.php');
 
         self::assertStringContainsString("unset(\$metadata['parent_key'])", $export);
-        self::assertStringContainsString("\$metadata['parent_key'] = \$item->getParent()?->getNavigationKey()", $export);
+        self::assertStringContainsString("\$metadata['parent_key'] = \$item->getParent()->getNavigationKey()", $export);
         self::assertStringContainsString("\$parentKey = \$metadata['parent_key'] ?? \$itemConfig['parent_key'] ?? null", $import);
         self::assertStringContainsString("unset(\$metadata['parent_key'])", $import);
         self::assertStringContainsString("\$itemConfig['operation'] ?? \$metadata['operation'] ?? null", $import);

@@ -33,8 +33,8 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
         self::assertStringContainsString("routeName: 'ea'", $dashboard);
         self::assertStringContainsString("#[IsGranted('ROLE_ADMIN')]", $dashboard);
         self::assertStringContainsString("redirectToRoute('ea_navigation_menu_index')", $dashboard);
-        self::assertStringContainsString("linkToCrud('Menus'", $dashboard);
-        self::assertStringContainsString("linkToCrud('Items'", $dashboard);
+        self::assertStringContainsString("linkTo(NavigationMenuCrudController::class, 'Menus'", $dashboard);
+        self::assertStringContainsString("linkTo(NavigationItemCrudController::class, 'Items'", $dashboard);
     }
 
     public function testRoutePrefixIsEnvironmentBacked(): void

@@ -79,7 +79,7 @@ final class NavigationConfigValidateService implements \App\Navigating\ServiceIn
                 $errors[] = sprintf('navigation.shell_groups.%s must be a map.', $groupKey);
                 continue;
             }
-
+            /** @var array<string, mixed> $groupConfig */
             $this->validateVisibilityNode(sprintf('navigation.shell_groups.%s', $groupKey), $groupConfig, $errors);
 
             $location = $groupConfig['location'] ?? null;
@@ -109,7 +109,7 @@ final class NavigationConfigValidateService implements \App\Navigating\ServiceIn
                     $errors[] = sprintf('navigation.shell_groups.%s.items.%s must be a map.', $groupKey, $itemKey);
                     continue;
                 }
-
+                /** @var array<string, mixed> $itemConfig */
                 if (isset($itemConfig['items']) || isset($itemConfig['sections']) || isset($itemConfig['children'])) {
                     $errors[] = sprintf('navigation.shell_groups.%s.items.%s must not contain nested items/sections/children.', $groupKey, $itemKey);
                 }
@@ -209,10 +209,6 @@ final class NavigationConfigValidateService implements \App\Navigating\ServiceIn
         }
 
         foreach (array_keys($itemConfig) as $itemConfigKey) {
-            if (!is_string($itemConfigKey)) {
-                continue;
-            }
-
             if (!in_array($itemConfigKey, ['type', 'label', 'priority', 'enabled', 'visible', 'visible_for_roles', 'visible_for_scopes', 'visible_for_environments', 'target', 'route', 'path', 'action', 'widget', 'icon', 'badge', 'metadata'], true)) {
                 $errors[] = sprintf('%s.%s is not supported.', $path, $itemConfigKey);
             }
@@ -310,6 +306,11 @@ final class NavigationConfigValidateService implements \App\Navigating\ServiceIn
         $target = $itemConfig['target'] ?? null;
 
         if (is_array($target) && [] !== $target) {
+            if (array_is_list($target)) {
+                return null;
+            }
+
+            /** @var array<string, mixed> $target */
             return $target;
         }
 
@@ -490,10 +491,6 @@ final class NavigationConfigValidateService implements \App\Navigating\ServiceIn
         }
 
         foreach (array_keys($target) as $targetKey) {
-            if (!is_string($targetKey)) {
-                continue;
-            }
-
             if (!in_array($targetKey, ['type', 'path', 'route', 'nameEntity', 'params', 'parameters', 'query'], true)) {
                 $errors[] = sprintf('%s.%s is not supported.', $path, $targetKey);
             }

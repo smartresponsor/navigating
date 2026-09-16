@@ -98,8 +98,8 @@ final class NavigationMenuScopedRuntimeTest extends TestCase
 
     /**
      * @param list<\App\Navigating\Value\Navigation\NavigationShellGroup> $groups
-     * @param array<string, mixed> $config
-     * @param list<string> $roles
+     * @param array<string, mixed>                                        $config
+     * @param list<string>                                                $roles
      *
      * @return list<\App\Navigating\Value\Navigation\NavigationShellGroup>
      */

@@ -36,6 +36,7 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+/** @extends AbstractCrudController<NavigationItem> */
 #[IsGranted('ROLE_ADMIN')]
 final class NavigationItemCrudController extends AbstractCrudController
 {
@@ -246,10 +247,6 @@ final class NavigationItemCrudController extends AbstractCrudController
 
     public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
-        if (!$entityInstance instanceof NavigationItem) {
-            throw new \InvalidArgumentException('NavigationItemCrudController can update only NavigationItem entities.');
-        }
-
         $context = $this->adminContextProvider->getContext();
         $expectedVersion = $context?->getRequest()->attributes->get(self::EXPECTED_VERSION_FIELD);
         if (!is_int($expectedVersion) || $expectedVersion < 1) {
@@ -260,6 +257,7 @@ final class NavigationItemCrudController extends AbstractCrudController
         parent::updateEntity($entityManager, $entityInstance);
     }
 
+    /** @param AdminContext<NavigationItem> $context */
     public function archiveItem(AdminContext $context, EntityManagerInterface $entityManager): RedirectResponse
     {
         $item = $this->resolveNavigationItem($context);
@@ -275,6 +273,7 @@ final class NavigationItemCrudController extends AbstractCrudController
         return $this->redirectToRoute('ea_navigation_item_index');
     }
 
+    /** @param AdminContext<NavigationItem> $context */
     public function restoreItem(AdminContext $context, EntityManagerInterface $entityManager): RedirectResponse
     {
         $item = $this->resolveNavigationItem($context);
@@ -290,13 +289,19 @@ final class NavigationItemCrudController extends AbstractCrudController
         return $this->redirectToRoute('ea_navigation_item_index');
     }
 
+    /** @param AdminContext<NavigationItem> $context */
     public function duplicateItem(AdminContext $context, EntityManagerInterface $entityManager): RedirectResponse
     {
         $item = $this->resolveNavigationItem($context);
         $this->assertStateChangeRequest($context, $item, 'duplicateItem');
+        $menu = $item->getMenu();
+        if (null === $menu) {
+            throw new \LogicException('Persisted navigation item is missing its required menu association.');
+        }
+
         $token = date('YmdHis').'-'.bin2hex(random_bytes(5));
         $copy = (new NavigationItem())
-            ->setMenu($item->getMenu())
+            ->setMenu($menu)
             ->setParent($item->getParent())
             ->setNavigationKey($this->appendWithinLimit($item->getNavigationKey(), '.copy.'.$token, 160))
             ->setLabel($this->appendWithinLimit($item->getLabel(), ' copy', 140))
@@ -328,6 +333,7 @@ final class NavigationItemCrudController extends AbstractCrudController
         return $this->redirectToRoute('ea_navigation_item_index');
     }
 
+    /** @param AdminContext<NavigationItem> $context */
     private function assertStateChangeRequest(AdminContext $context, NavigationItem $item, string $actionName): void
     {
         $request = $context->getRequest();
@@ -347,10 +353,11 @@ final class NavigationItemCrudController extends AbstractCrudController
         }
     }
 
+    /** @param AdminContext<NavigationItem> $context */
     private function resolveNavigationItem(AdminContext $context): NavigationItem
     {
         $entity = $context->getEntity();
-        $instance = null === $entity ? null : $entity->getInstance();
+        $instance = $entity->getInstance();
 
         if (!$instance instanceof NavigationItem) {
             throw $this->createNotFoundException('Navigation item was not resolved for the EasyAdmin action.');

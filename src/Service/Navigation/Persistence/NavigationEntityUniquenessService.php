@@ -41,20 +41,12 @@ final readonly class NavigationEntityUniquenessService
         }
 
         if ($this->itemRepository->existsOtherWithNavigationKey($menu, $entity->getNavigationKey(), $entity->getId())) {
-            throw new \DomainException(sprintf(
-                'Navigation item key "%s" is already in use in menu "%s".',
-                $entity->getNavigationKey(),
-                $menu->getMenuKey(),
-            ));
+            throw new \DomainException(sprintf('Navigation item key "%s" is already in use in menu "%s".', $entity->getNavigationKey(), $menu->getMenuKey()));
         }
 
         $slug = $entity->getSlug();
         if (null !== $slug && $this->itemRepository->existsOtherWithSlug($menu, $slug, $entity->getId())) {
-            throw new \DomainException(sprintf(
-                'Navigation item slug "%s" is already in use in menu "%s".',
-                $slug,
-                $menu->getMenuKey(),
-            ));
+            throw new \DomainException(sprintf('Navigation item slug "%s" is already in use in menu "%s".', $slug, $menu->getMenuKey()));
         }
     }
 }

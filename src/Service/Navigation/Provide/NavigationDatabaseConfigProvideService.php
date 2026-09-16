@@ -91,7 +91,7 @@ final readonly class NavigationDatabaseConfigProvideService implements Navigatio
         $metadata['operation'] ??= $item->getOperation();
 
         if (null !== $item->getParent()) {
-            $metadata['parent_key'] = $item->getParent()?->getNavigationKey();
+            $metadata['parent_key'] = $item->getParent()->getNavigationKey();
         }
 
         $config = [

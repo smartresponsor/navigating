@@ -15,7 +15,7 @@ final class NavigationLegacySqliteLifecycleTest extends TestCase
         $connection->executeStatement('CREATE TABLE navigation_item (id INTEGER PRIMARY KEY AUTOINCREMENT, navigation_key VARCHAR(160) NOT NULL)');
         $connection->executeStatement('CREATE INDEX idx_navigation_item_route_name ON navigation_item (navigation_key)');
         $connection->executeStatement('CREATE TABLE navigation_audit (item_id INTEGER NOT NULL)');
-        $connection->executeStatement("CREATE TRIGGER trg_navigation_item_insert AFTER INSERT ON navigation_item BEGIN INSERT INTO navigation_audit(item_id) VALUES (NEW.id); END");
+        $connection->executeStatement('CREATE TRIGGER trg_navigation_item_insert AFTER INSERT ON navigation_item BEGIN INSERT INTO navigation_audit(item_id) VALUES (NEW.id); END');
         $connection->executeStatement("INSERT INTO navigation_item (navigation_key) VALUES ('legacy_item')");
 
         $connection->beginTransaction();

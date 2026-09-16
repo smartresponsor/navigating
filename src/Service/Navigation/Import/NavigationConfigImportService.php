@@ -41,7 +41,7 @@ final readonly class NavigationConfigImportService
                 if (!is_string($menuKey) || '' === trim($menuKey) || !is_array($groupConfig)) {
                     throw new \InvalidArgumentException('Navigation menu keys must be non-empty strings with object configuration.');
                 }
-
+                /** @var array<string, mixed> $groupConfig */
                 $this->importGroup(trim($menuKey), $groupConfig);
             }
 
@@ -72,9 +72,9 @@ final readonly class NavigationConfigImportService
             ->setVisibleForRoles($this->stringList($groupConfig['visible_for_roles'] ?? []))
             ->setVisibleForScopes($this->stringList($groupConfig['visible_for_scopes'] ?? []))
             ->setVisibleForEnvironments($this->stringList($groupConfig['visible_for_environments'] ?? []))
-            ->setPriority((int) ($groupConfig['priority'] ?? 100))
+            ->setPriority($this->intValue($groupConfig['priority'] ?? null, 100))
             ->setEnabled((bool) ($groupConfig['enabled'] ?? true))
-            ->setMetadata(is_array($groupConfig['metadata'] ?? null) ? $groupConfig['metadata'] : []);
+            ->setMetadata($this->objectValue($groupConfig['metadata'] ?? null, 'navigation menu metadata'));
 
         $this->entityManager->persist($menu);
 
@@ -90,9 +90,10 @@ final readonly class NavigationConfigImportService
             if (!is_string($itemKey) || '' === trim($itemKey) || !is_array($itemConfig)) {
                 throw new \InvalidArgumentException(sprintf('Navigation items in menu "%s" must use non-empty string keys with object configuration.', $menuKey));
             }
+            /** @var array<string, mixed> $itemConfig */
             $itemKey = trim($itemKey);
 
-            $metadata = is_array($itemConfig['metadata'] ?? null) ? $itemConfig['metadata'] : [];
+            $metadata = $this->objectValue($itemConfig['metadata'] ?? null, 'navigation item metadata');
             $parentKey = $metadata['parent_key'] ?? $itemConfig['parent_key'] ?? null;
             unset($metadata['parent_key']);
 
@@ -107,7 +108,7 @@ final readonly class NavigationConfigImportService
                 ->setVisibleForRoles($this->stringList($itemConfig['visible_for_roles'] ?? []))
                 ->setVisibleForScopes($this->stringList($itemConfig['visible_for_scopes'] ?? []))
                 ->setVisibleForEnvironments($this->stringList($itemConfig['visible_for_environments'] ?? []))
-                ->setPosition((int) ($itemConfig['priority'] ?? 100))
+                ->setPosition($this->intValue($itemConfig['priority'] ?? null, 100))
                 ->setEnabled((bool) ($itemConfig['enabled'] ?? true))
                 ->setMetadata($metadata);
 
@@ -144,7 +145,7 @@ final readonly class NavigationConfigImportService
                 }
 
                 $item->setRouteName($route);
-                $item->setRouteParameters(is_array($target['params'] ?? null) ? $target['params'] : []);
+                $item->setRouteParameters($this->objectValue($target['params'] ?? null, 'navigation route params'));
                 $item->setPath(null);
 
                 return;
@@ -173,7 +174,7 @@ final readonly class NavigationConfigImportService
 
         if (null !== $route) {
             $item->setRouteName($route)
-                ->setRouteParameters(is_array($itemConfig['params'] ?? null) ? $itemConfig['params'] : [])
+                ->setRouteParameters($this->objectValue($itemConfig['params'] ?? null, 'navigation route params'))
                 ->setPath(null);
 
             return;
@@ -191,6 +192,7 @@ final readonly class NavigationConfigImportService
     private function slugify(string $value): string
     {
         $value = preg_replace('/[^a-z0-9]+/', '-', strtolower(trim($value))) ?? '';
+
         return trim($value, '-');
     }
 
@@ -202,6 +204,35 @@ final readonly class NavigationConfigImportService
     private function nullableString(mixed $value): ?string
     {
         return is_string($value) && '' !== trim($value) ? trim($value) : null;
+    }
+
+    private function intValue(mixed $value, int $fallback): int
+    {
+        if (null === $value) {
+            return $fallback;
+        }
+        if (is_int($value)) {
+            return $value;
+        }
+        if (is_string($value) && preg_match('/^-?\\d+$/', trim($value))) {
+            return (int) trim($value);
+        }
+
+        throw new \InvalidArgumentException('Navigation numeric configuration values must be integers.');
+    }
+
+    /** @return array<string, mixed> */
+    private function objectValue(mixed $value, string $field): array
+    {
+        if (null === $value) {
+            return [];
+        }
+        if (!is_array($value) || ([] !== $value && array_is_list($value))) {
+            throw new \InvalidArgumentException(sprintf('%s must be an object-shaped map.', ucfirst($field)));
+        }
+
+        /** @var array<string, mixed> $value */
+        return $value;
     }
 
     /** @return list<string> */
@@ -216,6 +247,7 @@ final readonly class NavigationConfigImportService
                 $values[] = trim($item);
             }
         }
+
         return $values;
     }
 }

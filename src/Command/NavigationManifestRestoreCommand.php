@@ -31,12 +31,14 @@ final class NavigationManifestRestoreCommand extends Command
     {
         if ([] !== $this->menuRepository->findAll() && true !== $input->getOption('force')) {
             $output->writeln('<error>Navigation database is not empty. Re-run with --force to restore the install manifest.</error>');
+
             return Command::FAILURE;
         }
 
         $path = dirname(__DIR__, 2).'/resources/navigation/navigation.install.json';
         if (!is_file($path)) {
             $output->writeln('<error>Navigation install manifest does not exist. Run navigation:manifest:write first.</error>');
+
             return Command::FAILURE;
         }
 
@@ -49,13 +51,16 @@ final class NavigationManifestRestoreCommand extends Command
             if (!is_array($snapshot)) {
                 throw new \RuntimeException('Navigation install manifest must decode to an object.');
             }
+            /** @var array<string, mixed> $snapshot */
             $count = $this->snapshotService->restore($snapshot);
         } catch (\Throwable $exception) {
             $output->writeln('<error>'.$exception->getMessage().'</error>');
+
             return Command::FAILURE;
         }
 
         $output->writeln(sprintf('<info>Restored %d navigation menus from install manifest.</info>', $count));
+
         return Command::SUCCESS;
     }
 }

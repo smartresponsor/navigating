@@ -25,13 +25,7 @@ final readonly class NavigationConfigCacheService
     public function remember(\Closure $loader): array
     {
         try {
-            $value = $this->cache->get(self::CACHE_KEY, static fn (): array => $loader());
-
-            if (is_array($value)) {
-                return $value;
-            }
-
-            $this->logger->warning('Navigation cache returned a non-array payload; falling back to the database loader.');
+            return $this->cache->get(self::CACHE_KEY, static fn (): array => $loader());
         } catch (\Throwable $exception) {
             $this->logger->warning('Navigation cache read/write failed; falling back to the database loader.', [
                 'exception' => $exception,

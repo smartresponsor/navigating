@@ -36,6 +36,7 @@ final class NavigationDatabaseImportCommand extends Command
     {
         if ([] !== $this->menuRepository->findAll() && true !== $input->getOption('force')) {
             $output->writeln('<error>Navigation database is not empty. Re-run with --force only when an intentional reset is required.</error>');
+
             return Command::FAILURE;
         }
 
@@ -43,10 +44,12 @@ final class NavigationDatabaseImportCommand extends Command
             $count = $this->importService->replaceFromConfig($this->navigationConfig);
         } catch (\Throwable $exception) {
             $output->writeln('<error>'.$exception->getMessage().'</error>');
+
             return Command::FAILURE;
         }
 
         $output->writeln(sprintf('<info>Imported %d navigation menus into Doctrine storage.</info>', $count));
+
         return Command::SUCCESS;
     }
 }
