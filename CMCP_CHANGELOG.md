@@ -111,3 +111,35 @@
 
 Что имеем? Canon041 executable tooling is present and PHP/static regressions are green.
 Что осталось? Canon040 coverage and Canon042 explicit behavioral/UI evidence remain RC quality debt; growth UX remains post-RC.
+
+## Task 2026-09-20 — Navigating production-package RC hardening
+
+### Reconnaissance and baseline
+
+- Workspace: `D:\\PhpstormProjects\\www\\Navigating`; branch baseline `cmcp/navigating-rc-20260911` at `b0871340b98afff835eb963a04a38eaa9dadde55`, clean and synchronized with upstream.
+- Read target `AGENTS.md`, `README.md`, `composer.json`, all repository Markdown documentation, current source/test/config inventory, nested EasyAdmin controller rules, and the mandatory Objecting, Cruding, Viewing, Interfacing, Gating and Canonization contracts. Root `MANIFEST.json` is absent in Navigating.
+- Code Memory scope resolution reports no declared repository-local memory scope script; graph planning therefore resolves only the active Navigating project plus the umbrella workspace as navigation-only context.
+- Market/OSS baseline: mature Symfony navigation implementations separate menu composition/state from rendering and from business/CRUD execution. Navigating already follows that ownership split through Doctrine-backed navigation intent, view-model projection, Viewing/Interfacing boundaries, and Cruding ownership of generic CRUD.
+- Canon mapping consulted directly: Canon007 (literal PSR-4 identity), Canon013 (no placeholder production logic), Canon018 (Composer component/subject identity), Canon019 (no competing layer taxonomy), Canon020 (typed Symfony role roots), Canon021 (Cruding owns generic CRUD; EasyAdmin exception), Canon022 (standalone dependency baseline), Canon023 (development path symlinks), Canon024 (production packaged dependencies), Canon026 (PHP/Symfony baseline), Canon031 (PHPDoc coverage), Canon032 (bundle registration), Canon033 (dev/prod manifest identity parity), Canon035 (stable container reuse), Canon036 (documentation producer ownership), Canon038 (subject-prefixed component YAML), Canon039-042 (PHP and behavioral/UI testing contracts), and Canon043 (local development `dev-master` identity).
+- Target mapping: `navigating/navigation` maps to `App\\Navigating\\` and `Navigation*`; all mandatory first-party dependencies are direct `dev-master` symlinked path repositories in development. EasyAdmin controllers remain an explicit nested compatibility exception and are not renamed in isolation. The two diagnostic `placeholder` hits are Symfony Form options, not Canon013 placeholder logic.
+- Material RC gap selected: Canon024/Canon033 production packaging was not represented because `composer.prod.json` was absent. A second proven debt item is the unreferenced pre-W22 `src/Value/Navigation/NavigationItemView.php`; deletion is desired but the current write policy rejects file deletion, so it is not mutated in this run.
+- RC-critical workstream: materialize and regression-test the production Composer contract, validate package identity/dependency posture, then run repository quality/acceptance gates. Growth workstream: richer authoring UX, diagnostics, browser workflows and capability uplift remain post-RC; Canon040/Canon042 quality debt remains independently measurable and must not be disguised by test counts.
+- Planned gates: Composer dev/prod validation, changed-PHP lint, CS, PHPStan, PHPUnit/QA, Symfony acceptance preflight/verify, coverage evidence, npm/Playwright contract, Git diff/status and remote synchronization.
+
+### Implementation and verification
+
+- Added `composer.prod.json` with the same `navigating/navigation` package type, `App\\Navigating\\ => src/` identity, PHP/Symfony baseline, bundle metadata and direct platform dependencies as development, while removing all local `path`/symlink repositories. Added `validate:prod` as the reproducible production-manifest gate.
+- Added an acceptance contract test that verifies dev/prod identity parity, absence of production repositories, and the full mandatory Objecting/Cruding/Collectioning/Tabling/Viewing/Interfacing dependency contour.
+- Added `package-lock.json` so the repository-local Playwright toolchain is reproducible and auditable. `npm audit --audit-level=high` reports zero vulnerabilities.
+- Corrected CS scope so Symfony's generated `config/reference.php` is excluded from source formatting; the file itself was not rewritten as product code.
+- `composer validate --strict --check-lock`: pass. `composer validate --strict --no-check-all composer.prod.json`: pass. Composer audit: no advisories.
+- Changed PHP syntax: pass. `cs:check`: 0/128 fixable files. PHPStan: 0 errors across 95 production paths. PHPUnit/QA: 176 tests / 17,474 assertions pass.
+- Acceptance preflight: container lint, W31 legacy-plan and full QA pass. Acceptance verify: Doctrine mapping valid, database schema synchronized, install manifest current, full QA pass.
+- Coverage evidence regenerated on 2026-09-20: lines 38.23%, methods 21.25%, branches 41.55%. Canon040 therefore remains `HIGH_TEST_DEBT`; the current RC work does not mislabel passing test counts as adequate coverage.
+- `npm test` executes the declared Playwright command successfully but currently has no E2E tests (`--pass-with-no-tests`). Canon042 behavioral/UI evidence remains missing and is retained as explicit RC quality debt rather than fabricated coverage.
+- Post-change RC diagnostic still reports only the two known Canon013 false positives caused by legitimate Symfony Form `placeholder` options. The diagnostic is otherwise blocked only because the task-owned worktree is intentionally uncommitted at that checkpoint.
+- Proven obsolete `src/Value/Navigation/NavigationItemView.php` remains unreferenced, but the active write policy explicitly rejected file deletion. No destructive workaround was attempted.
+
+Что имеем? Production package resolution is now explicit, reproducible and regression-tested; Composer, static analysis, PHPUnit, Symfony/Doctrine acceptance and npm audit are green.
+Что осталось? Commit/push the task-owned change set. Canon040 and Canon042 remain genuine follow-on RC quality debt; the obsolete duplicate view type requires a deletion-capable run.
+
