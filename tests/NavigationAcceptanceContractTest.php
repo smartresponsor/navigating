@@ -28,6 +28,30 @@ final class NavigationAcceptanceContractTest extends TestCase
         self::assertArrayNotHasKey('psr/cache', $require);
     }
 
+    public function testProductionComposerManifestPreservesIdentityWithoutLocalPathRepositories(): void
+    {
+        $development = $this->composer();
+        $production = json_decode(self::read('composer.prod.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::assertIsArray($production);
+
+        foreach (['name', 'type', 'autoload'] as $identityKey) {
+            self::assertSame($development[$identityKey] ?? null, $production[$identityKey] ?? null, $identityKey);
+        }
+
+        self::assertSame($development['require']['php'] ?? null, $production['require']['php'] ?? null);
+        self::assertSame(
+            $development['extra']['symfony']['require'] ?? null,
+            $production['extra']['symfony']['require'] ?? null,
+        );
+        self::assertArrayNotHasKey('repositories', $production);
+
+        $productionRequire = $production['require'] ?? [];
+        self::assertIsArray($productionRequire);
+        foreach (['objecting/object', 'cruding/crud', 'collectioning/collection', 'tabling/table', 'viewing/view', 'interfacing/interface'] as $package) {
+            self::assertSame('dev-master', $productionRequire[$package] ?? null, $package);
+        }
+    }
+
     public function testStandaloneDoctrineMapsNavigatingAndObjectingEmbeddables(): void
     {
         $doctrine = self::read('config/standalone/doctrine.yaml');

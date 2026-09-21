@@ -104,6 +104,7 @@
   "scripts": {
     "cs:check": "@php vendor/bin/php-cs-fixer fix --dry-run --diff",
     "cs:fix": "@php vendor/bin/php-cs-fixer fix",
+    "validate:prod": "composer validate --strict --no-check-all composer.prod.json",
     "phpstan": "@php vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=1G",
     "test:coverage": [
       "@php -r \"if (!is_dir('var/coverage')) { mkdir('var/coverage', 0777, true); }\"",

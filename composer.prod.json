@@ -1,0 +1,75 @@
+{
+  "name": "navigating/navigation",
+  "description": "Navigating process app",
+  "type": "symfony-bundle",
+  "license": "proprietary",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": "^8.4",
+    "collectioning/collection": "dev-master",
+    "cruding/crud": "dev-master",
+    "doctrine/dbal": "^4.0",
+    "doctrine/doctrine-bundle": "^3.2",
+    "doctrine/orm": "^3.3",
+    "easycorp/easyadmin-bundle": "^5.0",
+    "interfacing/interface": "dev-master",
+    "objecting/object": "dev-master",
+    "psr/log": "^3.0",
+    "viewing/view": "dev-master",
+    "symfony/cache-contracts": "^3.6",
+    "symfony/config": "^8.1",
+    "symfony/console": "^8.1",
+    "symfony/dependency-injection": "^8.1",
+    "symfony/form": "^8.1",
+    "symfony/framework-bundle": "^8.1",
+    "symfony/http-foundation": "^8.1",
+    "symfony/http-kernel": "^8.1",
+    "symfony/routing": "^8.1",
+    "symfony/security-bundle": "^8.1",
+    "symfony/security-csrf": "^8.1",
+    "symfony/twig-bundle": "^8.1",
+    "tabling/table": "dev-master",
+    "symfony/yaml": "^8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\Navigating\\": "src/"
+    }
+  },
+  "scripts": {
+    "navigation:backup": "@php bin/console navigation:backup:create",
+    "navigation:manifest:restore": "@php bin/console navigation:manifest:restore --force",
+    "navigation:manifest:write": "@php bin/console navigation:manifest:write",
+    "navigation:rebuild": "@php bin/console navigation:database:rebuild --force",
+    "navigation:schema:safe": [
+      "@navigation:backup",
+      "@navigation:schema:update"
+    ],
+    "navigation:schema:update": "@php bin/console navigation:database:update"
+  },
+  "extra": {
+    "symfony": {
+      "allow-contrib": false,
+      "require": "8.1.*",
+      "bundles": {
+        "App\\Navigating\\NavigatingBundle": [
+          "all"
+        ]
+      }
+    },
+    "smart-responsor": {
+      "component": "navigation",
+      "surface": "navigation",
+      "standalone": true,
+      "host_attachable": true
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": {
+      "*": "dist"
+    },
+    "sort-packages": true
+  }
+}
