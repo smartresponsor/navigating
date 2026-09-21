@@ -111,3 +111,23 @@
 
 Что имеем? Canon041 executable tooling is present and PHP/static regressions are green.
 Что осталось? Canon040 coverage and Canon042 explicit behavioral/UI evidence remain RC quality debt; growth UX remains post-RC.
+
+## Task 2026-09-20 — Navigating isolated production-package integration
+
+- Baseline: fresh branch `cmcp/navigating-production-packaging-20260920` created from current `origin/master` at `7432d71ff262c71fd152e2e9d3571931f07d478b` after identifying that cumulative PR #14 contained six historical commits / 57 files.
+- Reused only the six task-owned changes from commit `041c421`: production Composer manifest, npm lockfile, production-manifest validation script, generated-reference CS exclusion, acceptance regression test, and this CMCP journal update.
+- Canon mapping remains Canon024/Canon033 for production packaging and identity parity, with Canon039-042 quality evidence preserved separately. No navigation item, route, persistence model, or business semantics are changed.
+- RC-critical integration workstream: verify the isolated branch, push it, replace the cumulative PR with a one-commit PR, inspect mergeability/checks, and merge only when green.
+- Growth work remains post-RC. Known follow-up debt remains Canon040 executable coverage and Canon042 behavioral/UI coverage; obsolete duplicate view-type deletion remains outside this integration change.
+
+### Implementation and verification
+
+- Re-applied the production-packaging patch onto the fresh master baseline instead of rebasing or merging the historical cumulative branch.
+- Completed the existing partial Canon041 browser-tooling surface by adding the repository `test` script and `--pass-with-no-tests` execution contract; `playwright.config.js` already existed on master.
+- Fresh-master CS exposed two pre-existing formatter-only defects in `NavigationTargetResolveService.php` and `NavigationTargetResolveServiceTest.php`; local `cs:fix` corrected only those formatting issues, with no behavior change.
+- Symfony regenerated `config/reference.php` during validation; all generated drift was explicitly reversed and the file now has zero Git diff.
+- Verification on the isolated branch: Composer dev/prod validation pass; Composer audit has no advisories; PHP lint passes on all changed PHP; CS is 0/128; PHPStan reports 0 errors; PHPUnit/QA passes 178 tests / 17,491 assertions; acceptance preflight and verify pass; Doctrine mapping/schema and install manifest are current; npm audit reports 0 vulnerabilities; npm/Playwright test command succeeds.
+
+Что имеем? Изолированная ветка содержит только Navigating-owned production packaging, executable tooling closure, regression coverage and formatter-only repairs on top of current master.
+Что осталось? Signed commit, push, clean PR replacement for #14, mergeability/check inspection and merge when green.
+

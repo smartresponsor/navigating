@@ -65,6 +65,7 @@ final readonly class NavigationTargetResolveService implements NavigationTargetR
         if (null === $scheme || false === $scheme || '' === $scheme) {
             return $url;
         }
+
         return in_array(strtolower($scheme), ['http', 'https', 'mailto', 'tel'], true) ? $url : '';
     }
 

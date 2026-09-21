@@ -59,4 +59,5 @@ final class NavigationTargetResolveServiceTest extends TestCase
         self::assertSame('https://example.com/docs', $resolver->resolveUrl(new NavigationTarget(type: 'url', path: 'https://example.com/docs')));
         self::assertSame('mailto:help@example.com', $resolver->resolveUrl(new NavigationTarget(type: 'url', path: 'mailto:help@example.com')));
         self::assertSame('//cdn.example.com/app.js', $resolver->resolveUrl(new NavigationTarget(type: 'url', path: '//cdn.example.com/app.js')));
-    }}
+    }
+}
