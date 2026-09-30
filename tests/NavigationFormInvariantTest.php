@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Entity\NavigationItem;
-use App\Navigating\Entity\NavigationMenu;
+use App\Navigating\Entity\NavigationItemEntity;
+use App\Navigating\Entity\NavigationMenuEntity;
 use App\Navigating\Form\Extension\NavigationEntityInvariantTypeExtension;
-use App\Navigating\Service\Navigation\Persistence\NavigationEntityInvariantService;
+use App\Navigating\Service\Persistence\NavigationEntityInvariantService;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Forms;
@@ -16,7 +16,7 @@ final class NavigationFormInvariantTest extends TestCase
 {
     public function testInvalidMenuBecomesFormErrorInsteadOfException(): void
     {
-        $menu = (new NavigationMenu())
+        $menu = (new NavigationMenuEntity())
             ->setMenuKey('Invalid Menu')
             ->setSlug('main')
             ->setLabel('Main')
@@ -33,7 +33,7 @@ final class NavigationFormInvariantTest extends TestCase
     public function testInvalidTargetBecomesFormErrorInsteadOfException(): void
     {
         $menu = $this->menu();
-        $item = (new NavigationItem())
+        $item = (new NavigationItemEntity())
             ->setMenu($menu)
             ->setNavigationKey('vendor')
             ->setLabel('Vendor')
@@ -70,9 +70,9 @@ final class NavigationFormInvariantTest extends TestCase
         return $factory->create(FormType::class, $data);
     }
 
-    private function menu(): NavigationMenu
+    private function menu(): NavigationMenuEntity
     {
-        return (new NavigationMenu())
+        return (new NavigationMenuEntity())
             ->setMenuKey('main')
             ->setSlug('main')
             ->setLabel('Main')

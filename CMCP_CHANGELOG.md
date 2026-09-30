@@ -131,3 +131,34 @@
 Что имеем? Изолированная ветка содержит только Navigating-owned production packaging, executable tooling closure, regression coverage and formatter-only repairs on top of current master.
 Что осталось? Signed commit, push, clean PR replacement for #14, mergeability/check inspection and merge when green.
 
+## Task engine-20260930142943-navigating-043214 — Navigating canon remediation
+
+### Reconnaissance and baseline
+
+- Workspace: `D:\PhpstormProjects\www\Navigating`; branch `master` at `1f61a0aed58b499e72c9926b9dd9b29eaf42b311`, one commit ahead of `origin/master`, with pre-existing uncommitted Gating/composer/license/migration work preserved.
+- Read the target `AGENTS.md`, `README.md`, Composer manifests, package scripts, current source/config/tests/CI, the durable CanonScanning RED report, and the fresh Inspecting report for fingerprint `02ee525dfd7af83810f972b945c598cc9b28b719eba0399a9c1f1ad28c8313fa`.
+- Read the required Objecting, Cruding, Viewing, Interfacing, Gating and Canonization contracts. Normative Canonization rules consulted directly: `Canon001TechnicalRoleFirstRule.md`, `Canon004SubjectFolderPlacementRule.md`, `Canon006OneDominantTechnicalRoleRule.md`, `Canon018ComposerIdentityMappingRule.md`, `Canon020TypedSymfonyRoleRootRule.md`, `Canon025ComponentDualRuntimeModeRule.md`, `Canon030DoctrineSchemaParityRule.md`, `Canon037GeneratedReferenceArtifactRule.md`, `Canon038ConfigYamlSubjectPrefixRule.md`, `Canon045DevelopmentComposerRepositoryClosureRule.md`, `Canon047RepositoryOwnsDoctrineManagerRule.md`, `Canon052GatingIntegrationRule.md`, and `Canon055PlatformIdentityTerminologyRule.md`.
+- Target mapping: `navigating/navigation` maps to `App\Navigating\` and the `Navigation*` subject prefix; technical roles must be first; a `Navigation` directory cannot occur prematurely; Doctrine terminal entities require the `Entity` suffix; component-owned YAML uses the `navigation_` prefix; direct Doctrine manager access is Repository-owned; generated `config/reference.php` is not source; standalone mode requires `config/bundles.php`; local Composer path closure must include Viewing's Failing dependency; Gating is installed rather than copied into consumer policy state.
+- Fresh Inspecting evidence contains one high-complexity and nineteen medium maintainability/design observations. They are retained as quality evidence, but the current remediation front is the deterministic Canon RED backlog.
+- RC-critical workstream: close deterministic canon failures without changing navigation product semantics, then run Composer/static/test/Gating/Inspecting acceptance and reconcile Git safely.
+- Growth workstream: richer authoring UX, navigation diagnostics, dynamic extension points and history/recently-used capabilities remain post-RC; they do not block correctness or operability.
+- Material risks: Navigating is a sensitive menu helper; current working-tree changes and the untracked migration are pre-existing work that must be preserved and reconciled rather than overwritten. Destructive cleanup is forbidden.
+- Planned gates: Composer validation/resolution, PHP lint, CS, PHPStan, PHPUnit/targeted QA, Symfony container/Doctrine checks, Gating rescan, and post-mutation Inspecting where applicable.
+
+Что имеем? Factual baseline, canonical rule mapping, RED backlog and pre-existing work ownership are established.
+Что осталось? Apply bounded canon remediation, run deterministic acceptance, repair remaining in-scope failures, then close Git integration.
+
+### Remediation and verification
+
+- Canon001/004/006/018/020 topology was normalized to technical-role roots: singular `Controller`, role-first `Service/*` and `ServiceInterface/*`, `Provider` / `ProviderInterface`, `Value` / `Value\Context` / `Value\View`, and `Navigation*Entity` entity terminals. Namespace declarations, DI aliases, tests and config were synchronized; stale production namespaces `App\Navigating\Model\Navigation`, `App\Navigating\Service\Navigation\` and `App\Navigating\Controllers\` are absent.
+- Canon025/037/038/045/052/055 closure: standalone `config/bundles.php` exists; `config/reference.php` is untracked/ignored; component YAML names use `navigation_`; Composer dev path closure includes Failing and Gating; production Gating uses a non-path VCS repository; human-facing platform terminology is neutral.
+- Canon047 is closed by `NavigationPersistenceRepository`, the sole production owner of `EntityManagerInterface`. Commands, persistence/import/snapshot services and EasyAdmin custom actions consume repository-owned persistence primitives. EasyAdmin optimistic locking is preserved without exposing Doctrine manager dependencies outside `src/Repository`.
+- Canon030 now has executable migration parity: Doctrine Migrations Bundle is declared in development/production manifests, standalone migration config is registered, `schema:parity` runs schema validation plus migration currentness, and the migration chain contains a portable baseline followed by the PostgreSQL audit-column adoption migration.
+- Guarded migration execution registered both migrations on the existing standalone database. A separate fresh empty SQLite verification then executed both migrations (15 SQL statements), followed by GREEN `doctrine:schema:validate` and `doctrine:migrations:up-to-date`; the temporary database was removed.
+- Deterministic gates after final formatting: PHP CS Fixer 0/130 fixable; PHPStan 0 errors; PHPUnit 178/178 tests with 18,218 assertions; local Gating 9 rules, 0 failed, 0 warning (2 profile-dependent skips); `schema:parity` GREEN; development and production Composer validation GREEN; Composer audit reports no advisories.
+- Runtime wiring: managed Navigating runtime is healthy on isolated port 8001; EasyAdmin route `ea_navigation_menu_index` resolves to `App\Navigating\Controller\Admin\NavigationMenuCrudController::index()`. Browser access to the protected admin route returns expected HTTP 401 without credentials; ATTENTION screenshot evidence was written under the central `var/navigating/2026-09-30/run-19-58-31` evidence root.
+- Full asynchronous RC/Inspecting worker was requested but orchestration admitted light work only because of `ENGINE_BACKLOG_HIGH`; no heavy worker was started. Deterministic repository gates were completed independently rather than treating capacity as a repository defect.
+
+Что имеем? Canon remediation is materially implemented and deterministic code/schema/runtime gates are green; protected-browser evidence is ATTENTION only because authentication credentials were not supplied.
+Что осталось? Reconcile the large pre-existing overlapping dirty worktree for Git integration and obtain a fresh heavy Inspecting/RC report when runtime capacity admits it.
+

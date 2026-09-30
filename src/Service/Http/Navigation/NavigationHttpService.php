@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Navigating\Service\Http\Navigation;
 
-use App\Navigating\ServiceInterface\Navigation\Provide\NavigationResponseProvideServiceInterface;
-use App\Navigating\ServiceInterface\Navigation\Provide\NavigationTemplateDataProvideServiceInterface;
+use App\Navigating\ServiceInterface\Provide\NavigationResponseProvideServiceInterface;
+use App\Navigating\ServiceInterface\Provide\NavigationTemplateDataProvideServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

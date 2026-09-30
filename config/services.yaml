@@ -12,18 +12,18 @@ services:
   App\Navigating\:
     resource: '../src/'
     exclude:
-      - '../src/Controllers/'
+      - '../src/Controller/'
       - '../src/DataFixtures/'
       - '../src/DependencyInjection/'
       - '../src/Entity/'
       - '../src/Kernel/'
 
-  App\Navigating\Controllers\:
-    resource: '../src/Controllers/'
+  App\Navigating\Controller\:
+    resource: '../src/Controller/'
     tags:
       - { name: controller.service_arguments }
 
-  App\Navigating\Service\Navigation\Cache\NavigationConfigCacheService:
+  App\Navigating\Service\Cache\NavigationConfigCacheService:
     arguments:
       $cache: '@cache.app'
 
@@ -44,92 +44,92 @@ services:
   App\Navigating\EventSubscriber\NavigationEntityInvariantSubscriber:
     autoconfigure: false
     arguments:
-      $invariants: '@App\Navigating\Service\Navigation\Persistence\NavigationEntityInvariantService'
+      $invariants: '@App\Navigating\Service\Persistence\NavigationEntityInvariantService'
     tags:
       - { name: doctrine.event_subscriber }
 
-  App\Navigating\ServiceInterface\Navigation\Normalize\NavigationConfigNormalizeServiceInterface:
-    alias: App\Navigating\Service\Navigation\Normalize\NavigationConfigNormalizeService
+  App\Navigating\ServiceInterface\Normalize\NavigationConfigNormalizeServiceInterface:
+    alias: App\Navigating\Service\Normalize\NavigationConfigNormalizeService
 
-  App\Navigating\ServiceInterface\Navigation\Validate\NavigationConfigValidateServiceInterface:
-    alias: App\Navigating\Service\Navigation\Validate\NavigationConfigValidateService
+  App\Navigating\ServiceInterface\Validate\NavigationConfigValidateServiceInterface:
+    alias: App\Navigating\Service\Validate\NavigationConfigValidateService
 
-  App\Navigating\ServiceInterface\Navigation\Filter\NavigationVisibilityFilterServiceInterface:
-    alias: App\Navigating\Service\Navigation\Filter\NavigationVisibilityFilterService
+  App\Navigating\ServiceInterface\Filter\NavigationVisibilityFilterServiceInterface:
+    alias: App\Navigating\Service\Filter\NavigationVisibilityFilterService
 
-  App\Navigating\ServiceInterface\Navigation\Build\NavigationTreeBuildServiceInterface:
-    alias: App\Navigating\Service\Navigation\Build\NavigationTreeBuildService
+  App\Navigating\ServiceInterface\Build\NavigationTreeBuildServiceInterface:
+    alias: App\Navigating\Service\Build\NavigationTreeBuildService
 
-  App\Navigating\ServiceInterface\Navigation\Resolve\NavigationTargetResolveServiceInterface:
-    alias: App\Navigating\Service\Navigation\Resolve\NavigationTargetResolveService
+  App\Navigating\ServiceInterface\Resolve\NavigationTargetResolveServiceInterface:
+    alias: App\Navigating\Service\Resolve\NavigationTargetResolveService
 
-  App\Navigating\ServiceInterface\Navigation\Provide\NavigationRequestRoleProvideServiceInterface:
-    alias: App\Navigating\Service\Navigation\Provide\NavigationRequestRoleProvideService
+  App\Navigating\ServiceInterface\Provide\NavigationRequestRoleProvideServiceInterface:
+    alias: App\Navigating\Service\Provide\NavigationRequestRoleProvideService
 
-  App\Navigating\ServiceInterface\Navigation\Provide\NavigationRuntimeActivationProvideServiceInterface:
-    alias: App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService
+  App\Navigating\ServiceInterface\Provide\NavigationRuntimeActivationProvideServiceInterface:
+    alias: App\Navigating\Service\Provide\NavigationRuntimeActivationProvideService
 
-  App\Navigating\ServiceInterface\Navigation\Provide\NavigationDatabaseConfigProvideServiceInterface:
-    alias: App\Navigating\Service\Navigation\Provide\NavigationDatabaseConfigProvideService
+  App\Navigating\ServiceInterface\Provide\NavigationDatabaseConfigProvideServiceInterface:
+    alias: App\Navigating\Service\Provide\NavigationDatabaseConfigProvideService
 
-  App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService:
+  App\Navigating\Service\Provide\NavigationRuntimeActivationProvideService:
     arguments:
       $runtimeScope: '%env(default:navigation.runtime_scope_default:APP_RUNTIME_SCOPE)%'
       $runtimeEntity: '%env(default:navigation.runtime_entity_default:APP_RUNTIME_ENTITY)%'
       $runtimeActivationStrict: true
 
-  App\Navigating\ServiceInterface\Navigation\Provide\NavigationShellProvideServiceInterface:
-    alias: App\Navigating\Service\Navigation\Provide\NavigationShellProvideService
+  App\Navigating\ServiceInterface\Provide\NavigationShellProvideServiceInterface:
+    alias: App\Navigating\Service\Provide\NavigationShellProvideService
 
-  App\Navigating\ServiceInterface\Navigation\Provide\NavigationGroupProvideServiceInterface:
-    alias: App\Navigating\Service\Navigation\Provide\NavigationGroupProvideService
+  App\Navigating\ServiceInterface\Provide\NavigationGroupProvideServiceInterface:
+    alias: App\Navigating\Service\Provide\NavigationGroupProvideService
 
-  App\Navigating\ServiceInterface\Navigation\Provide\NavigationTemplateDataProvideServiceInterface:
-    alias: App\Navigating\Service\Navigation\Provide\NavigationTemplateDataProvideService
+  App\Navigating\ServiceInterface\Provide\NavigationTemplateDataProvideServiceInterface:
+    alias: App\Navigating\Service\Provide\NavigationTemplateDataProvideService
 
   navigating.template_data_provider:
-    alias: App\Navigating\Service\Navigation\Provide\NavigationTemplateDataProvideService
+    alias: App\Navigating\Service\Provide\NavigationTemplateDataProvideService
     public: true
 
-  App\Navigating\ServiceInterface\Navigation\Provide\NavigationShellPayloadProvideServiceInterface:
-    alias: App\Navigating\Service\Navigation\Provide\NavigationShellPayloadProvideService
+  App\Navigating\ServiceInterface\Provide\NavigationShellPayloadProvideServiceInterface:
+    alias: App\Navigating\Service\Provide\NavigationShellPayloadProvideService
 
   navigating.shell_payload_provider:
-    alias: App\Navigating\Service\Navigation\Provide\NavigationShellPayloadProvideService
+    alias: App\Navigating\Service\Provide\NavigationShellPayloadProvideService
     public: true
 
-  App\Navigating\ServiceInterface\Navigation\Provide\NavigationMobileShellPayloadProvideServiceInterface:
-    alias: App\Navigating\Service\Navigation\Provide\NavigationMobileShellPayloadProvideService
+  App\Navigating\ServiceInterface\Provide\NavigationMobileShellPayloadProvideServiceInterface:
+    alias: App\Navigating\Service\Provide\NavigationMobileShellPayloadProvideService
 
-  App\Navigating\ServiceInterface\Navigation\Provide\NavigationResponseProvideServiceInterface:
-    alias: App\Navigating\Service\Navigation\Provide\NavigationResponseProvideService
+  App\Navigating\ServiceInterface\Provide\NavigationResponseProvideServiceInterface:
+    alias: App\Navigating\Service\Provide\NavigationResponseProvideService
 
   navigating.response_provider:
-    alias: App\Navigating\Service\Navigation\Provide\NavigationResponseProvideService
+    alias: App\Navigating\Service\Provide\NavigationResponseProvideService
     public: true
 
-  App\Navigating\ServiceInterface\Navigation\Provide\NavigationInterfaceLocationProjectionProviderInterface:
-    alias: App\Navigating\Service\Navigation\Provide\NavigationInterfaceLocationProjectionProvider
+  App\Navigating\ProviderInterface\NavigationInterfaceLocationProjectionProviderInterface:
+    alias: App\Navigating\Provider\NavigationInterfaceLocationProjectionProvider
 
   navigating.interface_location_projection_provider:
-    class: App\Navigating\Service\Navigation\Provide\NavigationInterfaceLocationProjectionProvider
+    class: App\Navigating\Provider\NavigationInterfaceLocationProjectionProvider
     public: true
 
-  App\Navigating\ServiceInterface\Navigation\Merge\NavigationShellChromeMergeServiceInterface:
-    alias: App\Navigating\Service\Navigation\Merge\NavigationShellChromeMergeService
+  App\Navigating\ServiceInterface\Merge\NavigationShellChromeMergeServiceInterface:
+    alias: App\Navigating\Service\Merge\NavigationShellChromeMergeService
 
-  App\Navigating\ServiceInterface\Navigation\Render\NavigationRenderServiceInterface:
-    alias: App\Navigating\Service\Navigation\Render\NavigationRenderService
+  App\Navigating\ServiceInterface\Render\NavigationRenderServiceInterface:
+    alias: App\Navigating\Service\Render\NavigationRenderService
 
   navigating.renderer:
-    alias: App\Navigating\Service\Navigation\Render\NavigationTemplateRenderService
+    alias: App\Navigating\Service\Render\NavigationTemplateRenderService
     public: true
 
-  App\Navigating\ServiceInterface\Navigation\Render\NavigationTemplateRenderServiceInterface:
-    alias: App\Navigating\Service\Navigation\Render\NavigationTemplateRenderService
+  App\Navigating\ServiceInterface\Render\NavigationTemplateRenderServiceInterface:
+    alias: App\Navigating\Service\Render\NavigationTemplateRenderService
 
-  App\Navigating\ServiceInterface\Navigation\NavigationRendererInterface:
-    alias: App\Navigating\Service\Navigation\Render\NavigationTemplateRenderService
+  App\Navigating\ServiceInterface\Render\NavigationRendererInterface:
+    alias: App\Navigating\Service\Render\NavigationTemplateRenderService
 
   App\Navigating\Service\Twig\Navigation\NavigationTwigExtension:
     tags:

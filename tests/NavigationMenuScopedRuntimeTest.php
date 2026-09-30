@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Service\Navigation\Filter\NavigationVisibilityFilterService;
-use App\Navigating\Service\Navigation\Normalize\NavigationConfigNormalizeService;
-use App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService;
-use App\Navigating\ServiceInterface\Navigation\Provide\NavigationRequestRoleProvideServiceInterface;
+use App\Navigating\Service\Filter\NavigationVisibilityFilterService;
+use App\Navigating\Service\Normalize\NavigationConfigNormalizeService;
+use App\Navigating\Service\Provide\NavigationRuntimeActivationProvideService;
+use App\Navigating\ServiceInterface\Provide\NavigationRequestRoleProvideServiceInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -97,11 +97,11 @@ final class NavigationMenuScopedRuntimeTest extends TestCase
     }
 
     /**
-     * @param list<\App\Navigating\Value\Navigation\NavigationShellGroup> $groups
-     * @param array<string, mixed>                                        $config
-     * @param list<string>                                                $roles
+     * @param list<\App\Navigating\Value\NavigationShellGroup> $groups
+     * @param array<string, mixed>                             $config
+     * @param list<string>                                     $roles
      *
-     * @return list<\App\Navigating\Value\Navigation\NavigationShellGroup>
+     * @return list<\App\Navigating\Value\NavigationShellGroup>
      */
     private function filter(array $groups, array $config, array $roles): array
     {

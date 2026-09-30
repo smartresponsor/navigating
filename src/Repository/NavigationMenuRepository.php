@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace App\Navigating\Repository;
 
-use App\Navigating\Entity\NavigationMenu;
+use App\Navigating\Entity\NavigationMenuEntity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<NavigationMenu> */
+/** @extends ServiceEntityRepository<NavigationMenuEntity> */
 final class NavigationMenuRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, NavigationMenu::class);
+        parent::__construct($registry, NavigationMenuEntity::class);
     }
 
-    public function findOneBySlug(string $slug): ?NavigationMenu
+    public function findOneBySlug(string $slug): ?NavigationMenuEntity
     {
-        /** @var NavigationMenu|null $menu */
+        /** @var NavigationMenuEntity|null $menu */
         $menu = $this->findOneBy(['slug' => trim($slug)]);
 
         return $menu;
@@ -43,11 +43,11 @@ final class NavigationMenuRepository extends ServiceEntityRepository
      * Parent associations are fetch-joined as well so ancestor inspection cannot
      * trigger one query per parent proxy on a cold cache.
      *
-     * @return list<NavigationMenu>
+     * @return list<NavigationMenuEntity>
      */
     public function findEnabled(): array
     {
-        /** @var list<NavigationMenu> $menus */
+        /** @var list<NavigationMenuEntity> $menus */
         $menus = $this->inventoryQueryBuilder()
             ->andWhere('menu.enabled = :enabled')
             ->setParameter('enabled', true)
@@ -62,11 +62,11 @@ final class NavigationMenuRepository extends ServiceEntityRepository
      * Loads every menu/item/parent needed for a portable snapshot in one ORM query.
      * Disabled menus and disabled/archived items are intentionally retained.
      *
-     * @return list<NavigationMenu>
+     * @return list<NavigationMenuEntity>
      */
     public function findAllForSnapshot(): array
     {
-        /** @var list<NavigationMenu> $menus */
+        /** @var list<NavigationMenuEntity> $menus */
         $menus = $this->inventoryQueryBuilder()
             ->getQuery()
             ->getResult()

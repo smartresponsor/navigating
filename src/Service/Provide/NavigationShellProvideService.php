@@ -1,0 +1,138 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Navigating\Service\Provide;
+
+use App\Navigating\ServiceInterface\Build\NavigationTreeBuildServiceInterface;
+use App\Navigating\ServiceInterface\Filter\NavigationVisibilityFilterServiceInterface;
+use App\Navigating\ServiceInterface\Normalize\NavigationConfigNormalizeServiceInterface;
+use App\Navigating\ServiceInterface\Provide\NavigationDatabaseConfigProvideServiceInterface;
+use App\Navigating\ServiceInterface\Provide\NavigationShellProvideServiceInterface;
+use App\Navigating\ServiceInterface\Validate\NavigationConfigValidateServiceInterface;
+use App\Navigating\Value\NavigationShellLocationRegistry;
+use App\Navigating\Value\View\NavigationGroupView;
+use App\Navigating\Value\View\NavigationShellView;
+use Symfony\Component\HttpFoundation\Request;
+
+final readonly class NavigationShellProvideService implements NavigationShellProvideServiceInterface
+{
+    /** @param array<string, mixed> $navigationConfig */
+    public function __construct(
+        private NavigationConfigNormalizeServiceInterface $configNormalizeService,
+        private NavigationConfigValidateServiceInterface $configValidateService,
+        private NavigationVisibilityFilterServiceInterface $visibilityFilterService,
+        private NavigationTreeBuildServiceInterface $treeBuildService,
+        private NavigationDatabaseConfigProvideServiceInterface $databaseConfigProvider,
+        private array $navigationConfig = [],
+    ) {
+    }
+
+    public function provideShell(Request $request): NavigationShellView
+    {
+        $config = $this->runtimeConfig();
+        $this->assertValidConfig($config);
+
+        $groups = $this->visibilityFilterService->filterShellGroups(
+            $this->configNormalizeService->normalizeShellGroups($config),
+            $request,
+        );
+
+        $views = $this->emptyCanonicalGroups($config);
+
+        foreach ($groups as $group) {
+            $location = trim($group->location);
+            $builtGroup = $this->treeBuildService->buildGroup($group, $request);
+
+            $views[$location] = $this->mergeGroup($views[$location] ?? null, $builtGroup);
+        }
+
+        return new NavigationShellView($views);
+    }
+
+    public function provideActiveState(Request $request): array
+    {
+        foreach ($this->provideShell($request)->groups as $group) {
+            foreach ($group->items as $item) {
+                if (!$item->active) {
+                    continue;
+                }
+
+                return [
+                    'active_group' => is_string($item->metadata['group'] ?? null) ? $item->metadata['group'] : null,
+                    'active_item' => $item->key,
+                    'active_root' => null,
+                    'active_section' => null,
+                ];
+            }
+        }
+
+        return [
+            'active_group' => null,
+            'active_item' => null,
+            'active_root' => null,
+            'active_section' => null,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     *
+     * @return array<string, NavigationGroupView>
+     */
+    private function emptyCanonicalGroups(array $config): array
+    {
+        $groups = [];
+
+        foreach (NavigationShellLocationRegistry::all($config) as $location) {
+            $groups[$location] = new NavigationGroupView(location: $location, label: $location);
+        }
+
+        return $groups;
+    }
+
+    private function mergeGroup(?NavigationGroupView $current, NavigationGroupView $incoming): NavigationGroupView
+    {
+        if (!$current instanceof NavigationGroupView || [] === $current->items) {
+            return $incoming;
+        }
+
+        return new NavigationGroupView(
+            location: $incoming->location,
+            label: $incoming->label,
+            items: [...$current->items, ...$incoming->items],
+            type: $incoming->type,
+            metadata: array_replace($current->metadata, $incoming->metadata, [
+                'item_count' => count($current->items) + count($incoming->items),
+            ]),
+        );
+    }
+
+    /** @return array<string, mixed> */
+    private function runtimeConfig(): array
+    {
+        $databaseConfig = $this->databaseConfigProvider->provideConfig();
+        $databaseGroups = $databaseConfig['shell_groups'] ?? null;
+
+        if (!is_array($databaseGroups) || [] === $databaseGroups) {
+            throw new \RuntimeException('Navigation database contains no enabled menus. Bootstrap it with "php bin/console navigation:database:import-config" or create a menu in EasyAdmin.');
+        }
+
+        $config = $this->navigationConfig;
+        $config['shell_groups'] = $databaseGroups;
+
+        return $config;
+    }
+
+    /** @param array<string, mixed> $config */
+    private function assertValidConfig(array $config): void
+    {
+        $result = $this->configValidateService->validate($config);
+
+        if ($result->isValid()) {
+            return;
+        }
+
+        throw new \InvalidArgumentException('Invalid navigation config: '.implode(' ', $result->errors));
+    }
+}

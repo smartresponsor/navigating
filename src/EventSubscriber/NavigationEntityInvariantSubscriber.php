@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Navigating\EventSubscriber;
 
-use App\Navigating\Service\Navigation\Persistence\NavigationEntityInvariantService;
+use App\Navigating\Service\Persistence\NavigationEntityInvariantService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;

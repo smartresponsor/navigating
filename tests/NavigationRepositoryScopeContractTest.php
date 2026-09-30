@@ -12,8 +12,8 @@ final class NavigationRepositoryScopeContractTest extends TestCase
     {
         $repository = self::read('src/Repository/NavigationItemRepository.php');
 
-        self::assertStringContainsString('findOneByMenuAndSlug(NavigationMenu $menu, string $slug)', $repository);
-        self::assertStringContainsString('findOneByMenuIdOrSlug(NavigationMenu $menu, int|string $identifier)', $repository);
+        self::assertStringContainsString('findOneByMenuAndSlug(NavigationMenuEntity $menu, string $slug)', $repository);
+        self::assertStringContainsString('findOneByMenuIdOrSlug(NavigationMenuEntity $menu, int|string $identifier)', $repository);
         self::assertStringContainsString("'menu' => \$menu", $repository);
         self::assertStringContainsString('return $this->findOneByMenuAndSlug($menu, $identifier);', $repository);
 
@@ -24,7 +24,7 @@ final class NavigationRepositoryScopeContractTest extends TestCase
     public function testRuntimeAndSnapshotInventoriesUseOneFetchGraphWithDifferentMenuSemantics(): void
     {
         $repository = self::read('src/Repository/NavigationMenuRepository.php');
-        $snapshot = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotExportService.php');
+        $snapshot = self::read('src/Service/Snapshot/NavigationSnapshotExportService.php');
 
         self::assertStringContainsString('private function inventoryQueryBuilder(): QueryBuilder', $repository);
         self::assertStringContainsString("->addSelect('item', 'parent')", $repository);

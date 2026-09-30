@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Navigating\DependencyInjection;
 
-use App\Navigating\Service\Navigation\Validate\NavigationConfigValidateService;
+use App\Navigating\Service\Validate\NavigationConfigValidateService;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -34,7 +34,7 @@ class NavigationRuntimeExtension extends Extension
         $loader->load('services.yaml');
 
         if (class_exists(\Doctrine\Bundle\FixturesBundle\Fixture::class)) {
-            $loader->load('services_fixtures.yaml');
+            $loader->load('navigation_services_fixtures.yaml');
         }
     }
 
@@ -44,13 +44,13 @@ class NavigationRuntimeExtension extends Extension
         $configs = [];
 
         foreach ([
-            'navigation.yaml',
+            'navigation_bootstrap.yaml',
             'navigation_runtime_activation.yaml',
             'navigation_runtime_activation_business.yaml',
             'navigation_runtime_activation_system.yaml',
             'navigation_runtime_activation_entity.yaml',
             'navigation_access_quick.yaml',
-            'navigation.mobile.yaml',
+            'navigation_mobile.yaml',
         ] as $file) {
             $data = Yaml::parseFile(__DIR__.'/../../config/'.$file);
             $config = is_array($data) ? ($data['navigation'] ?? $data) : null;

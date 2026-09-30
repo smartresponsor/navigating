@@ -10,12 +10,12 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
 {
     public function testNativeEasyAdminExceptionFilesExist(): void
     {
-        self::assertFileExists(__DIR__.'/../src/Controllers/Admin/DashboardController.php');
-        self::assertFileExists(__DIR__.'/../src/Controllers/Admin/NavigationMenuCrudController.php');
-        self::assertFileExists(__DIR__.'/../src/Controllers/Admin/NavigationItemCrudController.php');
-        self::assertFileExists(__DIR__.'/../src/Controllers/Admin/AGENTS.md');
-        self::assertFileExists(__DIR__.'/../src/Entity/NavigationMenu.php');
-        self::assertFileExists(__DIR__.'/../src/Entity/NavigationItem.php');
+        self::assertFileExists(__DIR__.'/../src/Controller/Admin/NavigationDashboardController.php');
+        self::assertFileExists(__DIR__.'/../src/Controller/Admin/NavigationMenuCrudController.php');
+        self::assertFileExists(__DIR__.'/../src/Controller/Admin/NavigationItemCrudController.php');
+        self::assertFileExists(__DIR__.'/../src/Controller/Admin/AGENTS.md');
+        self::assertFileExists(__DIR__.'/../src/Entity/NavigationMenuEntity.php');
+        self::assertFileExists(__DIR__.'/../src/Entity/NavigationItemEntity.php');
         self::assertFileExists(__DIR__.'/../src/Repository/NavigationMenuRepository.php');
         self::assertFileExists(__DIR__.'/../src/Repository/NavigationItemRepository.php');
         self::assertFileExists(__DIR__.'/../config/routes/easyadmin.yaml');
@@ -25,7 +25,7 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
 
     public function testDashboardRemainsNativeEasyAdminAndRoleProtected(): void
     {
-        $dashboard = self::read('src/Controllers/Admin/DashboardController.php');
+        $dashboard = self::read('src/Controller/Admin/NavigationDashboardController.php');
 
         self::assertStringContainsString('extends AbstractDashboardController', $dashboard);
         self::assertStringContainsString('#[AdminDashboard(', $dashboard);
@@ -50,15 +50,15 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
 
     public function testNavigationEntitiesUseNativeEasyAdminCrud(): void
     {
-        $menuController = self::read('src/Controllers/Admin/NavigationMenuCrudController.php');
-        $itemController = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+        $menuController = self::read('src/Controller/Admin/NavigationMenuCrudController.php');
+        $itemController = self::read('src/Controller/Admin/NavigationItemCrudController.php');
 
         self::assertStringContainsString('extends AbstractCrudController', $menuController);
-        self::assertStringContainsString('return NavigationMenu::class;', $menuController);
+        self::assertStringContainsString('return NavigationMenuEntity::class;', $menuController);
         self::assertStringContainsString("#[IsGranted('ROLE_ADMIN')]", $menuController);
 
         self::assertStringContainsString('extends AbstractCrudController', $itemController);
-        self::assertStringContainsString('return NavigationItem::class;', $itemController);
+        self::assertStringContainsString('return NavigationItemEntity::class;', $itemController);
         self::assertStringContainsString("#[IsGranted('ROLE_ADMIN')]", $itemController);
         self::assertStringContainsString("AssociationField::new('menu')", $itemController);
         self::assertStringContainsString("AssociationField::new('parent')", $itemController);
@@ -66,7 +66,7 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
 
     public function testAllFunctionalMenuFieldsAreAdministrable(): void
     {
-        $controller = self::read('src/Controllers/Admin/NavigationMenuCrudController.php');
+        $controller = self::read('src/Controller/Admin/NavigationMenuCrudController.php');
 
         foreach ([
             'menuKey',
@@ -91,7 +91,7 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
 
     public function testAllFunctionalItemFieldsAreAdministrable(): void
     {
-        $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+        $controller = self::read('src/Controller/Admin/NavigationItemCrudController.php');
 
         foreach ([
             'menu',
@@ -127,10 +127,10 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
 
     public function testParentAssociationIsMenuAwareInAdministration(): void
     {
-        $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+        $controller = self::read('src/Controller/Admin/NavigationItemCrudController.php');
 
         self::assertStringContainsString('use Doctrine\\ORM\\QueryBuilder;', $controller);
-        self::assertStringContainsString('->autocomplete(callback: static function (NavigationItem $candidate): string', $controller);
+        self::assertStringContainsString('->autocomplete(callback: static function (NavigationItemEntity $candidate): string', $controller);
         self::assertStringContainsString("sprintf('[%s] %s — %s'", $controller);
         self::assertStringContainsString('null !== $currentItem?->getMenu()', $controller);
         self::assertStringContainsString('->setQueryBuilder(static function (QueryBuilder $queryBuilder)', $controller);
@@ -140,7 +140,7 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
 
     public function testDuplicateActionKeepsDerivedValuesInsidePersistenceLimits(): void
     {
-        $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+        $controller = self::read('src/Controller/Admin/NavigationItemCrudController.php');
 
         self::assertStringContainsString("\$token = date('YmdHis').'-'.bin2hex(random_bytes(5));", $controller);
         self::assertStringContainsString("appendWithinLimit(\$item->getNavigationKey(), '.copy.'.\$token, 160)", $controller);
@@ -151,14 +151,14 @@ final class NavigationEasyAdminSurfaceTest extends TestCase
 
     public function testEasyAdminExceptionHasNearestAutomationRules(): void
     {
-        $rules = self::read('src/Controllers/Admin/AGENTS.md');
+        $rules = self::read('src/Controller/Admin/AGENTS.md');
 
         self::assertStringContainsString('EASYADMIN_NATIVE_EXCEPTION', $rules);
         self::assertStringContainsString('NavigationMenuCrudController.php', $rules);
         self::assertStringContainsString('NavigationItemCrudController.php', $rules);
         self::assertStringContainsString('all administrator-managed functional persistence fields', $rules);
         self::assertStringContainsString(
-            'Admin entry points live in `src/Controllers/Admin/`',
+            'Admin entry points live in `src/Controller/Admin/`',
             self::read('README.md'),
         );
         self::assertStringContainsString(

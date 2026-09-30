@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Service\Navigation\Resolve\NavigationTargetResolveService;
-use App\Navigating\Value\Navigation\NavigationTarget;
+use App\Navigating\Service\Resolve\NavigationTargetResolveService;
+use App\Navigating\Value\NavigationTarget;
 use PHPUnit\Framework\TestCase;
 
 final class NavigationTargetResolveServiceTest extends TestCase

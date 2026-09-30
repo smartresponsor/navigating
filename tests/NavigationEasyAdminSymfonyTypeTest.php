@@ -10,14 +10,14 @@ final class NavigationEasyAdminSymfonyTypeTest extends TestCase
 {
     public function testEasyAdminCrudUsesSymfonyFormTypeBoundaries(): void
     {
-        $menuController = self::read('src/Controllers/Admin/NavigationMenuCrudController.php');
-        $itemController = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+        $menuController = self::read('src/Controller/Admin/NavigationMenuCrudController.php');
+        $itemController = self::read('src/Controller/Admin/NavigationItemCrudController.php');
 
         self::assertStringContainsString('NavigationItemLocationType::class', $menuController);
-        self::assertStringContainsString('JsonArrayTextareaType::class', $menuController);
-        self::assertStringContainsString('JsonListTextareaType::class', $menuController);
-        self::assertStringContainsString('JsonArrayTextareaType::class', $itemController);
-        self::assertStringContainsString('JsonListTextareaType::class', $itemController);
+        self::assertStringContainsString('NavigationJsonArrayTextareaType::class', $menuController);
+        self::assertStringContainsString('NavigationJsonListTextareaType::class', $menuController);
+        self::assertStringContainsString('NavigationJsonArrayTextareaType::class', $itemController);
+        self::assertStringContainsString('NavigationJsonListTextareaType::class', $itemController);
         self::assertStringContainsString('NavigationItemOperationType::class', $itemController);
         self::assertStringContainsString('->setFormType(', $menuController.$itemController);
         self::assertStringNotContainsString('->setChoices([', $menuController.$itemController);
@@ -27,17 +27,17 @@ final class NavigationEasyAdminSymfonyTypeTest extends TestCase
     {
         self::assertFileExists(self::path('src/Form/Type/Admin/NavigationItemLocationType.php'));
         self::assertFileExists(self::path('src/Form/Type/Admin/NavigationItemOperationType.php'));
-        self::assertFileExists(self::path('src/Form/Type/Admin/JsonArrayTextareaType.php'));
-        self::assertFileExists(self::path('src/Form/Type/Admin/JsonListTextareaType.php'));
+        self::assertFileExists(self::path('src/Form/Type/Admin/NavigationJsonArrayTextareaType.php'));
+        self::assertFileExists(self::path('src/Form/Type/Admin/NavigationJsonListTextareaType.php'));
 
         self::assertStringContainsString('extends AbstractType', self::read('src/Form/Type/Admin/NavigationItemLocationType.php'));
         self::assertStringContainsString('TextType::class', self::read('src/Form/Type/Admin/NavigationItemLocationType.php'));
         self::assertStringContainsString('data-navigation-location-contract', self::read('src/Form/Type/Admin/NavigationItemLocationType.php'));
         self::assertStringContainsString('config-owned', self::read('src/Form/Type/Admin/NavigationItemLocationType.php'));
         self::assertStringContainsString('ChoiceType::class', self::read('src/Form/Type/Admin/NavigationItemOperationType.php'));
-        self::assertStringContainsString('TextareaType::class', self::read('src/Form/Type/Admin/JsonArrayTextareaType.php'));
-        self::assertStringContainsString('CallbackTransformer', self::read('src/Form/Type/Admin/JsonArrayTextareaType.php'));
-        self::assertStringContainsString('array_is_list', self::read('src/Form/Type/Admin/JsonListTextareaType.php'));
+        self::assertStringContainsString('TextareaType::class', self::read('src/Form/Type/Admin/NavigationJsonArrayTextareaType.php'));
+        self::assertStringContainsString('CallbackTransformer', self::read('src/Form/Type/Admin/NavigationJsonArrayTextareaType.php'));
+        self::assertStringContainsString('array_is_list', self::read('src/Form/Type/Admin/NavigationJsonListTextareaType.php'));
     }
 
     public function testComposerKeepsPlatformDependenciesExplicit(): void

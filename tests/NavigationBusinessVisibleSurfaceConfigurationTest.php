@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Service\Navigation\Build\NavigationTreeBuildService;
-use App\Navigating\Service\Navigation\Filter\NavigationVisibilityFilterService;
-use App\Navigating\Service\Navigation\Normalize\NavigationConfigNormalizeService;
-use App\Navigating\Service\Navigation\Provide\NavigationRequestRoleProvideService;
-use App\Navigating\Service\Navigation\Provide\NavigationRuntimeActivationProvideService;
-use App\Navigating\Service\Navigation\Provide\NavigationShellProvideService;
-use App\Navigating\Service\Navigation\Resolve\NavigationTargetResolveService;
-use App\Navigating\Service\Navigation\Validate\NavigationConfigValidateService;
+use App\Navigating\Service\Build\NavigationTreeBuildService;
+use App\Navigating\Service\Filter\NavigationVisibilityFilterService;
+use App\Navigating\Service\Normalize\NavigationConfigNormalizeService;
+use App\Navigating\Service\Provide\NavigationRequestRoleProvideService;
+use App\Navigating\Service\Provide\NavigationRuntimeActivationProvideService;
+use App\Navigating\Service\Provide\NavigationShellProvideService;
+use App\Navigating\Service\Resolve\NavigationTargetResolveService;
+use App\Navigating\Service\Validate\NavigationConfigValidateService;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Yaml;
@@ -23,7 +23,7 @@ final class NavigationBusinessVisibleSurfaceConfigurationTest extends TestCase
      */
     private function configuration(): array
     {
-        $file = dirname(__DIR__).'/config/navigation.yaml';
+        $file = dirname(__DIR__).'/config/navigation_bootstrap.yaml';
         $data = Yaml::parseFile($file);
 
         self::assertIsArray($data);
@@ -189,7 +189,7 @@ final class NavigationBusinessVisibleSurfaceConfigurationTest extends TestCase
                 $config,
             ),
             new NavigationTreeBuildService(new NavigationTargetResolveService()),
-            new class($config) implements \App\Navigating\ServiceInterface\Navigation\Provide\NavigationDatabaseConfigProvideServiceInterface {
+            new class($config) implements \App\Navigating\ServiceInterface\Provide\NavigationDatabaseConfigProvideServiceInterface {
                 /** @param array<string, mixed> $config */
                 public function __construct(private array $config)
                 {

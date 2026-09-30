@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Navigating\Command;
 
 use App\Navigating\Repository\NavigationMenuRepository;
-use App\Navigating\Service\Navigation\Import\NavigationConfigImportService;
+use App\Navigating\Service\Import\NavigationConfigImportService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

@@ -10,8 +10,8 @@ final class NavigationDatabaseBackedModelTest extends TestCase
 {
     public function testMenuAndItemUseSQLiteFriendlyDoctrineMapping(): void
     {
-        $menu = self::read('src/Entity/NavigationMenu.php');
-        $item = self::read('src/Entity/NavigationItem.php');
+        $menu = self::read('src/Entity/NavigationMenuEntity.php');
+        $item = self::read('src/Entity/NavigationItemEntity.php');
 
         self::assertStringContainsString("#[ORM\\Table(name: 'navigation_menu')]", $menu);
         self::assertStringContainsString("#[ORM\\Table(name: 'navigation_item')]", $item);
@@ -30,8 +30,8 @@ final class NavigationDatabaseBackedModelTest extends TestCase
 
     public function testMenuVisibilityIsPersistedAndProjected(): void
     {
-        $menu = self::read('src/Entity/NavigationMenu.php');
-        $provider = self::read('src/Service/Navigation/Provide/NavigationDatabaseConfigProvideService.php');
+        $menu = self::read('src/Entity/NavigationMenuEntity.php');
+        $provider = self::read('src/Service/Provide/NavigationDatabaseConfigProvideService.php');
 
         self::assertStringContainsString('visibleForRoles', $menu);
         self::assertStringContainsString('visibleForScopes', $menu);
@@ -45,13 +45,13 @@ final class NavigationDatabaseBackedModelTest extends TestCase
     public function testBootstrapUsesOneReusableTransactionalImportService(): void
     {
         $command = self::read('src/Command/NavigationDatabaseImportCommand.php');
-        $import = self::read('src/Service/Navigation/Import/NavigationConfigImportService.php');
+        $import = self::read('src/Service/Import/NavigationConfigImportService.php');
 
         self::assertStringContainsString("name: 'navigation:database:import-config'", $command);
         self::assertStringContainsString("'force'", $command);
         self::assertStringContainsString('Navigation database is not empty', $command);
         self::assertStringContainsString('NavigationConfigImportService', $command);
-        self::assertStringContainsString('wrapInTransaction', $import);
+        self::assertStringContainsString('persistenceRepository->transactional', $import);
         self::assertStringContainsString('setParent($parent)', $import);
         self::assertStringContainsString('Navigation menu keys must be non-empty strings', $import);
         self::assertStringContainsString('Navigation items in menu', $import);
@@ -61,8 +61,8 @@ final class NavigationDatabaseBackedModelTest extends TestCase
 
     public function testSnapshotRestoreCanonicalizesDerivedHierarchyAndOperation(): void
     {
-        $export = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotExportService.php');
-        $import = self::read('src/Service/Navigation/Import/NavigationConfigImportService.php');
+        $export = self::read('src/Service/Snapshot/NavigationSnapshotExportService.php');
+        $import = self::read('src/Service/Import/NavigationConfigImportService.php');
 
         self::assertStringContainsString("unset(\$metadata['parent_key'])", $export);
         self::assertStringContainsString("\$metadata['parent_key'] = \$item->getParent()->getNavigationKey()", $export);
@@ -75,7 +75,7 @@ final class NavigationDatabaseBackedModelTest extends TestCase
     public function testFixturesManifestAndPortableBackupRecoveryExist(): void
     {
         $fixture = self::read('src/DataFixtures/NavigationFixture.php');
-        $export = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotExportService.php');
+        $export = self::read('src/Service/Snapshot/NavigationSnapshotExportService.php');
         $backup = self::read('src/Command/NavigationBackupCreateCommand.php');
         $restore = self::read('src/Command/NavigationBackupRestoreCommand.php');
         $manifestWrite = self::read('src/Command/NavigationManifestWriteCommand.php');
@@ -96,9 +96,9 @@ final class NavigationDatabaseBackedModelTest extends TestCase
 
     public function testRuntimeUsesDoctrineAsTheOnlyCompleteMenuInventorySource(): void
     {
-        $shellProvider = self::read('src/Service/Navigation/Provide/NavigationShellProvideService.php');
-        $databaseProvider = self::read('src/Service/Navigation/Provide/NavigationDatabaseConfigProvideService.php');
-        $cacheService = self::read('src/Service/Navigation/Cache/NavigationConfigCacheService.php');
+        $shellProvider = self::read('src/Service/Provide/NavigationShellProvideService.php');
+        $databaseProvider = self::read('src/Service/Provide/NavigationDatabaseConfigProvideService.php');
+        $cacheService = self::read('src/Service/Cache/NavigationConfigCacheService.php');
         $subscriber = self::read('src/EventSubscriber/NavigationConfigCacheInvalidationSubscriber.php');
         $services = self::read('config/services.yaml');
 

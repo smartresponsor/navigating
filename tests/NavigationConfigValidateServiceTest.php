@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Service\Navigation\Validate\NavigationConfigValidateService;
+use App\Navigating\Service\Validate\NavigationConfigValidateService;
 use PHPUnit\Framework\TestCase;
 
 final class NavigationConfigValidateServiceTest extends TestCase
@@ -371,7 +371,7 @@ final class NavigationConfigValidateServiceTest extends TestCase
     }
 
     /** @param array<string, mixed> $config */
-    private function validate(array $config): \App\Navigating\Value\Navigation\NavigationValidationResult
+    private function validate(array $config): \App\Navigating\Value\NavigationValidationResult
     {
         $config['shell_locations'] ??= [
             'shell.left.middle' => [],

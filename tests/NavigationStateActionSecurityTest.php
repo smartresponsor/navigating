@@ -10,7 +10,7 @@ final class NavigationStateActionSecurityTest extends TestCase
 {
     public function testStateActionsUsePostFormsAndExplicitCsrfValidation(): void
     {
-        $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+        $controller = self::read('src/Controller/Admin/NavigationItemCrudController.php');
         $template = self::read('templates/admin/action/navigation_item_state_change.html.twig');
         $composer = self::read('composer.json');
         $framework = self::read('config/standalone/framework.yaml');

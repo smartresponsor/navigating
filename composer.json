@@ -2,7 +2,7 @@
   "name": "navigating/navigation",
   "description": "Navigating process app",
   "type": "symfony-bundle",
-  "license": "proprietary",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "minimum-stability": "dev",
   "prefer-stable": true,
   "repositories": [
@@ -11,7 +11,9 @@
       "url": "../Objecting",
       "options": {
         "symlink": true,
-        "versions": { "objecting/object": "dev-master" }
+        "versions": {
+          "objecting/object": "dev-master"
+        }
       }
     },
     {
@@ -19,7 +21,9 @@
       "url": "../Cruding",
       "options": {
         "symlink": true,
-        "versions": { "cruding/crud": "dev-master" }
+        "versions": {
+          "cruding/crud": "dev-master"
+        }
       }
     },
     {
@@ -27,7 +31,9 @@
       "url": "../Collectioning",
       "options": {
         "symlink": true,
-        "versions": { "collectioning/collection": "dev-master" }
+        "versions": {
+          "collectioning/collection": "dev-master"
+        }
       }
     },
     {
@@ -35,7 +41,9 @@
       "url": "../Tabling",
       "options": {
         "symlink": true,
-        "versions": { "tabling/table": "dev-master" }
+        "versions": {
+          "tabling/table": "dev-master"
+        }
       }
     },
     {
@@ -43,7 +51,9 @@
       "url": "../Interfacing",
       "options": {
         "symlink": true,
-        "versions": { "interfacing/interface": "dev-master" }
+        "versions": {
+          "interfacing/interface": "dev-master"
+        }
       }
     },
     {
@@ -51,7 +61,29 @@
       "url": "../Viewing",
       "options": {
         "symlink": true,
-        "versions": { "viewing/view": "dev-master" }
+        "versions": {
+          "viewing/view": "dev-master"
+        }
+      }
+    },
+    {
+      "type": "path",
+      "url": "../Failing",
+      "options": {
+        "symlink": true,
+        "versions": {
+          "failing/failure": "dev-master"
+        }
+      }
+    },
+    {
+      "type": "path",
+      "url": "../Gating",
+      "options": {
+        "symlink": true,
+        "versions": {
+          "gating/gate": "dev-master"
+        }
       }
     }
   ],
@@ -61,6 +93,7 @@
     "cruding/crud": "dev-master",
     "doctrine/dbal": "^4.0",
     "doctrine/doctrine-bundle": "^3.2",
+    "doctrine/doctrine-migrations-bundle": "^3.4",
     "doctrine/orm": "^3.3",
     "easycorp/easyadmin-bundle": "^5.0",
     "interfacing/interface": "dev-master",
@@ -89,7 +122,8 @@
     "phpstan/phpstan-doctrine": "^2.0",
     "phpunit/phpunit": "^12.0",
     "symfony/panther": "^2.4",
-    "symfony/test-pack": "^1.2"
+    "symfony/test-pack": "^1.2",
+    "gating/gate": "dev-master"
   },
   "autoload": {
     "psr-4": {
@@ -135,12 +169,22 @@
       "@navigation:legacy:plan",
       "@qa"
     ],
-    "navigation:acceptance:verify": [
+    "schema:parity": [
       "@php bin/console doctrine:schema:validate",
+      "@php bin/console doctrine:migrations:up-to-date --no-interaction"
+    ],
+    "navigation:acceptance:verify": [
+      "@schema:parity",
       "@php bin/console navigation:manifest:verify",
       "@qa"
     ],
-    "qa": "@qa:all"
+    "qa": "@qa:all",
+    "gate": "@php vendor/bin/gating check --target=.",
+    "quality": [
+      "@cs:check",
+      "@phpstan",
+      "@gate"
+    ]
   },
   "extra": {
     "symfony": {

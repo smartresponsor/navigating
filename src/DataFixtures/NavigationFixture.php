@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Navigating\DataFixtures;
 
-use App\Navigating\Service\Navigation\Import\NavigationConfigImportService;
-use App\Navigating\Service\Navigation\Snapshot\NavigationSnapshotService;
+use App\Navigating\Service\Import\NavigationConfigImportService;
+use App\Navigating\Service\Snapshot\NavigationSnapshotService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;

@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\Navigating\Command;
 
-use App\Navigating\Entity\NavigationItem;
-use App\Navigating\Entity\NavigationMenu;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\SchemaTool;
+use App\Navigating\Repository\NavigationPersistenceRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,62 +16,23 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class NavigationDatabaseUpdateCommand extends Command
 {
-    private const OWNED_TABLES = [
-        'navigation_menu' => true,
-        'navigation_item' => true,
-    ];
-
-    public function __construct(private readonly EntityManagerInterface $entityManager)
+    public function __construct(private readonly NavigationPersistenceRepository $persistenceRepository)
     {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $metadata = [
-            $this->entityManager->getClassMetadata(NavigationMenu::class),
-            $this->entityManager->getClassMetadata(NavigationItem::class),
-        ];
-
-        $connection = $this->entityManager->getConnection();
-        $configuration = $connection->getConfiguration();
-        $previousFilter = $configuration->getSchemaAssetsFilter();
-
-        $configuration->setSchemaAssetsFilter(
-            static function (mixed $asset): bool {
-                if (is_string($asset)) {
-                    return isset(self::OWNED_TABLES[$asset]);
-                }
-                if (!is_object($asset)) {
-                    return false;
-                }
-
-                $name = method_exists($asset, 'getName') ? $asset->getName() : null;
-                if (!is_string($name)) {
-                    return false;
-                }
-
-                return isset(self::OWNED_TABLES[$name]);
-            },
-        );
-
         try {
-            $schemaTool = new SchemaTool($this->entityManager);
-            $sql = $schemaTool->getUpdateSchemaSql($metadata);
-
-            if ([] === $sql) {
+            if (!$this->persistenceRepository->synchronizeOwnedSchema()) {
                 $output->writeln('<info>Navigating schema is already up to date.</info>');
 
                 return Command::SUCCESS;
             }
-
-            $schemaTool->updateSchema($metadata);
         } catch (\Throwable $exception) {
             $output->writeln('<error>Navigating schema update failed: '.$exception->getMessage().'</error>');
 
             return Command::FAILURE;
-        } finally {
-            $configuration->setSchemaAssetsFilter($previousFilter);
         }
 
         $output->writeln('<info>Navigating schema synchronized successfully.</info>');

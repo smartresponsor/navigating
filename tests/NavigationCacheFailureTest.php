@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Service\Navigation\Cache\NavigationConfigCacheService;
+use App\Navigating\Service\Cache\NavigationConfigCacheService;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Symfony\Contracts\Cache\CacheInterface;

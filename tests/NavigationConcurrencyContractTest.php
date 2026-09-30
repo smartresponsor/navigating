@@ -10,7 +10,7 @@ final class NavigationConcurrencyContractTest extends TestCase
 {
     public function testSnapshotWritersAreSerializedPerTarget(): void
     {
-        $writer = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotFileService.php');
+        $writer = self::read('src/Service/Snapshot/NavigationSnapshotFileService.php');
 
         self::assertStringContainsString(".'.lock'", $writer);
         self::assertStringContainsString("fopen(\$lockPath, 'c+b')", $writer);
@@ -29,8 +29,8 @@ final class NavigationConcurrencyContractTest extends TestCase
 
     public function testDoctrineEntitiesUseOrmOwnedOptimisticVersionColumns(): void
     {
-        $menu = self::read('src/Entity/NavigationMenu.php');
-        $item = self::read('src/Entity/NavigationItem.php');
+        $menu = self::read('src/Entity/NavigationMenuEntity.php');
+        $item = self::read('src/Entity/NavigationItemEntity.php');
 
         self::assertStringContainsString('#[ORM\\Version]', $menu);
         self::assertStringContainsString('#[ORM\\Version]', $item);
@@ -44,8 +44,8 @@ final class NavigationConcurrencyContractTest extends TestCase
 
     public function testEasyAdminCarriesExpectedVersionAsUnmappedLongRunningFormToken(): void
     {
-        $menuController = self::read('src/Controllers/Admin/NavigationMenuCrudController.php');
-        $itemController = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+        $menuController = self::read('src/Controller/Admin/NavigationMenuCrudController.php');
+        $itemController = self::read('src/Controller/Admin/NavigationItemCrudController.php');
 
         foreach ([$menuController, $itemController] as $controller) {
             self::assertStringContainsString("private const EXPECTED_VERSION_FIELD = '_navigation_expected_version';", $controller);
@@ -54,8 +54,8 @@ final class NavigationConcurrencyContractTest extends TestCase
             self::assertStringContainsString("'mapped' => false", $controller);
             self::assertStringContainsString("'data' => (string) \$instance->getVersion()", $controller);
             self::assertStringContainsString('request->attributes->set(self::EXPECTED_VERSION_FIELD', $controller);
-            self::assertStringContainsString('LockMode::OPTIMISTIC', $controller);
-            self::assertStringContainsString('$entityManager->lock($entityInstance, LockMode::OPTIMISTIC, $expectedVersion)', $controller);
+            self::assertStringContainsString('persistenceRepository->assertOptimisticVersion($entityInstance, $expectedVersion)', $controller);
+            self::assertStringNotContainsString('EntityManagerInterface', $controller);
             self::assertStringContainsString('catch (OptimisticLockException)', $controller);
             self::assertStringContainsString("addFlash('warning'", $controller);
             self::assertStringNotContainsString("HiddenField::new('version')", $controller);
@@ -64,7 +64,7 @@ final class NavigationConcurrencyContractTest extends TestCase
 
     public function testCustomStateActionsHandleOptimisticRacesWithout500(): void
     {
-        $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+        $controller = self::read('src/Controller/Admin/NavigationItemCrudController.php');
 
         foreach (['archiveItem', 'restoreItem'] as $method) {
             $start = strpos($controller, 'public function '.$method.'(');

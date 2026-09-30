@@ -12,12 +12,12 @@ final class NavigationRecoveryContractTest extends TestCase
     {
         foreach ([
             'src/DataFixtures/NavigationFixture.php',
-            'src/Service/Navigation/Import/NavigationConfigImportService.php',
-            'src/Service/Navigation/Persistence/NavigationPersistenceFinalizeService.php',
-            'src/Service/Navigation/Snapshot/NavigationSnapshotExportService.php',
-            'src/Service/Navigation/Snapshot/NavigationSnapshotService.php',
-            'src/Service/Navigation/Snapshot/NavigationSnapshotFileService.php',
-            'src/Service/Navigation/Snapshot/NavigationAutoBackupService.php',
+            'src/Service/Import/NavigationConfigImportService.php',
+            'src/Service/Persistence/NavigationPersistenceFinalizeService.php',
+            'src/Service/Snapshot/NavigationSnapshotExportService.php',
+            'src/Service/Snapshot/NavigationSnapshotService.php',
+            'src/Service/Snapshot/NavigationSnapshotFileService.php',
+            'src/Service/Snapshot/NavigationAutoBackupService.php',
             'src/EventSubscriber/NavigationAutoBackupSubscriber.php',
             'src/Command/NavigationBackupCreateCommand.php',
             'src/Command/NavigationBackupRestoreCommand.php',
@@ -34,9 +34,9 @@ final class NavigationRecoveryContractTest extends TestCase
 
     public function testPortableSnapshotIsVersionedChecksummedAndCycleFree(): void
     {
-        $export = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotExportService.php');
-        $snapshot = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotService.php');
-        $autoBackup = self::read('src/Service/Navigation/Snapshot/NavigationAutoBackupService.php');
+        $export = self::read('src/Service/Snapshot/NavigationSnapshotExportService.php');
+        $snapshot = self::read('src/Service/Snapshot/NavigationSnapshotService.php');
+        $autoBackup = self::read('src/Service/Snapshot/NavigationAutoBackupService.php');
 
         self::assertStringContainsString("public const FORMAT = 'smartresponsor.navigation'", $export);
         self::assertStringContainsString('public const VERSION = 1', $export);
@@ -52,11 +52,11 @@ final class NavigationRecoveryContractTest extends TestCase
 
     public function testRecoveryArtifactsUseCrashSafeFilePromotion(): void
     {
-        $writer = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotFileService.php');
+        $writer = self::read('src/Service/Snapshot/NavigationSnapshotFileService.php');
         $backup = self::read('src/Command/NavigationBackupCreateCommand.php');
         $manifest = self::read('src/Command/NavigationManifestWriteCommand.php');
         $legacyPlan = self::read('src/Command/NavigationLegacyMigrationPlanCommand.php');
-        $autoBackup = self::read('src/Service/Navigation/Snapshot/NavigationAutoBackupService.php');
+        $autoBackup = self::read('src/Service/Snapshot/NavigationAutoBackupService.php');
 
         self::assertStringContainsString("fopen(\$temporary, 'xb')", $writer);
         self::assertStringContainsString('fflush($handle)', $writer);
@@ -77,22 +77,22 @@ final class NavigationRecoveryContractTest extends TestCase
     public function testSchemaUpdateIsComponentScopedForDoctrineOrm36(): void
     {
         $command = self::read('src/Command/NavigationDatabaseUpdateCommand.php');
+        $repository = self::read('src/Repository/NavigationPersistenceRepository.php');
         $composer = self::read('composer.json');
         $makefile = self::read('Makefile');
         $workflow = self::read('.github/workflows/sqlite-recovery.yml');
 
         self::assertStringContainsString("name: 'navigation:database:update'", $command);
-        self::assertStringContainsString("'navigation_menu' => true", $command);
-        self::assertStringContainsString("'navigation_item' => true", $command);
-        self::assertStringContainsString('getSchemaAssetsFilter()', $command);
-        self::assertStringContainsString('setSchemaAssetsFilter(', $command);
-        self::assertStringContainsString('getUpdateSchemaSql($metadata)', $command);
-        self::assertStringContainsString('updateSchema($metadata)', $command);
-        self::assertStringNotContainsString('getUpdateSchemaSql($metadata, true)', $command);
-        self::assertStringNotContainsString('updateSchema($metadata, true)', $command);
-        self::assertStringContainsString('finally', $command);
-        self::assertStringContainsString('setSchemaAssetsFilter($previousFilter)', $command);
-        self::assertStringNotContainsString('dropSchema(', $command);
+        self::assertStringContainsString('persistenceRepository->synchronizeOwnedSchema()', $command);
+        self::assertStringContainsString("'navigation_menu' => true", $repository);
+        self::assertStringContainsString("'navigation_item' => true", $repository);
+        self::assertStringContainsString('getSchemaAssetsFilter()', $repository);
+        self::assertStringContainsString('setSchemaAssetsFilter(', $repository);
+        self::assertStringContainsString('getUpdateSchemaSql($metadata)', $repository);
+        self::assertStringContainsString('updateSchema($metadata)', $repository);
+        self::assertStringContainsString('finally', $repository);
+        self::assertStringContainsString('setSchemaAssetsFilter($previousFilter)', $repository);
+        self::assertStringNotContainsString('EntityManagerInterface', $command);
         self::assertStringNotContainsString('doctrine:schema:update --force', $composer);
         self::assertStringNotContainsString('doctrine:schema:update --force', $makefile);
         self::assertStringNotContainsString('doctrine:schema:update --force', $workflow);
@@ -101,21 +101,24 @@ final class NavigationRecoveryContractTest extends TestCase
     public function testSafeRebuildIsComponentScoped(): void
     {
         $command = self::read('src/Command/NavigationDatabaseRebuildCommand.php');
+        $repository = self::read('src/Repository/NavigationPersistenceRepository.php');
 
         self::assertStringContainsString("name: 'navigation:database:rebuild'", $command);
-        self::assertStringContainsString('NavigationMenu::class', $command);
-        self::assertStringContainsString('NavigationItem::class', $command);
-        self::assertStringContainsString('new SchemaTool', $command);
-        self::assertStringContainsString('dropSchema($metadata)', $command);
-        self::assertStringContainsString('createSchema($metadata)', $command);
+        self::assertStringContainsString('persistenceRepository->rebuildOwnedSchema()', $command);
+        self::assertStringContainsString('NavigationMenuEntity::class', $repository);
+        self::assertStringContainsString('NavigationItemEntity::class', $repository);
+        self::assertStringContainsString('new SchemaTool', $repository);
+        self::assertStringContainsString('dropSchema($metadata)', $repository);
+        self::assertStringContainsString('createSchema($metadata)', $repository);
         self::assertStringContainsString('snapshotService->restore($snapshot)', $command);
+        self::assertStringNotContainsString('EntityManagerInterface', $command);
         self::assertStringNotContainsString('doctrine:schema:drop', $command);
         self::assertStringNotContainsString('--full-database', $command);
     }
 
     public function testAutomaticBackupKeepsTwoRollingCommittedSnapshots(): void
     {
-        $service = self::read('src/Service/Navigation/Snapshot/NavigationAutoBackupService.php');
+        $service = self::read('src/Service/Snapshot/NavigationAutoBackupService.php');
         $subscriber = self::read('src/EventSubscriber/NavigationAutoBackupSubscriber.php');
         $services = self::read('config/services.yaml');
 
@@ -132,7 +135,7 @@ final class NavigationRecoveryContractTest extends TestCase
 
     public function testNavigationCacheUsesNewGenerationAndInvalidatesOnlyOutsideExplicitTransactions(): void
     {
-        $cache = self::read('src/Service/Navigation/Cache/NavigationConfigCacheService.php');
+        $cache = self::read('src/Service/Cache/NavigationConfigCacheService.php');
         $subscriber = self::read('src/EventSubscriber/NavigationConfigCacheInvalidationSubscriber.php');
 
         self::assertStringContainsString("CACHE_KEY = 'navigating.navigation.database_config.v3'", $cache);
@@ -152,16 +155,16 @@ final class NavigationRecoveryContractTest extends TestCase
 
     public function testBulkPersistenceFinalizesOnlyAfterCommit(): void
     {
-        $finalizer = self::read('src/Service/Navigation/Persistence/NavigationPersistenceFinalizeService.php');
-        $import = self::read('src/Service/Navigation/Import/NavigationConfigImportService.php');
-        $snapshot = self::read('src/Service/Navigation/Snapshot/NavigationSnapshotService.php');
+        $finalizer = self::read('src/Service/Persistence/NavigationPersistenceFinalizeService.php');
+        $import = self::read('src/Service/Import/NavigationConfigImportService.php');
+        $snapshot = self::read('src/Service/Snapshot/NavigationSnapshotService.php');
 
         self::assertStringContainsString('cache->invalidate()', $finalizer);
-        self::assertStringContainsString('getTransactionNestingLevel() > 0', $finalizer);
+        self::assertStringContainsString('persistenceRepository->hasOpenTransaction()', $finalizer);
         self::assertStringContainsString('side effects were skipped', $finalizer);
         self::assertStringContainsString('autoBackup->writeLatest()', $finalizer);
 
-        $transactionCheck = strpos($finalizer, 'getTransactionNestingLevel() > 0');
+        $transactionCheck = strpos($finalizer, 'persistenceRepository->hasOpenTransaction()');
         $cacheInvalidate = strpos($finalizer, 'cache->invalidate()');
         $backupWrite = strpos($finalizer, 'autoBackup->writeLatest()');
         self::assertIsInt($transactionCheck);
@@ -174,7 +177,7 @@ final class NavigationRecoveryContractTest extends TestCase
         self::assertStringContainsString('finalizeCommittedChange()', $import);
         self::assertStringContainsString("replaceFromConfig(['shell_groups' => \$snapshot['shell_groups']], false, false)", $snapshot);
         self::assertStringContainsString('$this->finalizer->finalizeCommittedChange();', $snapshot);
-        self::assertStringContainsString('wrapInTransaction', $snapshot);
+        self::assertStringContainsString('persistenceRepository->transactional', $snapshot);
     }
 
     public function testFixtureLoadingCannotPurgeUnrelatedHostTables(): void

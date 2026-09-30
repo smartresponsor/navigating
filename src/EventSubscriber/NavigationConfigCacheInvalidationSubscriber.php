@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Navigating\EventSubscriber;
 
-use App\Navigating\Entity\NavigationItem;
-use App\Navigating\Entity\NavigationMenu;
-use App\Navigating\Service\Navigation\Cache\NavigationConfigCacheService;
+use App\Navigating\Entity\NavigationItemEntity;
+use App\Navigating\Entity\NavigationMenuEntity;
+use App\Navigating\Service\Cache\NavigationConfigCacheService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PostPersistEventArgs;
@@ -61,7 +61,7 @@ final class NavigationConfigCacheInvalidationSubscriber implements EventSubscrib
 
     private function markDirty(object $entity): void
     {
-        if ($entity instanceof NavigationMenu || $entity instanceof NavigationItem) {
+        if ($entity instanceof NavigationMenuEntity || $entity instanceof NavigationItemEntity) {
             $this->dirty = true;
         }
     }

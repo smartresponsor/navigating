@@ -4,7 +4,7 @@ Navigating owns navigation intent and its persistence model. It does not execute
 
 ## Canon
 
-Menu inventory is Doctrine-backed. Runtime menu content is read from `NavigationMenu` and `NavigationItem`; YAML `shell_groups` exist only as bootstrap import input and are never a runtime fallback.
+Menu inventory is Doctrine-backed. Runtime menu content is read from `NavigationMenuEntity` and `NavigationItemEntity`; YAML `shell_groups` exist only as bootstrap import input and are never a runtime fallback.
 
 Structural navigation configuration remains configuration, including shell locations and runtime role/scope/environment defaults.
 
@@ -40,9 +40,9 @@ Standalone HTTP entry points are served by `Service/Http/Navigation/NavigationHt
 The canonical runtime engine lives in:
 
 ```text
-src/Service/Navigation/{Normalize,Validate,Filter,Build,Resolve,Provide,Render,Merge,Cache}
-src/ServiceInterface/Navigation/{Provide,Resolve,Render,...}
-src/Model/Navigation/View/
+src/Service/{Normalize,Validate,Filter,Build,Resolve,Provide,Render,Merge,Cache}
+src/ServiceInterface/{Provide,Resolve,Render,...}
+src/Value/View/
 ```
 
 Twig integration remains under `Service/Twig/Navigation` and exposes:
@@ -64,9 +64,9 @@ navigation_menu
 navigation_item
 ```
 
-`NavigationMenu` owns menu identity, location, type, visibility, priority, enabled state and metadata.
+`NavigationMenuEntity` owns menu identity, location, type, visibility, priority, enabled state and metadata.
 
-`NavigationItem` belongs to one menu and may reference another item in the same menu as its parent. String `parentKey` persistence is obsolete; hierarchy is a Doctrine association.
+`NavigationItemEntity` belongs to one menu and may reference another item in the same menu as its parent. String `parentKey` persistence is obsolete; hierarchy is a Doctrine association.
 
 Navigation item keys are unique within a menu rather than globally because keys such as `vendor`, `catalog`, or `attachment` can legitimately occur in multiple menus.
 
@@ -76,7 +76,7 @@ No Doctrine migrations are introduced for the current development workflow. Navi
 php bin/console navigation:database:update
 ```
 
-The command temporarily whitelists only `navigation_menu` and `navigation_item` in Doctrine schema introspection, synchronizes only `NavigationMenu` and `NavigationItem` metadata through the Doctrine ORM 3.x `SchemaTool` API, and restores the host application's previous schema-assets filter afterward. Navigating does not use global `doctrine:schema:update --force` as its host-application maintenance command.
+The command temporarily whitelists only `navigation_menu` and `navigation_item` in Doctrine schema introspection, synchronizes only `NavigationMenuEntity` and `NavigationItemEntity` metadata through the Doctrine ORM 3.x `SchemaTool` API, and restores the host application's previous schema-assets filter afterward. Navigating does not use global `doctrine:schema:update --force` as its host-application maintenance command.
 
 Because schema synchronization can still alter Navigating's own tables, planned updates should use:
 
@@ -96,13 +96,13 @@ which snapshots the navigation configuration, recreates only Navigating tables, 
 
 ## Objecting
 
-`NavigationMenu` and `NavigationItem` use the Objecting audit embeddable lifecycle pack for created/modified state. Duplicate local timestamp implementations are not maintained.
+`NavigationMenuEntity` and `NavigationItemEntity` use the Objecting audit embeddable lifecycle pack for created/modified state. Duplicate local timestamp implementations are not maintained.
 
 ## EasyAdmin
 
 Navigating exposes native EasyAdmin administration under the environment-backed backend prefix (`APP_BACK_TOKEN`, default `ea`). The admin surface is protected by `ROLE_ADMIN`.
 
-Admin entry points live in `src/Controllers/Admin/` as the platform's explicit EasyAdmin exception to the zero generic CRUD controller rule.
+Admin entry points live in `src/Controller/Admin/` as the platform's explicit EasyAdmin exception to the zero generic CRUD controller rule.
 
 EasyAdmin provides separate CRUD surfaces for:
 
@@ -173,7 +173,7 @@ See `docs/navigation-recovery.md` for the full recovery canon.
 
 The Doctrine runtime projection is cached through Symfony `cache.app`.
 
-`NavigationConfigCacheInvalidationSubscriber` invalidates the projection after Doctrine persist, update, or remove events for `NavigationMenu` and `NavigationItem`. This covers writes made through EasyAdmin, Cruding, bootstrap import, or another Doctrine-backed operation.
+`NavigationConfigCacheInvalidationSubscriber` invalidates the projection after Doctrine persist, update, or remove events for `NavigationMenuEntity` and `NavigationItemEntity`. This covers writes made through EasyAdmin, Cruding, bootstrap import, or another Doctrine-backed operation.
 
 ## Runtime ownership and activation
 

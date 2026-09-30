@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Model\Navigation\View\NavigationGroupView;
-use App\Navigating\Model\Navigation\View\NavigationItemView;
-use App\Navigating\Model\Navigation\View\NavigationShellView;
-use App\Navigating\Model\Navigation\View\NavigationTargetView;
+use App\Navigating\Value\View\NavigationGroupView;
+use App\Navigating\Value\View\NavigationItemView;
+use App\Navigating\Value\View\NavigationShellView;
+use App\Navigating\Value\View\NavigationTargetView;
 use PHPUnit\Framework\TestCase;
 
 final class NavigationLocationFirstPayloadTest extends TestCase

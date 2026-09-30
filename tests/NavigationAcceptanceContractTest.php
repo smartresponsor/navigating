@@ -43,7 +43,12 @@ final class NavigationAcceptanceContractTest extends TestCase
             $development['extra']['symfony']['require'] ?? null,
             $production['extra']['symfony']['require'] ?? null,
         );
-        self::assertArrayNotHasKey('repositories', $production);
+        $productionRepositories = $production['repositories'] ?? [];
+        self::assertIsArray($productionRepositories);
+        foreach ($productionRepositories as $repository) {
+            self::assertIsArray($repository);
+            self::assertNotSame('path', $repository['type'] ?? null);
+        }
 
         $productionRequire = $production['require'] ?? [];
         self::assertIsArray($productionRequire);
@@ -67,7 +72,7 @@ final class NavigationAcceptanceContractTest extends TestCase
         $routes = self::read('config/routes_dev.yaml');
         $easyAdminRoutes = self::read('config/routes/easyadmin.yaml');
         $security = self::read('config/standalone/security.yaml');
-        $dashboard = self::read('src/Controllers/Admin/DashboardController.php');
+        $dashboard = self::read('src/Controller/Admin/NavigationDashboardController.php');
 
         self::assertStringContainsString('use EasyCorp\\Bundle\\EasyAdminBundle\\EasyAdminBundle;', $kernel);
         self::assertStringContainsString('yield new EasyAdminBundle();', $kernel);
@@ -84,16 +89,16 @@ final class NavigationAcceptanceContractTest extends TestCase
     public function testServiceDiscoveryRegistersControllersAndFormTypesWithoutTreatingTechnicalClassesAsServices(): void
     {
         $services = self::read('config/services.yaml');
-        $formType = self::read('src/Form/Type/Admin/JsonListTextareaType.php');
+        $formType = self::read('src/Form/Type/Admin/NavigationJsonListTextareaType.php');
 
         self::assertStringContainsString("resource: '../src/'", $services);
-        self::assertStringContainsString("- '../src/Controllers/'", $services);
+        self::assertStringContainsString("- '../src/Controller/'", $services);
         self::assertStringContainsString("- '../src/DataFixtures/'", $services);
         self::assertStringContainsString("- '../src/DependencyInjection/'", $services);
         self::assertStringContainsString("- '../src/Entity/'", $services);
         self::assertStringContainsString("- '../src/Kernel/'", $services);
-        self::assertStringContainsString('App\\Navigating\\Controllers\\:', $services);
-        self::assertStringContainsString("resource: '../src/Controllers/'", $services);
+        self::assertStringContainsString('App\\Navigating\\Controller\\:', $services);
+        self::assertStringContainsString("resource: '../src/Controller/'", $services);
         self::assertStringContainsString('controller.service_arguments', $services);
         self::assertStringContainsString('extends AbstractType', $formType);
         self::assertStringContainsString('autoconfigure: true', $services);
@@ -102,14 +107,14 @@ final class NavigationAcceptanceContractTest extends TestCase
     public function testDevOnlyFixturesAreLoadedConditionally(): void
     {
         $runtimeServices = self::read('config/services.yaml');
-        $fixtureServices = self::read('config/services_fixtures.yaml');
+        $fixtureServices = self::read('config/navigation_services_fixtures.yaml');
         $extension = self::read('src/DependencyInjection/NavigationRuntimeExtension.php');
 
         self::assertStringContainsString("- '../src/DataFixtures/'", $runtimeServices);
         self::assertStringContainsString('App\\Navigating\\DataFixtures\\:', $fixtureServices);
         self::assertStringContainsString("resource: '../src/DataFixtures/'", $fixtureServices);
         self::assertStringContainsString('class_exists(\\Doctrine\\Bundle\\FixturesBundle\\Fixture::class)', $extension);
-        self::assertStringContainsString("load('services_fixtures.yaml')", $extension);
+        self::assertStringContainsString("load('navigation_services_fixtures.yaml')", $extension);
     }
 
     public function testCiHasProductionNoDevBootWarmupAndAdminRouteGate(): void
@@ -186,10 +191,14 @@ final class NavigationAcceptanceContractTest extends TestCase
         /* @var array<string, mixed> $scripts */
 
         self::assertSame([
-            '@php bin/console doctrine:schema:validate',
+            '@schema:parity',
             '@php bin/console navigation:manifest:verify',
             '@qa',
         ], $scripts['navigation:acceptance:verify'] ?? null);
+        self::assertSame([
+            '@php bin/console doctrine:schema:validate',
+            '@php bin/console doctrine:migrations:up-to-date --no-interaction',
+        ], $scripts['schema:parity'] ?? null);
     }
 
     /** @return array<string, mixed> */

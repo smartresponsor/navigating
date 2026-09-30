@@ -7,6 +7,7 @@ namespace App\Navigating\Kernel;
 use App\Navigating\NavigatingBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
+use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
@@ -30,6 +31,10 @@ final class NavigationKernel extends Kernel
 
         if (class_exists(DoctrineBundle::class)) {
             yield new DoctrineBundle();
+        }
+
+        if (class_exists(DoctrineMigrationsBundle::class)) {
+            yield new DoctrineMigrationsBundle();
         }
 
         if (class_exists(DoctrineFixturesBundle::class)) {
@@ -61,7 +66,11 @@ final class NavigationKernel extends Kernel
             $loader->load($configDir.'/standalone/doctrine.yaml');
         }
 
-        $loader->load($configDir.'/navigation.yaml');
+        if (class_exists(DoctrineMigrationsBundle::class)) {
+            $loader->load($configDir.'/standalone/navigation_doctrine_migrations.yaml');
+        }
+
+        $loader->load($configDir.'/navigation_bootstrap.yaml');
     }
 
     public function getProjectDir(): string

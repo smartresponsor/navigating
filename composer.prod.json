@@ -11,6 +11,7 @@
     "cruding/crud": "dev-master",
     "doctrine/dbal": "^4.0",
     "doctrine/doctrine-bundle": "^3.2",
+    "doctrine/doctrine-migrations-bundle": "^3.4",
     "doctrine/orm": "^3.3",
     "easycorp/easyadmin-bundle": "^5.0",
     "interfacing/interface": "dev-master",
@@ -71,5 +72,15 @@
       "*": "dist"
     },
     "sort-packages": true
-  }
+  },
+  "require-dev": {
+    "gating/gate": "dev-master"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/smartresponsor/gating.git",
+      "no-api": true
+    }
+  ]
 }

@@ -10,11 +10,11 @@ final class NavigationUniquenessContractTest extends TestCase
 {
     public function testDatabaseAndApplicationUniquenessContractsStayAligned(): void
     {
-        $menuEntity = self::read('src/Entity/NavigationMenu.php');
-        $itemEntity = self::read('src/Entity/NavigationItem.php');
+        $menuEntity = self::read('src/Entity/NavigationMenuEntity.php');
+        $itemEntity = self::read('src/Entity/NavigationItemEntity.php');
         $menuRepository = self::read('src/Repository/NavigationMenuRepository.php');
         $itemRepository = self::read('src/Repository/NavigationItemRepository.php');
-        $service = self::read('src/Service/Navigation/Persistence/NavigationEntityUniquenessService.php');
+        $service = self::read('src/Service/Persistence/NavigationEntityUniquenessService.php');
 
         self::assertStringContainsString('uniq_navigation_menu_key', $menuEntity);
         self::assertStringContainsString('uniq_navigation_menu_slug', $menuEntity);
@@ -32,8 +32,8 @@ final class NavigationUniquenessContractTest extends TestCase
     public function testEasyAdminShowsPrecheckErrorsAndHandlesDatabaseRaces(): void
     {
         $extension = self::read('src/Form/Extension/NavigationEntityInvariantTypeExtension.php');
-        $menuController = self::read('src/Controllers/Admin/NavigationMenuCrudController.php');
-        $itemController = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+        $menuController = self::read('src/Controller/Admin/NavigationMenuCrudController.php');
+        $itemController = self::read('src/Controller/Admin/NavigationItemCrudController.php');
 
         self::assertStringContainsString('NavigationEntityUniquenessService', $extension);
         self::assertStringContainsString('$this->uniqueness?->validate($entity)', $extension);
@@ -47,7 +47,7 @@ final class NavigationUniquenessContractTest extends TestCase
 
     public function testDuplicateActionUsesCollisionResistantIdentityAndDatabaseFallback(): void
     {
-        $controller = self::read('src/Controllers/Admin/NavigationItemCrudController.php');
+        $controller = self::read('src/Controller/Admin/NavigationItemCrudController.php');
         $duplicateStart = strpos($controller, 'public function duplicateItem(');
         self::assertIsInt($duplicateStart);
         $duplicateEnd = strpos($controller, 'private function resolveNavigationItem(', $duplicateStart);

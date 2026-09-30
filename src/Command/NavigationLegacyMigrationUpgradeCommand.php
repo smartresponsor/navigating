@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace App\Navigating\Command;
 
-use App\Navigating\Entity\NavigationItem;
-use App\Navigating\Entity\NavigationMenu;
 use App\Navigating\Repository\NavigationMenuRepository;
-use App\Navigating\Service\Navigation\Import\NavigationConfigImportService;
-use App\Navigating\Service\Navigation\Migration\NavigationLegacyMigrationPlanService;
-use App\Navigating\Service\Navigation\Persistence\NavigationPersistenceFinalizeService;
+use App\Navigating\Repository\NavigationPersistenceRepository;
+use App\Navigating\Service\Import\NavigationConfigImportService;
+use App\Navigating\Service\Migration\NavigationLegacyMigrationPlanService;
+use App\Navigating\Service\Persistence\NavigationPersistenceFinalizeService;
 use Doctrine\DBAL\Platforms\SQLitePlatform;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -30,7 +26,7 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
     private const SHADOW_TABLE = 'navigation_item_legacy_w31';
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
+        private readonly NavigationPersistenceRepository $persistenceRepository,
         private readonly NavigationLegacyMigrationPlanService $planService,
         private readonly NavigationConfigImportService $importService,
         private readonly NavigationMenuRepository $menuRepository,
@@ -72,7 +68,7 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
             return Command::FAILURE;
         }
 
-        $connection = $this->entityManager->getConnection();
+        $connection = $this->persistenceRepository->connection();
         if (!$connection->getDatabasePlatform() instanceof SQLitePlatform) {
             $output->writeln('<error>The guarded W30 -> W31 legacy upgrade currently supports SQLite only.</error>');
 
@@ -95,11 +91,6 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
             return Command::FAILURE;
         }
 
-        $metadata = [
-            $this->entityManager->getClassMetadata(NavigationMenu::class),
-            $this->entityManager->getClassMetadata(NavigationItem::class),
-        ];
-
         $foreignKeyPragma = $connection->fetchOne('PRAGMA foreign_keys');
         if (!is_int($foreignKeyPragma) && !is_string($foreignKeyPragma)) {
             throw new \RuntimeException('SQLite returned an invalid PRAGMA foreign_keys value.');
@@ -114,7 +105,7 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
             $connection->beginTransaction();
             $connection->executeStatement('ALTER TABLE navigation_item RENAME TO '.self::SHADOW_TABLE);
             $this->dropLegacySchemaObjects($legacySchemaObjects);
-            (new SchemaTool($this->entityManager))->createSchema($metadata);
+            $this->persistenceRepository->createOwnedSchema();
             $connection->commit();
         } catch (\Throwable $exception) {
             if ($connection->isTransactionActive()) {
@@ -127,7 +118,7 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
         }
 
         try {
-            $this->entityManager->clear();
+            $this->persistenceRepository->clear();
             $this->importService->replaceFromConfig(['shell_groups' => $payload['shell_groups']], true, false);
             $this->restoreArchivedItems($payload['archived_items']);
             $this->assertImportedCount((int) $payload['row_count']);
@@ -139,7 +130,7 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
             $this->restoreForeignKeyPragma($foreignKeysEnabled);
             $connection->executeStatement('DROP TABLE '.self::SHADOW_TABLE);
         } catch (\Throwable $exception) {
-            $recovered = $this->restoreLegacySchema($metadata, $legacySchemaObjects);
+            $recovered = $this->restoreLegacySchema($legacySchemaObjects);
             $this->restoreForeignKeyPragma($foreignKeysEnabled);
             $suffix = $recovered
                 ? 'Legacy schema was restored automatically.'
@@ -234,7 +225,7 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
 
     private function assertNoExternalSqliteDependencies(): void
     {
-        $connection = $this->entityManager->getConnection();
+        $connection = $this->persistenceRepository->connection();
 
         $views = $connection->executeQuery(
             "SELECT name FROM sqlite_schema WHERE type = 'view' AND sql IS NOT NULL AND lower(sql) LIKE '%navigation_item%'",
@@ -273,7 +264,7 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
     /** @return list<array{name:string,type:string,sql:string}> */
     private function captureLegacySchemaObjects(): array
     {
-        $rows = $this->entityManager->getConnection()->executeQuery(
+        $rows = $this->persistenceRepository->connection()->executeQuery(
             "SELECT name, type, sql FROM sqlite_schema WHERE tbl_name = 'navigation_item' AND type IN ('index', 'trigger') AND sql IS NOT NULL ORDER BY type, name",
         )->fetchAllAssociative();
 
@@ -293,7 +284,7 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
     /** @param list<array{name:string,type:string,sql:string}> $objects */
     private function dropLegacySchemaObjects(array $objects): void
     {
-        $connection = $this->entityManager->getConnection();
+        $connection = $this->persistenceRepository->connection();
         foreach ($objects as $object) {
             $keyword = 'trigger' === $object['type'] ? 'TRIGGER' : 'INDEX';
             $connection->executeStatement('DROP '.$keyword.' IF EXISTS '.$this->quoteSqliteIdentifier($object['name']));
@@ -314,7 +305,7 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
                 }
             }
         }
-        $this->entityManager->flush();
+        $this->persistenceRepository->flush();
     }
 
     private function assertImportedCount(int $expected): void
@@ -330,22 +321,21 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
 
     private function assertForeignKeyIntegrity(): void
     {
-        $violations = $this->entityManager->getConnection()->executeQuery('PRAGMA foreign_key_check')->fetchAllAssociative();
+        $violations = $this->persistenceRepository->connection()->executeQuery('PRAGMA foreign_key_check')->fetchAllAssociative();
         if ([] !== $violations) {
             throw new \RuntimeException('SQLite foreign_key_check reported violations after W31 import.');
         }
     }
 
     /**
-     * @param list<ClassMetadata<object>>                     $metadata
      * @param list<array{name:string,type:string,sql:string}> $legacySchemaObjects
      */
-    private function restoreLegacySchema(array $metadata, array $legacySchemaObjects): bool
+    private function restoreLegacySchema(array $legacySchemaObjects): bool
     {
-        $connection = $this->entityManager->getConnection();
+        $connection = $this->persistenceRepository->connection();
         try {
-            $this->entityManager->clear();
-            (new SchemaTool($this->entityManager))->dropSchema($metadata);
+            $this->persistenceRepository->clear();
+            $this->persistenceRepository->dropOwnedSchema();
             if (!$connection->createSchemaManager()->tablesExist([self::SHADOW_TABLE])) {
                 return false;
             }
@@ -362,10 +352,10 @@ final class NavigationLegacyMigrationUpgradeCommand extends Command
 
     private function restoreForeignKeyPragma(bool $enabled): void
     {
-        if ($this->entityManager->getConnection()->isTransactionActive()) {
+        if ($this->persistenceRepository->connection()->isTransactionActive()) {
             return;
         }
-        $this->entityManager->getConnection()->executeStatement('PRAGMA foreign_keys = '.($enabled ? 'ON' : 'OFF'));
+        $this->persistenceRepository->connection()->executeStatement('PRAGMA foreign_keys = '.($enabled ? 'ON' : 'OFF'));
     }
 
     private function quoteSqliteIdentifier(string $identifier): string

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Navigating\Form\Extension;
 
-use App\Navigating\Entity\NavigationItem;
-use App\Navigating\Entity\NavigationMenu;
-use App\Navigating\Service\Navigation\Persistence\NavigationEntityInvariantService;
-use App\Navigating\Service\Navigation\Persistence\NavigationEntityUniquenessService;
+use App\Navigating\Entity\NavigationItemEntity;
+use App\Navigating\Entity\NavigationMenuEntity;
+use App\Navigating\Service\Persistence\NavigationEntityInvariantService;
+use App\Navigating\Service\Persistence\NavigationEntityUniquenessService;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -37,7 +37,7 @@ final class NavigationEntityInvariantTypeExtension extends AbstractTypeExtension
             }
 
             $entity = $event->getData();
-            if (!$entity instanceof NavigationMenu && !$entity instanceof NavigationItem) {
+            if (!$entity instanceof NavigationMenuEntity && !$entity instanceof NavigationItemEntity) {
                 return;
             }
 

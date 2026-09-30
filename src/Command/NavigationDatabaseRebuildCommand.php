@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Navigating\Command;
 
-use App\Navigating\Entity\NavigationItem;
-use App\Navigating\Entity\NavigationMenu;
-use App\Navigating\Service\Navigation\Snapshot\NavigationSnapshotService;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\SchemaTool;
+use App\Navigating\Repository\NavigationPersistenceRepository;
+use App\Navigating\Service\Snapshot\NavigationSnapshotService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,7 +20,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class NavigationDatabaseRebuildCommand extends Command
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
+        private readonly NavigationPersistenceRepository $persistenceRepository,
         private readonly NavigationSnapshotService $snapshotService,
         #[Autowire('%kernel.project_dir%')] private readonly string $projectDir,
     ) {
@@ -46,11 +43,6 @@ final class NavigationDatabaseRebuildCommand extends Command
             return Command::FAILURE;
         }
 
-        $metadata = [
-            $this->entityManager->getClassMetadata(NavigationMenu::class),
-            $this->entityManager->getClassMetadata(NavigationItem::class),
-        ];
-
         try {
             $snapshot = $this->snapshotService->create();
             $backupPath = $this->resolveBackupPath($input->getOption('backup-path'));
@@ -58,11 +50,8 @@ final class NavigationDatabaseRebuildCommand extends Command
 
             $output->writeln('<info>Navigation pre-rebuild backup: '.$backupPath.'</info>');
 
-            $schemaTool = new SchemaTool($this->entityManager);
-            $schemaTool->dropSchema($metadata);
-            $schemaTool->createSchema($metadata);
-            $this->entityManager->clear();
-
+            $this->persistenceRepository->rebuildOwnedSchema();
+            $this->persistenceRepository->clear();
             $this->snapshotService->restore($snapshot);
         } catch (\Throwable $exception) {
             $output->writeln('<error>Navigation rebuild failed: '.$exception->getMessage().'</error>');

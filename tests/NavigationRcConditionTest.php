@@ -32,11 +32,10 @@ final class NavigationRcConditionTest extends TestCase
         }
     }
 
-    public function testNoMigrationOrTemporaryQaFilesExist(): void
+    public function testNoTemporaryQaFilesExist(): void
     {
         $root = dirname(__DIR__);
 
-        self::assertDirectoryDoesNotExist($root.'/migrations');
         self::assertDirectoryDoesNotExist($root.'/src/Migrations');
         foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($root, \FilesystemIterator::SKIP_DOTS)) as $file) {
             self::assertStringEndsNotWith('.tmp', $file->getPathname());

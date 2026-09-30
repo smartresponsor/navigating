@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Entity\NavigationItem;
-use App\Navigating\Entity\NavigationMenu;
+use App\Navigating\Entity\NavigationItemEntity;
+use App\Navigating\Entity\NavigationMenuEntity;
 use App\Navigating\EventSubscriber\NavigationEntityInvariantSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PrePersistEventArgs;
@@ -15,7 +15,7 @@ final class NavigationTreeInvariantTest extends TestCase
 {
     public function testSelfParentIsRejected(): void
     {
-        $item = new NavigationItem();
+        $item = new NavigationItemEntity();
 
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('cannot be its own parent');
@@ -25,15 +25,15 @@ final class NavigationTreeInvariantTest extends TestCase
 
     public function testCrossMenuParentIsRejectedAtPersistenceBoundary(): void
     {
-        $menuA = (new NavigationMenu())->setMenuKey('a')->setSlug('a');
-        $menuB = (new NavigationMenu())->setMenuKey('b')->setSlug('b');
-        $item = (new NavigationItem())
+        $menuA = (new NavigationMenuEntity())->setMenuKey('a')->setSlug('a');
+        $menuB = (new NavigationMenuEntity())->setMenuKey('b')->setSlug('b');
+        $item = (new NavigationItemEntity())
             ->setMenu($menuA)
             ->setNavigationKey('item')
             ->setLabel('Item')
             ->setType('link')
             ->setOperation('index');
-        $parent = (new NavigationItem())->setMenu($menuB);
+        $parent = (new NavigationItemEntity())->setMenu($menuB);
 
         // Cross-field setters must allow a form to transition menu and parent in one submit.
         $item->setParent($parent);
@@ -52,11 +52,11 @@ final class NavigationTreeInvariantTest extends TestCase
 
     public function testMenuAndParentCanTransitionTogetherWithoutSetterOrderDependency(): void
     {
-        $menuA = (new NavigationMenu())->setMenuKey('a')->setSlug('a');
-        $menuB = (new NavigationMenu())->setMenuKey('b')->setSlug('b');
-        $oldParent = (new NavigationItem())->setMenu($menuA);
-        $newParent = (new NavigationItem())->setMenu($menuB);
-        $item = (new NavigationItem())->setMenu($menuA)->setParent($oldParent);
+        $menuA = (new NavigationMenuEntity())->setMenuKey('a')->setSlug('a');
+        $menuB = (new NavigationMenuEntity())->setMenuKey('b')->setSlug('b');
+        $oldParent = (new NavigationItemEntity())->setMenu($menuA);
+        $newParent = (new NavigationItemEntity())->setMenu($menuB);
+        $item = (new NavigationItemEntity())->setMenu($menuA)->setParent($oldParent);
 
         $item->setMenu($menuB);
         $item->setParent($newParent);
@@ -67,10 +67,10 @@ final class NavigationTreeInvariantTest extends TestCase
 
     public function testLongHierarchyCycleIsRejected(): void
     {
-        $menu = (new NavigationMenu())->setMenuKey('main')->setSlug('main');
-        $a = (new NavigationItem())->setMenu($menu)->setNavigationKey('a');
-        $b = (new NavigationItem())->setMenu($menu)->setNavigationKey('b');
-        $c = (new NavigationItem())->setMenu($menu)->setNavigationKey('c');
+        $menu = (new NavigationMenuEntity())->setMenuKey('main')->setSlug('main');
+        $a = (new NavigationItemEntity())->setMenu($menu)->setNavigationKey('a');
+        $b = (new NavigationItemEntity())->setMenu($menu)->setNavigationKey('b');
+        $c = (new NavigationItemEntity())->setMenu($menu)->setNavigationKey('c');
 
         $b->setParent($a);
         $c->setParent($b);
@@ -83,7 +83,7 @@ final class NavigationTreeInvariantTest extends TestCase
 
     public function testDeletingParentDoesNotCascadeDeleteSubtreeByMappingContract(): void
     {
-        $entity = file_get_contents(dirname(__DIR__).'/src/Entity/NavigationItem.php');
+        $entity = file_get_contents(dirname(__DIR__).'/src/Entity/NavigationItemEntity.php');
         self::assertIsString($entity);
 
         self::assertStringContainsString("JoinColumn(name: 'parent_id', nullable: true, onDelete: 'SET NULL')", $entity);
@@ -95,14 +95,14 @@ final class NavigationTreeInvariantTest extends TestCase
 
     public function testMenuOrphanRemovalDoesNotCreateAnIllegalNullableMenuState(): void
     {
-        $menu = file_get_contents(dirname(__DIR__).'/src/Entity/NavigationMenu.php');
+        $menu = file_get_contents(dirname(__DIR__).'/src/Entity/NavigationMenuEntity.php');
         self::assertIsString($menu);
 
-        self::assertStringContainsString("mappedBy: 'menu', targetEntity: NavigationItem::class, cascade: ['persist'], orphanRemoval: true", $menu);
-        self::assertStringContainsString('public function removeItem(NavigationItem $item): self', $menu);
+        self::assertStringContainsString("mappedBy: 'menu', targetEntity: NavigationItemEntity::class, cascade: ['persist'], orphanRemoval: true", $menu);
+        self::assertStringContainsString('public function removeItem(NavigationItemEntity $item): self', $menu);
         self::assertStringContainsString('$this->items->removeElement($item);', $menu);
 
-        $removeMethodStart = strpos($menu, 'public function removeItem(NavigationItem $item): self');
+        $removeMethodStart = strpos($menu, 'public function removeItem(NavigationItemEntity $item): self');
         self::assertIsInt($removeMethodStart);
         $removeMethodEnd = strpos($menu, '#[ORM\\PreUpdate]', $removeMethodStart);
         self::assertIsInt($removeMethodEnd);
@@ -112,7 +112,7 @@ final class NavigationTreeInvariantTest extends TestCase
 
     public function testArchiveStateDoesNotDestroyEnabledPreference(): void
     {
-        $disabled = (new NavigationItem())->setEnabled(false);
+        $disabled = (new NavigationItemEntity())->setEnabled(false);
         $disabled->archive();
 
         self::assertTrue($disabled->isArchived());
@@ -123,7 +123,7 @@ final class NavigationTreeInvariantTest extends TestCase
         self::assertFalse($disabled->isArchived());
         self::assertFalse($disabled->isEnabled());
 
-        $enabled = (new NavigationItem())->setEnabled(true);
+        $enabled = (new NavigationItemEntity())->setEnabled(true);
         $enabled->archive()->restore();
 
         self::assertTrue($enabled->isEnabled());
@@ -131,7 +131,7 @@ final class NavigationTreeInvariantTest extends TestCase
 
     public function testRuntimeProjectionRequiresAllAncestorsToBeEnabledAndUnarchived(): void
     {
-        $provider = file_get_contents(dirname(__DIR__).'/src/Service/Navigation/Provide/NavigationDatabaseConfigProvideService.php');
+        $provider = file_get_contents(dirname(__DIR__).'/src/Service/Provide/NavigationDatabaseConfigProvideService.php');
         self::assertIsString($provider);
 
         self::assertStringContainsString('isEffectivelyEnabled($item)', $provider);
@@ -142,7 +142,7 @@ final class NavigationTreeInvariantTest extends TestCase
 
     public function testRuntimeVisibilityRequiresVisibleAncestorChain(): void
     {
-        $filter = file_get_contents(dirname(__DIR__).'/src/Service/Navigation/Filter/NavigationVisibilityFilterService.php');
+        $filter = file_get_contents(dirname(__DIR__).'/src/Service/Filter/NavigationVisibilityFilterService.php');
         self::assertIsString($filter);
 
         self::assertStringContainsString('hasVisibleAncestorChain($item, $itemsByKey, $locallyVisibleItems)', $filter);

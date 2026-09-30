@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Model\Navigation\View\NavigationTargetView;
-use App\Navigating\Service\Navigation\Provide\NavigationResponseProvideService;
-use App\Navigating\Service\Navigation\Provide\NavigationTemplateDataProvideService;
-use App\Navigating\Service\Navigation\Render\NavigationTemplateRenderService;
-use App\Navigating\ServiceInterface\Navigation\NavigationRendererInterface;
-use App\Navigating\ServiceInterface\Navigation\Provide\NavigationTemplateDataProvideServiceInterface;
-use App\Navigating\ServiceInterface\Navigation\Render\NavigationTemplateRenderServiceInterface;
+use App\Navigating\Service\Provide\NavigationResponseProvideService;
+use App\Navigating\Service\Provide\NavigationTemplateDataProvideService;
+use App\Navigating\Service\Render\NavigationTemplateRenderService;
+use App\Navigating\ServiceInterface\Provide\NavigationTemplateDataProvideServiceInterface;
+use App\Navigating\ServiceInterface\Render\NavigationRendererInterface;
+use App\Navigating\ServiceInterface\Render\NavigationTemplateRenderServiceInterface;
+use App\Navigating\Value\View\NavigationTargetView;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 

@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace App\Navigating\Repository;
 
-use App\Navigating\Entity\NavigationItem;
-use App\Navigating\Entity\NavigationMenu;
+use App\Navigating\Entity\NavigationItemEntity;
+use App\Navigating\Entity\NavigationMenuEntity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends ServiceEntityRepository<NavigationItem> */
+/** @extends ServiceEntityRepository<NavigationItemEntity> */
 final class NavigationItemRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, NavigationItem::class);
+        parent::__construct($registry, NavigationItemEntity::class);
     }
 
-    public function findOneByMenuAndSlug(NavigationMenu $menu, string $slug): ?NavigationItem
+    public function findOneByMenuAndSlug(NavigationMenuEntity $menu, string $slug): ?NavigationItemEntity
     {
-        /** @var NavigationItem|null $item */
+        /** @var NavigationItemEntity|null $item */
         $item = $this->findOneBy([
             'menu' => $menu,
             'slug' => trim($slug),
@@ -28,10 +28,10 @@ final class NavigationItemRepository extends ServiceEntityRepository
         return $item;
     }
 
-    public function findOneByMenuIdOrSlug(NavigationMenu $menu, int|string $identifier): ?NavigationItem
+    public function findOneByMenuIdOrSlug(NavigationMenuEntity $menu, int|string $identifier): ?NavigationItemEntity
     {
         if (is_int($identifier) || ctype_digit($identifier)) {
-            /** @var NavigationItem|null $item */
+            /** @var NavigationItemEntity|null $item */
             $item = $this->findOneBy([
                 'id' => (int) $identifier,
                 'menu' => $menu,
@@ -43,20 +43,20 @@ final class NavigationItemRepository extends ServiceEntityRepository
         return $this->findOneByMenuAndSlug($menu, $identifier);
     }
 
-    public function existsOtherWithNavigationKey(NavigationMenu $menu, string $navigationKey, ?int $excludeId = null): bool
+    public function existsOtherWithNavigationKey(NavigationMenuEntity $menu, string $navigationKey, ?int $excludeId = null): bool
     {
         return $this->existsOtherByField($menu, 'navigationKey', trim($navigationKey), $excludeId);
     }
 
-    public function existsOtherWithSlug(NavigationMenu $menu, string $slug, ?int $excludeId = null): bool
+    public function existsOtherWithSlug(NavigationMenuEntity $menu, string $slug, ?int $excludeId = null): bool
     {
         return $this->existsOtherByField($menu, 'slug', trim($slug), $excludeId);
     }
 
-    /** @return list<NavigationItem> */
-    public function findEnabledByMenu(NavigationMenu $menu): array
+    /** @return list<NavigationItemEntity> */
+    public function findEnabledByMenu(NavigationMenuEntity $menu): array
     {
-        /** @var list<NavigationItem> $items */
+        /** @var list<NavigationItemEntity> $items */
         $items = $this->createQueryBuilder('item')
             ->andWhere('item.menu = :menu')
             ->andWhere('item.enabled = :enabled')
@@ -72,10 +72,10 @@ final class NavigationItemRepository extends ServiceEntityRepository
         return $items;
     }
 
-    /** @return list<NavigationItem> */
+    /** @return list<NavigationItemEntity> */
     public function findEnabledByLocation(string $location): array
     {
-        /** @var list<NavigationItem> $items */
+        /** @var list<NavigationItemEntity> $items */
         $items = $this->createQueryBuilder('item')
             ->innerJoin('item.menu', 'menu')
             ->andWhere('menu.enabled = :enabled')
@@ -94,7 +94,7 @@ final class NavigationItemRepository extends ServiceEntityRepository
         return $items;
     }
 
-    private function existsOtherByField(NavigationMenu $menu, string $field, string $value, ?int $excludeId): bool
+    private function existsOtherByField(NavigationMenuEntity $menu, string $field, string $value, ?int $excludeId): bool
     {
         $queryBuilder = $this->createQueryBuilder('item')
             ->select('COUNT(item.id)')

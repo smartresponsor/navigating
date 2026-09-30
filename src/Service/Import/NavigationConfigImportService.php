@@ -1,0 +1,253 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Navigating\Service\Import;
+
+use App\Navigating\Entity\NavigationItemEntity;
+use App\Navigating\Entity\NavigationMenuEntity;
+use App\Navigating\Repository\NavigationMenuRepository;
+use App\Navigating\Repository\NavigationPersistenceRepository;
+use App\Navigating\Service\Persistence\NavigationPersistenceFinalizeService;
+
+final readonly class NavigationConfigImportService
+{
+    public function __construct(
+        private NavigationPersistenceRepository $persistenceRepository,
+        private NavigationMenuRepository $menuRepository,
+        private NavigationPersistenceFinalizeService $finalizer,
+    ) {
+    }
+
+    /** @param array<string, mixed> $config */
+    public function replaceFromConfig(array $config, bool $requireEmpty = false, bool $finalize = true): int
+    {
+        $groups = $config['shell_groups'] ?? null;
+        if (!is_array($groups) || [] === $groups) {
+            throw new \InvalidArgumentException('No shell_groups are available in navigation configuration.');
+        }
+
+        if ($requireEmpty && [] !== $this->menuRepository->findAll()) {
+            throw new \RuntimeException('Navigation database is not empty.');
+        }
+
+        $this->persistenceRepository->transactional(function () use ($groups): void {
+            foreach ($this->menuRepository->findAll() as $existingMenu) {
+                $this->persistenceRepository->remove($existingMenu);
+            }
+            $this->persistenceRepository->flush();
+
+            foreach ($groups as $menuKey => $groupConfig) {
+                if (!is_string($menuKey) || '' === trim($menuKey) || !is_array($groupConfig)) {
+                    throw new \InvalidArgumentException('Navigation menu keys must be non-empty strings with object configuration.');
+                }
+                /** @var array<string, mixed> $groupConfig */
+                $this->importGroup(trim($menuKey), $groupConfig);
+            }
+
+            $this->persistenceRepository->flush();
+        });
+
+        if ($finalize) {
+            $this->finalizer->finalizeCommittedChange();
+        }
+
+        return count($groups);
+    }
+
+    /** @param array<string, mixed> $groupConfig */
+    private function importGroup(string $menuKey, array $groupConfig): void
+    {
+        $menuSlug = $this->stringValue($groupConfig['slug'] ?? null, $this->slugify($menuKey));
+        if ('' === trim($menuSlug)) {
+            throw new \InvalidArgumentException(sprintf('Navigation menu "%s" must resolve to a non-empty slug.', $menuKey));
+        }
+
+        $menu = (new NavigationMenuEntity())
+            ->setMenuKey($menuKey)
+            ->setSlug($menuSlug)
+            ->setLabel($this->stringValue($groupConfig['label'] ?? null, $menuKey))
+            ->setLocation($this->stringValue($groupConfig['location'] ?? null, 'shell.context.middle'))
+            ->setType($this->stringValue($groupConfig['type'] ?? null, 'navigation'))
+            ->setVisibleForRoles($this->stringList($groupConfig['visible_for_roles'] ?? []))
+            ->setVisibleForScopes($this->stringList($groupConfig['visible_for_scopes'] ?? []))
+            ->setVisibleForEnvironments($this->stringList($groupConfig['visible_for_environments'] ?? []))
+            ->setPriority($this->intValue($groupConfig['priority'] ?? null, 100))
+            ->setEnabled((bool) ($groupConfig['enabled'] ?? true))
+            ->setMetadata($this->objectValue($groupConfig['metadata'] ?? null, 'navigation menu metadata'));
+
+        $this->persistenceRepository->persist($menu);
+
+        $itemsConfig = $groupConfig['items'] ?? [];
+        if (!is_array($itemsConfig)) {
+            return;
+        }
+
+        $items = [];
+        $parentKeys = [];
+
+        foreach ($itemsConfig as $itemKey => $itemConfig) {
+            if (!is_string($itemKey) || '' === trim($itemKey) || !is_array($itemConfig)) {
+                throw new \InvalidArgumentException(sprintf('Navigation items in menu "%s" must use non-empty string keys with object configuration.', $menuKey));
+            }
+            /** @var array<string, mixed> $itemConfig */
+            $itemKey = trim($itemKey);
+
+            $metadata = $this->objectValue($itemConfig['metadata'] ?? null, 'navigation item metadata');
+            $parentKey = $metadata['parent_key'] ?? $itemConfig['parent_key'] ?? null;
+            unset($metadata['parent_key']);
+
+            $item = (new NavigationItemEntity())
+                ->setNavigationKey($itemKey)
+                ->setSlug($this->nullableString($itemConfig['slug'] ?? null))
+                ->setLabel($this->stringValue($itemConfig['label'] ?? null, $itemKey))
+                ->setType($this->stringValue($itemConfig['type'] ?? null, 'link'))
+                ->setOperation($this->stringValue($itemConfig['operation'] ?? $metadata['operation'] ?? null, 'index'))
+                ->setIcon($this->nullableString($itemConfig['icon'] ?? null))
+                ->setBadge($this->nullableString($itemConfig['badge'] ?? null))
+                ->setVisibleForRoles($this->stringList($itemConfig['visible_for_roles'] ?? []))
+                ->setVisibleForScopes($this->stringList($itemConfig['visible_for_scopes'] ?? []))
+                ->setVisibleForEnvironments($this->stringList($itemConfig['visible_for_environments'] ?? []))
+                ->setPosition($this->intValue($itemConfig['priority'] ?? null, 100))
+                ->setEnabled((bool) ($itemConfig['enabled'] ?? true))
+                ->setMetadata($metadata);
+
+            $this->applyTarget($item, $itemConfig);
+            $menu->addItem($item);
+            $this->persistenceRepository->persist($item);
+            $items[$itemKey] = $item;
+
+            if (is_string($parentKey) && '' !== trim($parentKey)) {
+                $parentKeys[$itemKey] = trim($parentKey);
+            }
+        }
+
+        foreach ($parentKeys as $itemKey => $parentKey) {
+            $parent = $items[$parentKey] ?? null;
+            if (!$parent instanceof NavigationItemEntity) {
+                throw new \InvalidArgumentException(sprintf('Navigation item "%s" in menu "%s" references missing parent "%s".', $itemKey, $menuKey, $parentKey));
+            }
+            $items[$itemKey]->setParent($parent);
+        }
+    }
+
+    /** @param array<string, mixed> $itemConfig */
+    private function applyTarget(NavigationItemEntity $item, array $itemConfig): void
+    {
+        $target = is_array($itemConfig['target'] ?? null) ? $itemConfig['target'] : [];
+        $targetType = $this->nullableString($target['type'] ?? null);
+
+        if (null !== $targetType) {
+            if ('route' === $targetType) {
+                $route = $this->nullableString($target['route'] ?? null);
+                if (null === $route) {
+                    throw new \InvalidArgumentException('Navigation route target requires a non-empty route name.');
+                }
+
+                $item->setRouteName($route);
+                $item->setRouteParameters($this->objectValue($target['params'] ?? null, 'navigation route params'));
+                $item->setPath(null);
+
+                return;
+            }
+
+            if ('path' === $targetType) {
+                $path = $this->nullableString($target['path'] ?? null);
+                if (null === $path) {
+                    throw new \InvalidArgumentException('Navigation path target requires a non-empty path.');
+                }
+
+                $item->setRouteName(null)->setRouteParameters([])->setPath($path);
+
+                return;
+            }
+
+            throw new \InvalidArgumentException(sprintf('Unsupported navigation target type "%s".', $targetType));
+        }
+
+        $route = $this->nullableString($itemConfig['route'] ?? null);
+        $path = $this->nullableString($itemConfig['path'] ?? null);
+
+        if (null !== $route && null !== $path) {
+            throw new \InvalidArgumentException('Navigation item configuration cannot define both route and path targets.');
+        }
+
+        if (null !== $route) {
+            $item->setRouteName($route)
+                ->setRouteParameters($this->objectValue($itemConfig['params'] ?? null, 'navigation route params'))
+                ->setPath(null);
+
+            return;
+        }
+
+        if (null !== $path) {
+            $item->setRouteName(null)->setRouteParameters([])->setPath($path);
+
+            return;
+        }
+
+        $item->setRouteName(null)->setRouteParameters([])->setPath(null);
+    }
+
+    private function slugify(string $value): string
+    {
+        $value = preg_replace('/[^a-z0-9]+/', '-', strtolower(trim($value))) ?? '';
+
+        return trim($value, '-');
+    }
+
+    private function stringValue(mixed $value, string $fallback): string
+    {
+        return is_string($value) && '' !== trim($value) ? trim($value) : $fallback;
+    }
+
+    private function nullableString(mixed $value): ?string
+    {
+        return is_string($value) && '' !== trim($value) ? trim($value) : null;
+    }
+
+    private function intValue(mixed $value, int $fallback): int
+    {
+        if (null === $value) {
+            return $fallback;
+        }
+        if (is_int($value)) {
+            return $value;
+        }
+        if (is_string($value) && preg_match('/^-?\\d+$/', trim($value))) {
+            return (int) trim($value);
+        }
+
+        throw new \InvalidArgumentException('Navigation numeric configuration values must be integers.');
+    }
+
+    /** @return array<string, mixed> */
+    private function objectValue(mixed $value, string $field): array
+    {
+        if (null === $value) {
+            return [];
+        }
+        if (!is_array($value) || ([] !== $value && array_is_list($value))) {
+            throw new \InvalidArgumentException(sprintf('%s must be an object-shaped map.', ucfirst($field)));
+        }
+
+        /** @var array<string, mixed> $value */
+        return $value;
+    }
+
+    /** @return list<string> */
+    private function stringList(mixed $value): array
+    {
+        if (!is_array($value)) {
+            return [];
+        }
+        $values = [];
+        foreach ($value as $item) {
+            if (is_string($item) && '' !== trim($item)) {
+                $values[] = trim($item);
+            }
+        }
+
+        return $values;
+    }
+}

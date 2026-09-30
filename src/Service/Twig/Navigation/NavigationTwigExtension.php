@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Navigating\Service\Twig\Navigation;
 
-use App\Navigating\ServiceInterface\Navigation\Provide\NavigationGroupProvideServiceInterface;
-use App\Navigating\ServiceInterface\Navigation\Provide\NavigationShellProvideServiceInterface;
-use App\Navigating\ServiceInterface\Navigation\Render\NavigationRenderServiceInterface;
+use App\Navigating\ServiceInterface\Provide\NavigationGroupProvideServiceInterface;
+use App\Navigating\ServiceInterface\Provide\NavigationShellProvideServiceInterface;
+use App\Navigating\ServiceInterface\Render\NavigationRenderServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Extension\AbstractExtension;

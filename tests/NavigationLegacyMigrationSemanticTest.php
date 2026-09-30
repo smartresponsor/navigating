@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Service\Navigation\Migration\NavigationLegacyMigrationPlanService;
+use App\Navigating\Service\Migration\NavigationLegacyMigrationPlanService;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use PHPUnit\Framework\TestCase;

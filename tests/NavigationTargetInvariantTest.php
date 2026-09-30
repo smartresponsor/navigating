@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Navigating\Tests;
 
-use App\Navigating\Entity\NavigationItem;
-use App\Navigating\Entity\NavigationMenu;
-use App\Navigating\Service\Navigation\Persistence\NavigationEntityInvariantService;
+use App\Navigating\Entity\NavigationItemEntity;
+use App\Navigating\Entity\NavigationMenuEntity;
+use App\Navigating\Service\Persistence\NavigationEntityInvariantService;
 use PHPUnit\Framework\TestCase;
 
 final class NavigationTargetInvariantTest extends TestCase
@@ -52,16 +52,16 @@ final class NavigationTargetInvariantTest extends TestCase
         self::addToAssertionCount(1);
     }
 
-    private function item(): NavigationItem
+    private function item(): NavigationItemEntity
     {
-        $menu = (new NavigationMenu())
+        $menu = (new NavigationMenuEntity())
             ->setMenuKey('main')
             ->setSlug('main')
             ->setLabel('Main')
             ->setLocation('shell.left.middle')
             ->setType('navigation');
 
-        return (new NavigationItem())
+        return (new NavigationItemEntity())
             ->setMenu($menu)
             ->setNavigationKey('vendor')
             ->setLabel('Vendor')
@@ -69,7 +69,7 @@ final class NavigationTargetInvariantTest extends TestCase
             ->setOperation('index');
     }
 
-    private function validate(NavigationItem $item): void
+    private function validate(NavigationItemEntity $item): void
     {
         (new NavigationEntityInvariantService([
             'shell_locations' => ['shell.left.middle' => []],

@@ -12,10 +12,10 @@ final class NavigationSynchronizationContractTest extends TestCase
     public function testMobileInventoryIsBootstrapOnlyAndProjectionUsesCanonicalShell(): void
     {
         $extension = self::read('src/DependencyInjection/NavigationRuntimeExtension.php');
-        $provider = self::read('src/Service/Navigation/Provide/NavigationMobileShellPayloadProvideService.php');
-        $mobile = Yaml::parse(self::read('config/navigation.mobile.yaml'));
+        $provider = self::read('src/Service/Provide/NavigationMobileShellPayloadProvideService.php');
+        $mobile = Yaml::parse(self::read('config/navigation_mobile.yaml'));
 
-        self::assertStringContainsString("'navigation.mobile.yaml'", $extension);
+        self::assertStringContainsString("'navigation_mobile.yaml'", $extension);
         self::assertStringContainsString('NavigationShellProvideServiceInterface', $provider);
         self::assertStringNotContainsString('array $navigationConfig', $provider);
         self::assertIsArray($mobile);

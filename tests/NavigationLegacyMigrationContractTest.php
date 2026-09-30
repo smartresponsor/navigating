@@ -12,7 +12,7 @@ final class NavigationLegacyMigrationContractTest extends TestCase
     {
         $plan = self::read('src/Command/NavigationLegacyMigrationPlanCommand.php');
         $upgrade = self::read('src/Command/NavigationLegacyMigrationUpgradeCommand.php');
-        $service = self::read('src/Service/Navigation/Migration/NavigationLegacyMigrationPlanService.php');
+        $service = self::read('src/Service/Migration/NavigationLegacyMigrationPlanService.php');
 
         self::assertStringContainsString("name: 'navigation:database:legacy-plan'", $plan);
         self::assertStringContainsString('Database was not modified.', $plan);
