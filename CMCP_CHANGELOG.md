@@ -160,5 +160,11 @@
 - Full asynchronous RC/Inspecting worker was requested but orchestration admitted light work only because of `ENGINE_BACKLOG_HIGH`; no heavy worker was started. Deterministic repository gates were completed independently rather than treating capacity as a repository defect.
 
 Что имеем? Canon remediation is materially implemented and deterministic code/schema/runtime gates are green; protected-browser evidence is ATTENTION only because authentication credentials were not supplied.
-Что осталось? Reconcile the large pre-existing overlapping dirty worktree for Git integration and obtain a fresh heavy Inspecting/RC report when runtime capacity admits it.
+Что осталось? Obtain a fresh heavy Inspecting/RC report when runtime capacity admits it.
+
+### Git integration
+
+- Signed commit `0b40ad2a0db381d80cc98d10704674ccc1adcd70` (`Canonicalize Navigating repository contracts`) was created and pushed to `origin/master`.
+- Git recognized the structural pass as renames; unrelated untracked `LICENSE` and `NOTICE` were intentionally not absorbed into the task commit.
+- Post-push branch publication succeeded. Heavy RC/Inspecting remained unavailable because the orchestration capacity gate continued to report `ENGINE_BACKLOG_HIGH`; synchronous read-only RC validation also exceeded the Code Mode wrapper timeout without a usable report.
 
