@@ -62,10 +62,37 @@ final readonly class NavigationLegacyMigrationPlanService
      */
     private function convertRows(array $rows): array
     {
-        $canonicalGroups = is_array($this->navigationConfig['shell_groups'] ?? null) ? $this->navigationConfig['shell_groups'] : [];
+        $canonicalGroups = $this->canonicalGroups();
+        $keyToGroup = $this->indexCanonicalItemGroups($canonicalGroups);
+        $rowByKey = $this->indexLegacyRows($rows);
+        [$groupForKey, $legacyLocationForGroup] = $this->resolveLegacyGroups($rowByKey, $canonicalGroups, $keyToGroup);
+        $this->assertParentRelationsStayWithinGroups($rowByKey, $groupForKey);
+
+        return $this->buildConvertedGroups($rowByKey, $canonicalGroups, $groupForKey, $legacyLocationForGroup);
+    }
+
+    /** @return array<string, mixed> */
+    private function canonicalGroups(): array
+    {
+        $groups = $this->navigationConfig['shell_groups'] ?? null;
+        if (!is_array($groups)) {
+            return [];
+        }
+
+        /** @var array<string, mixed> $groups */
+        return $groups;
+    }
+
+    /**
+     * @param array<string, mixed> $canonicalGroups
+     *
+     * @return array<string, string>
+     */
+    private function indexCanonicalItemGroups(array $canonicalGroups): array
+    {
         $keyToGroup = [];
         foreach ($canonicalGroups as $groupKey => $groupConfig) {
-            if (!is_string($groupKey) || !is_array($groupConfig)) {
+            if (!is_array($groupConfig)) {
                 continue;
             }
             $canonicalItems = $groupConfig['items'] ?? [];
@@ -79,6 +106,16 @@ final readonly class NavigationLegacyMigrationPlanService
             }
         }
 
+        return $keyToGroup;
+    }
+
+    /**
+     * @param list<array<string, mixed>> $rows
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    private function indexLegacyRows(array $rows): array
+    {
         $rowByKey = [];
         foreach ($rows as $row) {
             $key = $this->requiredString($row['navigation_key'] ?? null, 'legacy navigation_key');
@@ -91,6 +128,18 @@ final readonly class NavigationLegacyMigrationPlanService
             $rowByKey[$key] = $row;
         }
 
+        return $rowByKey;
+    }
+
+    /**
+     * @param array<string, array<string, mixed>> $rowByKey
+     * @param array<string, mixed>                $canonicalGroups
+     * @param array<string, string>               $keyToGroup
+     *
+     * @return array{array<string, string>, array<string, string>}
+     */
+    private function resolveLegacyGroups(array $rowByKey, array $canonicalGroups, array $keyToGroup): array
+    {
         $groupForKey = [];
         $legacyLocationForGroup = [];
         foreach ($rowByKey as $key => $row) {
@@ -110,6 +159,15 @@ final readonly class NavigationLegacyMigrationPlanService
             }
         }
 
+        return [$groupForKey, $legacyLocationForGroup];
+    }
+
+    /**
+     * @param array<string, array<string, mixed>> $rowByKey
+     * @param array<string, string>               $groupForKey
+     */
+    private function assertParentRelationsStayWithinGroups(array $rowByKey, array $groupForKey): void
+    {
         foreach ($rowByKey as $key => $row) {
             $parentKey = $this->nullableString($row['parent_key'] ?? null);
             if (null === $parentKey) {
@@ -122,76 +180,113 @@ final readonly class NavigationLegacyMigrationPlanService
                 throw new \RuntimeException(sprintf('Legacy parent relation "%s" -> "%s" crosses future menu boundaries (%s vs %s). Refusing lossy migration.', $key, $parentKey, $groupForKey[$key], $groupForKey[$parentKey]));
             }
         }
+    }
 
+    /**
+     * @param array<string, array<string, mixed>> $rowByKey
+     * @param array<string, mixed>                $canonicalGroups
+     * @param array<string, string>               $groupForKey
+     * @param array<string, string>               $legacyLocationForGroup
+     *
+     * @return array{shell_groups:array<string,mixed>, archived_items:list<string>}
+     */
+    private function buildConvertedGroups(array $rowByKey, array $canonicalGroups, array $groupForKey, array $legacyLocationForGroup): array
+    {
         $groups = [];
         $archived = [];
         foreach ($rowByKey as $key => $row) {
             $groupKey = $groupForKey[$key];
             $location = $legacyLocationForGroup[$groupKey];
             $canonical = is_array($canonicalGroups[$groupKey] ?? null) ? $canonicalGroups[$groupKey] : [];
-
+            /** @var array<string, mixed> $canonical */
             if (!isset($groups[$groupKey])) {
-                $groups[$groupKey] = [
-                    'label' => $canonical['label'] ?? $this->labelize($location),
-                    'slug' => $canonical['slug'] ?? str_replace('_', '-', $groupKey),
-                    'location' => $location,
-                    'type' => $canonical['type'] ?? 'navigation',
-                    'priority' => $this->intValue($canonical['priority'] ?? null, 100),
-                    'enabled' => true,
-                    'visible_for_roles' => [],
-                    'visible_for_scopes' => [],
-                    'visible_for_environments' => [],
-                    'metadata' => array_merge(
-                        is_array($canonical['metadata'] ?? null) ? $canonical['metadata'] : [],
-                        ['legacy_migrated' => true, 'legacy_location' => $location],
-                    ),
-                    'items' => [],
-                ];
+                $groups[$groupKey] = $this->buildGroup($groupKey, $location, $canonical);
             }
 
-            $metadata = $this->decodeJsonObjectStrict($row['metadata'] ?? null, sprintf('metadata for legacy navigation item "%s"', $key));
-            $parentKey = $this->nullableString($row['parent_key'] ?? null);
-            if (null !== $parentKey) {
-                $metadata['parent_key'] = $parentKey;
+            $group = $groups[$groupKey];
+            $items = $group['items'] ?? [];
+            if (!is_array($items)) {
+                throw new \LogicException(sprintf('Converted navigation group "%s" has invalid items state.', $groupKey));
             }
-
-            $requiredRole = $this->nullableString($row['required_role'] ?? null);
-            $routeName = $this->nullableString($row['route_name'] ?? null);
-            $operation = $this->stringValue($row['operation'] ?? null, 'index');
-            if (is_string($metadata['operation'] ?? null) && '' !== trim($metadata['operation']) && trim($metadata['operation']) !== $operation) {
-                $metadata['legacy_metadata_operation'] = $metadata['operation'];
-            }
-
-            $item = [
-                'type' => is_string($metadata['type'] ?? null) && '' !== trim($metadata['type']) ? trim($metadata['type']) : 'link',
-                'label' => $this->stringValue($row['label'] ?? null, $key),
-                'slug' => $this->nullableString($row['slug'] ?? null),
-                'operation' => $operation,
-                'icon' => $this->nullableString($row['icon'] ?? null),
-                'priority' => $this->intValue($row['position'] ?? null, 0),
-                'enabled' => (bool) ($row['enabled'] ?? true),
-                'visible_for_roles' => null === $requiredRole ? [] : [$requiredRole],
-                'visible_for_scopes' => [],
-                'visible_for_environments' => [],
-                'metadata' => $metadata,
-            ];
-            if (null !== $routeName) {
-                $item['target'] = [
-                    'type' => 'route',
-                    'route' => $routeName,
-                    'params' => $this->decodeJsonObjectStrict($row['route_parameters'] ?? null, sprintf('route_parameters for legacy navigation item "%s"', $key)),
-                ];
-            } elseif ([] !== $this->decodeJsonObjectStrict($row['route_parameters'] ?? null, sprintf('route_parameters for legacy navigation item "%s"', $key))) {
-                throw new \RuntimeException(sprintf('Legacy navigation item "%s" has route parameters but no route name.', $key));
-            }
-
-            $groups[$groupKey]['items'][$key] = $item;
+            /** @var array<string, mixed> $items */
+            $items[$key] = $this->buildItem($key, $row);
+            $group['items'] = $items;
+            $groups[$groupKey] = $group;
             if (null !== $this->nullableString($row['archived_at'] ?? null)) {
                 $archived[] = $groupKey.':'.$key;
             }
         }
 
         return ['shell_groups' => $groups, 'archived_items' => $archived];
+    }
+
+    /**
+     * @param array<string, mixed> $canonical
+     *
+     * @return array<string, mixed>
+     */
+    private function buildGroup(string $groupKey, string $location, array $canonical): array
+    {
+        return [
+            'label' => $canonical['label'] ?? $this->labelize($location),
+            'slug' => $canonical['slug'] ?? str_replace('_', '-', $groupKey),
+            'location' => $location,
+            'type' => $canonical['type'] ?? 'navigation',
+            'priority' => $this->intValue($canonical['priority'] ?? null, 100),
+            'enabled' => true,
+            'visible_for_roles' => [],
+            'visible_for_scopes' => [],
+            'visible_for_environments' => [],
+            'metadata' => array_merge(
+                is_array($canonical['metadata'] ?? null) ? $canonical['metadata'] : [],
+                ['legacy_migrated' => true, 'legacy_location' => $location],
+            ),
+            'items' => [],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $row
+     *
+     * @return array<string, mixed>
+     */
+    private function buildItem(string $key, array $row): array
+    {
+        $metadata = $this->decodeJsonObjectStrict($row['metadata'] ?? null, sprintf('metadata for legacy navigation item "%s"', $key));
+        $parentKey = $this->nullableString($row['parent_key'] ?? null);
+        if (null !== $parentKey) {
+            $metadata['parent_key'] = $parentKey;
+        }
+
+        $requiredRole = $this->nullableString($row['required_role'] ?? null);
+        $routeName = $this->nullableString($row['route_name'] ?? null);
+        $operation = $this->stringValue($row['operation'] ?? null, 'index');
+        if (is_string($metadata['operation'] ?? null) && '' !== trim($metadata['operation']) && trim($metadata['operation']) !== $operation) {
+            $metadata['legacy_metadata_operation'] = $metadata['operation'];
+        }
+
+        $item = [
+            'type' => is_string($metadata['type'] ?? null) && '' !== trim($metadata['type']) ? trim($metadata['type']) : 'link',
+            'label' => $this->stringValue($row['label'] ?? null, $key),
+            'slug' => $this->nullableString($row['slug'] ?? null),
+            'operation' => $operation,
+            'icon' => $this->nullableString($row['icon'] ?? null),
+            'priority' => $this->intValue($row['position'] ?? null, 0),
+            'enabled' => (bool) ($row['enabled'] ?? true),
+            'visible_for_roles' => null === $requiredRole ? [] : [$requiredRole],
+            'visible_for_scopes' => [],
+            'visible_for_environments' => [],
+            'metadata' => $metadata,
+        ];
+
+        $routeParameters = $this->decodeJsonObjectStrict($row['route_parameters'] ?? null, sprintf('route_parameters for legacy navigation item "%s"', $key));
+        if (null !== $routeName) {
+            $item['target'] = ['type' => 'route', 'route' => $routeName, 'params' => $routeParameters];
+        } elseif ([] !== $routeParameters) {
+            throw new \RuntimeException(sprintf('Legacy navigation item "%s" has route parameters but no route name.', $key));
+        }
+
+        return $item;
     }
 
     /** @return array<string, mixed> */

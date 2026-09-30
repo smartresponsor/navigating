@@ -168,3 +168,35 @@
 - Git recognized the structural pass as renames; unrelated untracked `LICENSE` and `NOTICE` were intentionally not absorbed into the task commit.
 - Post-push branch publication succeeded. Heavy RC/Inspecting remained unavailable because the orchestration capacity gate continued to report `ENGINE_BACKLOG_HIGH`; synchronous read-only RC validation also exceeded the Code Mode wrapper timeout without a usable report.
 
+## Task engine-20260930224649-navigating-705f0d — Navigating Inspecting remediation
+
+### Reconnaissance and baseline
+
+- Workspace: `D:\\PhpstormProjects\\www\\Navigating`; branch `master` at `c0895cda4934400c827d19396908523e426f1ea0`, synchronized with `origin/master`; pre-existing untracked `LICENSE` and `NOTICE` are preserved outside task ownership pending semantic classification.
+- Read the complete execution specification, repository Markdown documentation and nested EasyAdmin rules, current Composer/package/static-analysis contracts, the mandatory Objecting/Cruding/Viewing/Interfacing contour, and the Gating/Canonization enforcement contour.
+- Canonization mappings consulted directly include Composer dependency integrity, no-silent-failure, typed boundary, documentation/runtime parity, no alternative layer taxonomy, typed Symfony role roots, Cruding generic-CRUD ownership, standalone dependency baseline, development symlink closure, production bundle contract, dual-runtime mode, and PHP/Symfony platform baseline.
+- Market/open-source benchmark: mature navigation systems separate hierarchical menu intent from rendering/execution, keep route/URL targets explicit, expose administrator-managed hierarchy/order, and enforce authorization independently. RC-critical work therefore remains migration/persistence safety, deterministic visibility/target semantics, recovery, and maintainable validation; richer authoring UX and navigation analytics remain a separate growth workstream.
+- Durable RED Inspecting evidence from 2026-09-29 contains 20 php-structure findings (1 high, 19 medium). Several paths are stale after the canonical repository restructuring, but the high-complexity `NavigationLegacyMigrationPlanService::convertRows()` finding maps directly to the current `src/Service/Migration/NavigationLegacyMigrationPlanService.php` implementation and was selected as the first actionable remediation.
+- Fresh Inspecting execution was attempted before mutation because the durable report is stale for the current HEAD; the standalone engine failed before analysis because `App\\Inspecting\\Command\\EngineInspectCommand` cannot be autoloaded from `Inspecting\\bin\\inspecting`. This is an external verification-engine defect, not a Navigating runtime failure.
+- Planned acceptance: targeted legacy-migration semantic/contract tests, full QA, CS/PHPStan/Gating, Composer validation/audit, Symfony/container/schema checks where applicable, then a post-mutation Inspecting retry and Git integration if safe.
+
+Что имеем? Current HEAD, dependency/canon contour, stale-vs-current Inspecting mapping, and one concrete actionable RC hotspot are established.
+Что осталось? Verify the bounded complexity refactor, repair any regressions, retry Inspecting, update the journal with evidence, and close Git integration without absorbing unrelated files.
+
+### Remediation
+
+- Refactored legacy migration row conversion into cohesive private phases for canonical-group indexing, legacy-row indexing, group resolution, parent-boundary validation, group construction and item construction. The conversion contract and data shape remain unchanged; the previous single high-complexity method is now a short orchestration method.
+
+### Verification
+
+- Changed-PHP syntax check is GREEN; Composer validation is GREEN and Composer audit reports no advisories.
+- Targeted database/recovery/migration verification is GREEN: 83 tests / 588 assertions.
+- Full PHPUnit QA is GREEN: 178 tests / 18,409 assertions.
+- `composer quality` is GREEN after the bounded refactor: PHP CS Fixer 0/130 fixable, PHPStan 0 errors across 96 analyzed paths, and Gating 9 rules with 0 failures / 0 warnings (2 profile-dependent skips).
+- `navigation:acceptance:verify` is GREEN: Doctrine mapping valid, schema in sync, migrations up to date, install manifest matches the database, and the full 178-test suite passes.
+- Post-mutation Inspecting was retried as required. Console MCP reports the engine surface as `INSPECTING_READY`, but the bounded quality-inspect run does not produce a report and returns `INSPECTING_FAILED`; a longer attempt exceeded the current Code Mode execution window. The required external Inspecting acceptance therefore remains NOT_VERIFIED even though Navigating deterministic gates are GREEN.
+- No browser/mobile UI, navigation item inventory, route target, persistence schema, or user flow was changed; new visual evidence is not applicable to this remediation.
+
+Что имеем? The high-severity legacy-migration complexity hotspot is materially reduced and all repository-owned deterministic/acceptance gates are GREEN.
+Что осталось? Preserve the verified task-owned change in Git and publish it; external Inspecting remains a factual verification blocker until its full analysis can complete and emit a report.
+
