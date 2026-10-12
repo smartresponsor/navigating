@@ -93,7 +93,7 @@
     "cruding/crud": "dev-master",
     "doctrine/dbal": "^4.0",
     "doctrine/doctrine-bundle": "^3.2",
-    "doctrine/doctrine-migrations-bundle": "^3.4",
+    "doctrine/doctrine-migrations-bundle": "^3.4 || ^4.0",
     "doctrine/orm": "^3.3",
     "easycorp/easyadmin-bundle": "^5.0",
     "interfacing/interface": "dev-master",
